@@ -1,0 +1,81 @@
+# LimaGo — despliegue con Docker Compose (Docker Desktop en Windows 10/11, macOS o Linux)
+#   Copy-Item .env.example .env      (y cambia POSTGRES_PASSWORD)
+#   docker compose up --build -d     →  http://localhost:8080
+name: limago
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-limago}
+      POSTGRES_USER: ${POSTGRES_USER:-limago}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Define POSTGRES_PASSWORD en el archivo .env}
+    volumes:
+      - datos_postgres:/var/lib/postgresql/data
+    networks: [interna]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    image: limago-backend:1.0
+    env_file: .env
+    environment:
+      LIMAGO_URL_BASE_DATOS: postgresql+psycopg://${POSTGRES_USER:-limago}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-limago}
+      LIMAGO_SERVIR_FRONTEND: "0"
+      LIMAGO_RUTA_CACHE_GEOCODIFICACION: /app/cache/geocodificacion.json
+    volumes:
+      - cache_geocodificacion:/app/cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [interna, externa]   # externa: salida a Nominatim para buscar direcciones
+    restart: unless-stopped
+
+  worker:
+    image: limago-backend:1.0      # misma imagen que el backend, otro proceso
+    command: ["python", "-m", "api.worker"]
+    env_file: .env
+    environment:
+      LIMAGO_URL_BASE_DATOS: postgresql+psycopg://${POSTGRES_USER:-limago}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-limago}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      backend:
+        condition: service_started  # garantiza que la imagen ya fue construida
+    networks: [interna]
+    healthcheck:
+      test: ["CMD", "python", "-m", "api.salud_worker"]
+      interval: 15s
+      timeout: 10s
+      start_period: 40s
+      retries: 5
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+    image: limago-frontend:1.0
+    ports:
+      - "${LIMAGO_PUERTO_WEB:-8080}:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks: [interna, externa]
+    restart: unless-stopped
+
+volumes:
+  datos_postgres:
+  cache_geocodificacion:
+
+networks:
+  interna:
+    internal: true   # PostgreSQL y el worker no tienen salida a Internet
+  externa:

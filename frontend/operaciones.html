@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Centro de operaciones · LimaGo</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header class="cabecera">
+  <div class="contenedor">
+    <a class="logo" href="index.html" aria-label="LimaGo, inicio"><img src="img/logo.svg" alt="" width="30" height="30"><span>Lima<b>Go</b></span> <span class="etiqueta estado-cancelada" style="margin-left:6px">Operaciones</span></a>
+    <nav class="navegacion" aria-label="Principal" style="display:flex;position:static;flex-direction:row;padding:0;border:0;background:none">
+      <a href="index.html">Volver al sitio</a>
+    </nav>
+  </div>
+</header>
+
+<main class="seccion" style="padding-top:24px">
+  <div class="contenedor">
+    <h2>Centro de operaciones</h2>
+    <p class="subtitulo">Estado de la flota de Miraflores y control del escenario de demostración.</p>
+    <div class="kpis">
+      <div class="tarjeta kpi"><span>Disponibles</span><strong id="k-disponible">—</strong></div>
+      <div class="tarjeta kpi"><span>Recogiendo</span><strong id="k-en_camino">—</strong></div>
+      <div class="tarjeta kpi"><span>En viaje</span><strong id="k-en_viaje">—</strong></div>
+      <div class="tarjeta kpi"><span>Turno</span><strong id="k-turno">—</strong></div>
+      <div class="tarjeta kpi"><span>Hora del escenario</span><strong id="k-hora">—</strong></div>
+    </div>
+    <div class="operaciones">
+      <div class="mapa-operaciones" id="mapa"></div>
+      <aside class="controles">
+        <div class="tarjeta">
+          <p style="margin:0 0 10px"><span class="etiqueta" id="estado-servicio">—</span></p>
+          <div class="fila">
+            <button class="boton secundario" data-accion="pausar">Pausar</button>
+            <button class="boton" data-accion="reanudar">Continuar</button>
+          </div>
+          <div class="fila" style="margin-top:8px">
+            <button class="boton secundario" data-accion="avanzar" data-turnos="1">+1 turno</button>
+            <button class="boton secundario" data-accion="avanzar" data-turnos="10">+10 turnos</button>
+          </div>
+        </div>
+        <form class="tarjeta" id="reinicio">
+          <h3 style="margin:0 0 10px;font-size:1rem">Reiniciar escenario</h3>
+          <div class="campo"><label for="semilla">Semilla</label><input class="entrada" id="semilla" type="number" min="0" value="42" required></div>
+          <div class="campo"><label for="conductores">Conductores</label><input class="entrada" id="conductores" type="number" min="1" max="30000" value="300" required></div>
+          <button class="boton acento bloque" type="submit">Reiniciar</button>
+        </form>
+        <div id="mensaje" role="status"></div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/comun.js"></script>
+<script>
+"use strict";
+(async () => {
+  const mapa = LimaGo.crearMapa("mapa");
+  const flota = new LimaGo.CapaFlota(mapa, { radio: 4 });
+  LimaGo.dibujarCobertura(mapa).catch(() => {});
+  const mensaje = (t, tipo = "info") => { document.getElementById("mensaje").innerHTML = t ? `<div class="aviso ${tipo}">${LimaGo.escapar(t)}</div>` : ""; };
+
+  async function refrescar() {
+    try {
+      const d = await LimaGo.api("/flota");
+      flota.actualizar(d.conductores);
+      for (const k of ["disponible", "en_camino", "en_viaje"]) document.getElementById(`k-${k}`).textContent = d.conteo[k];
+      document.getElementById("k-turno").textContent = d.turno;
+      document.getElementById("k-hora").textContent = LimaGo.hora(d.hora_simulada);
+      const estado = document.getElementById("estado-servicio");
+      estado.className = `etiqueta ${!d.worker_activo ? "estado-rechazada" : d.en_pausa ? "estado-asignada" : "estado-completada"}`;
+      estado.textContent = !d.worker_activo ? "Servicio sin respuesta" : d.en_pausa ? `En pausa · semilla ${d.semilla}` : `En marcha · semilla ${d.semilla}`;
+    } catch (e) { mensaje(e.message, "error"); }
+  }
+
+  async function operar(accion, cuerpo) {
+    try {
+      const r = await LimaGo.api(`/operaciones/${accion}`, { method: "POST", body: cuerpo || {} });
+      mensaje(`Listo: turno ${r.turno}${r.en_pausa ? " (en pausa)" : ""}.`, "exito");
+      refrescar();
+    } catch (e) { mensaje(e.message, "error"); }
+  }
+
+  document.querySelectorAll("[data-accion]").forEach((b) => b.addEventListener("click", () =>
+    operar(b.dataset.accion, b.dataset.turnos ? { turnos: +b.dataset.turnos } : null)));
+  document.getElementById("reinicio").addEventListener("submit", (e) => {
+    e.preventDefault();
+    operar("reiniciar", { semilla: +document.getElementById("semilla").value, num_conductores: +document.getElementById("conductores").value });
+  });
+  await refrescar();
+  setInterval(refrescar, 1500);
+})();
+</script>
+</body>
+</html>

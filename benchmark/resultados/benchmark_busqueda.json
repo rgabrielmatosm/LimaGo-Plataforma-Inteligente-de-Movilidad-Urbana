@@ -1,0 +1,276 @@
+{
+  "entorno": {
+    "fecha_utc": "2026-11-06T01:13:10+00:00",
+    "python": "3.13.18",
+    "implementacion": "CPython",
+    "sistema": "Linux-6.18.44-fc-v242-x86_64-with-glibc2.39",
+    "procesador": "x86_64",
+    "nucleos_logicos": 4,
+    "networkx": "3.7",
+    "osmnx": "2.1.1"
+  },
+  "parametros": {
+    "escalas": [
+      300,
+      3000,
+      30000
+    ],
+    "consultas": 400,
+    "repeticiones": 5,
+    "k": 5,
+    "semilla_flota": 42,
+    "semilla_consultas": 2026,
+    "proporcion_ocupados": 0.2,
+    "capacidad_nodo": 8,
+    "profundidad_maxima": 18,
+    "resolucion_h3": 9,
+    "h3_version": "4.5.0",
+    "red": "Red vial: 1368 intersecciones, 2670 tramos dirigidos (1833 de sentido único), 227.4 km de tramos"
+  },
+  "escenarios": {
+    "intersecciones": [
+      {
+        "conductores": 300,
+        "lineal_ms_por_consulta": 0.136496075,
+        "quadtree_ms_por_consulta": 0.032386825,
+        "h3_ms_por_consulta": 0.10955648500000001,
+        "aceleracion_quadtree": 4.214555610190255,
+        "aceleracion_h3": 1.2458968083906672,
+        "detalle_lineal": {
+          "mediana_ms": 54.59843,
+          "media_ms": 56.357199800000004,
+          "desviacion_ms": 3.8413285016899033,
+          "minimo_ms": 53.495217,
+          "repeticiones": 5
+        },
+        "detalle_quadtree": {
+          "mediana_ms": 12.95473,
+          "media_ms": 13.929326800000002,
+          "desviacion_ms": 2.5779922328986364,
+          "minimo_ms": 11.944784,
+          "repeticiones": 5
+        },
+        "detalle_h3": {
+          "mediana_ms": 43.822594,
+          "media_ms": 43.320063,
+          "desviacion_ms": 2.8725629765824108,
+          "minimo_ms": 38.603102,
+          "repeticiones": 5
+        },
+        "construccion_quadtree_ms": 0.5788050002593081,
+        "construccion_h3_ms": 0.5044130002715974,
+        "profundidad_quadtree": 5,
+        "nodos_quadtree": 137,
+        "celdas_h3_ocupadas": 81,
+        "distancias_promedio_lineal": 300,
+        "distancias_promedio_quadtree": 19.16,
+        "distancias_promedio_h3": 82.5425,
+        "nodos_visitados_promedio_quadtree": 13.045,
+        "resultados_identicos_quadtree": "400/400",
+        "resultados_identicos_h3": "400/400"
+      },
+      {
+        "conductores": 3000,
+        "lineal_ms_por_consulta": 1.417493275,
+        "quadtree_ms_por_consulta": 0.048808790000000005,
+        "h3_ms_por_consulta": 0.3214480075,
+        "aceleracion_quadtree": 29.041762252250052,
+        "aceleracion_h3": 4.4097124322663594,
+        "detalle_lineal": {
+          "mediana_ms": 566.99731,
+          "media_ms": 530.029614,
+          "desviacion_ms": 80.22223192973141,
+          "minimo_ms": 400.672477,
+          "repeticiones": 5
+        },
+        "detalle_quadtree": {
+          "mediana_ms": 19.523516,
+          "media_ms": 19.139548400000002,
+          "desviacion_ms": 1.5073118670405607,
+          "minimo_ms": 17.351686,
+          "repeticiones": 5
+        },
+        "detalle_h3": {
+          "mediana_ms": 128.579203,
+          "media_ms": 148.94127840000002,
+          "desviacion_ms": 61.60538599249101,
+          "minimo_ms": 101.379006,
+          "repeticiones": 5
+        },
+        "construccion_quadtree_ms": 7.258119000198349,
+        "construccion_h3_ms": 2.9002769997532596,
+        "profundidad_quadtree": 9,
+        "nodos_quadtree": 1437,
+        "celdas_h3_ocupadas": 94,
+        "distancias_promedio_lineal": 3000,
+        "distancias_promedio_quadtree": 31.7625,
+        "distancias_promedio_h3": 463.2675,
+        "nodos_visitados_promedio_quadtree": 20.5425,
+        "resultados_identicos_quadtree": "400/400",
+        "resultados_identicos_h3": "400/400"
+      },
+      {
+        "conductores": 30000,
+        "lineal_ms_por_consulta": 12.823824085000002,
+        "quadtree_ms_por_consulta": 0.1523494175,
+        "h3_ms_por_consulta": 2.7605798575,
+        "aceleracion_quadtree": 84.17376512122208,
+        "aceleracion_h3": 4.645337120083656,
+        "detalle_lineal": {
+          "mediana_ms": 5129.529634,
+          "media_ms": 5141.2189026,
+          "desviacion_ms": 134.7327417529544,
+          "minimo_ms": 4944.712625,
+          "repeticiones": 5
+        },
+        "detalle_quadtree": {
+          "mediana_ms": 60.939767,
+          "media_ms": 60.1294168,
+          "desviacion_ms": 3.8699818607909138,
+          "minimo_ms": 53.52026,
+          "repeticiones": 5
+        },
+        "detalle_h3": {
+          "mediana_ms": 1104.231943,
+          "media_ms": 1116.9515572,
+          "desviacion_ms": 137.60559977311084,
+          "minimo_ms": 945.141239,
+          "repeticiones": 5
+        },
+        "construccion_quadtree_ms": 120.28204700027345,
+        "construccion_h3_ms": 25.00235099978454,
+        "profundidad_quadtree": 14,
+        "nodos_quadtree": 4233,
+        "celdas_h3_ocupadas": 95,
+        "distancias_promedio_lineal": 30000,
+        "distancias_promedio_quadtree": 172.5125,
+        "distancias_promedio_h3": 4270.3875,
+        "nodos_visitados_promedio_quadtree": 25.6775,
+        "resultados_identicos_quadtree": "400/400",
+        "resultados_identicos_h3": "400/400"
+      }
+    ],
+    "uniforme": [
+      {
+        "conductores": 300,
+        "lineal_ms_por_consulta": 0.13540952,
+        "quadtree_ms_por_consulta": 0.026696865,
+        "h3_ms_por_consulta": 0.0495720875,
+        "aceleracion_quadtree": 5.072113148865982,
+        "aceleracion_h3": 2.731567840470708,
+        "detalle_lineal": {
+          "mediana_ms": 54.163808,
+          "media_ms": 58.3826572,
+          "desviacion_ms": 10.934329991967553,
+          "minimo_ms": 51.451178,
+          "repeticiones": 5
+        },
+        "detalle_quadtree": {
+          "mediana_ms": 10.678746,
+          "media_ms": 10.6820324,
+          "desviacion_ms": 0.02695111648522212,
+          "minimo_ms": 10.656941,
+          "repeticiones": 5
+        },
+        "detalle_h3": {
+          "mediana_ms": 19.828835,
+          "media_ms": 20.255125800000002,
+          "desviacion_ms": 1.2582365159220652,
+          "minimo_ms": 19.170024,
+          "repeticiones": 5
+        },
+        "construccion_quadtree_ms": 3.4480439999242662,
+        "construccion_h3_ms": 2.0787630000995705,
+        "profundidad_quadtree": 3,
+        "nodos_quadtree": 85,
+        "celdas_h3_ocupadas": 147,
+        "distancias_promedio_lineal": 300,
+        "distancias_promedio_quadtree": 18.145,
+        "distancias_promedio_h3": 38.605,
+        "nodos_visitados_promedio_quadtree": 9.22,
+        "resultados_identicos_quadtree": "400/400",
+        "resultados_identicos_h3": "400/400"
+      },
+      {
+        "conductores": 3000,
+        "lineal_ms_por_consulta": 1.1018570525,
+        "quadtree_ms_por_consulta": 0.03384723,
+        "h3_ms_por_consulta": 0.10139830749999999,
+        "aceleracion_quadtree": 32.553832396329035,
+        "aceleracion_h3": 10.866621738237594,
+        "detalle_lineal": {
+          "mediana_ms": 440.742821,
+          "media_ms": 447.8186074,
+          "desviacion_ms": 43.02545041768414,
+          "minimo_ms": 394.99118,
+          "repeticiones": 5
+        },
+        "detalle_quadtree": {
+          "mediana_ms": 13.538892,
+          "media_ms": 13.6676682,
+          "desviacion_ms": 0.2653584025176135,
+          "minimo_ms": 13.503253,
+          "repeticiones": 5
+        },
+        "detalle_h3": {
+          "mediana_ms": 40.559323,
+          "media_ms": 40.7699832,
+          "desviacion_ms": 0.9731474888187303,
+          "minimo_ms": 39.737309,
+          "repeticiones": 5
+        },
+        "construccion_quadtree_ms": 5.123284000092099,
+        "construccion_h3_ms": 2.4270260000776034,
+        "profundidad_quadtree": 6,
+        "nodos_quadtree": 1217,
+        "celdas_h3_ocupadas": 214,
+        "distancias_promedio_lineal": 3000,
+        "distancias_promedio_quadtree": 17.265,
+        "distancias_promedio_h3": 147.8425,
+        "nodos_visitados_promedio_quadtree": 13.85,
+        "resultados_identicos_quadtree": "400/400",
+        "resultados_identicos_h3": "400/400"
+      },
+      {
+        "conductores": 30000,
+        "lineal_ms_por_consulta": 12.203570090000001,
+        "quadtree_ms_por_consulta": 0.048345200000000005,
+        "h3_ms_por_consulta": 0.5453904275,
+        "aceleracion_quadtree": 252.4256821773413,
+        "aceleracion_h3": 22.37584210258256,
+        "detalle_lineal": {
+          "mediana_ms": 4881.428036,
+          "media_ms": 4953.6815674,
+          "desviacion_ms": 128.2127225081948,
+          "minimo_ms": 4864.256049,
+          "repeticiones": 5
+        },
+        "detalle_quadtree": {
+          "mediana_ms": 19.33808,
+          "media_ms": 20.622169200000002,
+          "desviacion_ms": 4.415164976976251,
+          "minimo_ms": 17.062453,
+          "repeticiones": 5
+        },
+        "detalle_h3": {
+          "mediana_ms": 218.156171,
+          "media_ms": 227.01037179999997,
+          "desviacion_ms": 21.768602475572756,
+          "minimo_ms": 214.17173,
+          "repeticiones": 5
+        },
+        "construccion_quadtree_ms": 76.98573799962105,
+        "construccion_h3_ms": 29.636435999691457,
+        "profundidad_quadtree": 7,
+        "nodos_quadtree": 10673,
+        "celdas_h3_ocupadas": 219,
+        "distancias_promedio_lineal": 30000,
+        "distancias_promedio_quadtree": 19.4075,
+        "distancias_promedio_h3": 797.7775,
+        "nodos_visitados_promedio_quadtree": 14.9575,
+        "resultados_identicos_quadtree": "400/400",
+        "resultados_identicos_h3": "400/400"
+      }
+    ]
+  }
+}

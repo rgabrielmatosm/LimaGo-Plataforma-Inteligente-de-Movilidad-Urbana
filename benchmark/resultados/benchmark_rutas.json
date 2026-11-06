@@ -1,0 +1,1584 @@
+{
+  "entorno": {
+    "fecha_utc": "2026-11-06T01:14:40+00:00",
+    "python": "3.13.18",
+    "implementacion": "CPython",
+    "sistema": "Linux-6.18.44-fc-v242-x86_64-with-glibc2.39",
+    "procesador": "x86_64",
+    "nucleos_logicos": 4,
+    "networkx": "3.7",
+    "osmnx": "2.1.1"
+  },
+  "parametros": {
+    "pares": 300,
+    "repeticiones": 5,
+    "semilla": 7,
+    "tolerancia_m": 1e-06,
+    "red": "Red vial: 1368 intersecciones, 2670 tramos dirigidos (1833 de sentido único), 227.4 km de tramos",
+    "nodos_componente_principal": 1300
+  },
+  "correccion": {
+    "pares_identicos": "300/300",
+    "diferencia_maxima_m": 0.0,
+    "diferencia_maxima_origen_completo_m": 0.0,
+    "longitud_media_ruta_m": 2515.2844022748554
+  },
+  "tiempos": {
+    "dijkstra_propio_ms_por_par": 0.46671454,
+    "networkx_ms_por_par": 1.20035039,
+    "a_estrella_ms_por_par": 0.33286458333333335,
+    "dijkstra_completo_propio_ms": 1.1826365,
+    "dijkstra_completo_networkx_ms": 2.639569,
+    "detalle": {
+      "propio": {
+        "mediana_ms": 140.014362,
+        "media_ms": 143.91408040000002,
+        "desviacion_ms": 15.440315624511028,
+        "minimo_ms": 131.325749,
+        "repeticiones": 5
+      },
+      "networkx": {
+        "mediana_ms": 360.105117,
+        "media_ms": 373.2287252,
+        "desviacion_ms": 37.29175152883691,
+        "minimo_ms": 344.771548,
+        "repeticiones": 5
+      },
+      "a_estrella": {
+        "mediana_ms": 99.859375,
+        "media_ms": 99.7976438,
+        "desviacion_ms": 2.6309134490043933,
+        "minimo_ms": 96.425352,
+        "repeticiones": 5
+      },
+      "completo_propio": {
+        "mediana_ms": 1.1826365,
+        "media_ms": 1.20693465,
+        "desviacion_ms": 0.13499614523981004,
+        "minimo_ms": 1.073754,
+        "repeticiones": 20
+      },
+      "completo_networkx": {
+        "mediana_ms": 2.639569,
+        "media_ms": 2.832735,
+        "desviacion_ms": 0.608670065005924,
+        "minimo_ms": 2.291124,
+        "repeticiones": 20
+      }
+    }
+  },
+  "a_estrella": {
+    "nodos_explorados_dijkstra_promedio": 678.25,
+    "nodos_explorados_a_estrella_promedio": 208.01333333333332,
+    "reduccion_porcentual": 69.33087602899619,
+    "mismo_coste_en_todos": true,
+    "muestras": [
+      {
+        "longitud_m": 5471.829094147943,
+        "dijkstra": 1326,
+        "a_estrella": 555
+      },
+      {
+        "longitud_m": 3028.233428120414,
+        "dijkstra": 719,
+        "a_estrella": 261
+      },
+      {
+        "longitud_m": 4278.926080232146,
+        "dijkstra": 1301,
+        "a_estrella": 313
+      },
+      {
+        "longitud_m": 3183.7377726902887,
+        "dijkstra": 888,
+        "a_estrella": 219
+      },
+      {
+        "longitud_m": 316.08635085768265,
+        "dijkstra": 11,
+        "a_estrella": 4
+      },
+      {
+        "longitud_m": 2280.8195487558114,
+        "dijkstra": 458,
+        "a_estrella": 153
+      },
+      {
+        "longitud_m": 269.0388574311854,
+        "dijkstra": 14,
+        "a_estrella": 4
+      },
+      {
+        "longitud_m": 748.7945858259127,
+        "dijkstra": 35,
+        "a_estrella": 13
+      },
+      {
+        "longitud_m": 2785.725329098576,
+        "dijkstra": 882,
+        "a_estrella": 302
+      },
+      {
+        "longitud_m": 2939.3581453422335,
+        "dijkstra": 997,
+        "a_estrella": 378
+      },
+      {
+        "longitud_m": 3078.55457799564,
+        "dijkstra": 555,
+        "a_estrella": 158
+      },
+      {
+        "longitud_m": 1913.6313790373551,
+        "dijkstra": 673,
+        "a_estrella": 134
+      },
+      {
+        "longitud_m": 2012.390744564733,
+        "dijkstra": 691,
+        "a_estrella": 135
+      },
+      {
+        "longitud_m": 1959.5917299026598,
+        "dijkstra": 449,
+        "a_estrella": 118
+      },
+      {
+        "longitud_m": 1178.322157958158,
+        "dijkstra": 329,
+        "a_estrella": 31
+      },
+      {
+        "longitud_m": 1393.3781913718808,
+        "dijkstra": 381,
+        "a_estrella": 52
+      },
+      {
+        "longitud_m": 2461.875010008532,
+        "dijkstra": 542,
+        "a_estrella": 189
+      },
+      {
+        "longitud_m": 2933.0549509129783,
+        "dijkstra": 1152,
+        "a_estrella": 205
+      },
+      {
+        "longitud_m": 1734.765540031244,
+        "dijkstra": 472,
+        "a_estrella": 124
+      },
+      {
+        "longitud_m": 3407.0374797875097,
+        "dijkstra": 681,
+        "a_estrella": 260
+      },
+      {
+        "longitud_m": 4567.394291629119,
+        "dijkstra": 968,
+        "a_estrella": 429
+      },
+      {
+        "longitud_m": 212.62166620862888,
+        "dijkstra": 16,
+        "a_estrella": 8
+      },
+      {
+        "longitud_m": 3971.6956486562553,
+        "dijkstra": 1053,
+        "a_estrella": 475
+      },
+      {
+        "longitud_m": 1191.79260610956,
+        "dijkstra": 316,
+        "a_estrella": 50
+      },
+      {
+        "longitud_m": 2288.999272902363,
+        "dijkstra": 934,
+        "a_estrella": 169
+      },
+      {
+        "longitud_m": 3082.2796935621786,
+        "dijkstra": 816,
+        "a_estrella": 326
+      },
+      {
+        "longitud_m": 1452.8624132766731,
+        "dijkstra": 398,
+        "a_estrella": 55
+      },
+      {
+        "longitud_m": 1247.3998578259193,
+        "dijkstra": 242,
+        "a_estrella": 33
+      },
+      {
+        "longitud_m": 1611.1623293765833,
+        "dijkstra": 496,
+        "a_estrella": 86
+      },
+      {
+        "longitud_m": 4334.445472209207,
+        "dijkstra": 931,
+        "a_estrella": 567
+      },
+      {
+        "longitud_m": 2173.6335200342587,
+        "dijkstra": 497,
+        "a_estrella": 149
+      },
+      {
+        "longitud_m": 3441.8797024552573,
+        "dijkstra": 697,
+        "a_estrella": 503
+      },
+      {
+        "longitud_m": 1116.3066823895585,
+        "dijkstra": 131,
+        "a_estrella": 34
+      },
+      {
+        "longitud_m": 1193.595946326966,
+        "dijkstra": 300,
+        "a_estrella": 21
+      },
+      {
+        "longitud_m": 1038.321652257061,
+        "dijkstra": 183,
+        "a_estrella": 29
+      },
+      {
+        "longitud_m": 2710.2587991433593,
+        "dijkstra": 898,
+        "a_estrella": 211
+      },
+      {
+        "longitud_m": 1787.1873598200598,
+        "dijkstra": 734,
+        "a_estrella": 98
+      },
+      {
+        "longitud_m": 1933.5528905931524,
+        "dijkstra": 660,
+        "a_estrella": 105
+      },
+      {
+        "longitud_m": 5262.863733566943,
+        "dijkstra": 1321,
+        "a_estrella": 650
+      },
+      {
+        "longitud_m": 2444.240610851465,
+        "dijkstra": 673,
+        "a_estrella": 209
+      },
+      {
+        "longitud_m": 4691.223172391297,
+        "dijkstra": 1321,
+        "a_estrella": 619
+      },
+      {
+        "longitud_m": 4112.202317737372,
+        "dijkstra": 937,
+        "a_estrella": 531
+      },
+      {
+        "longitud_m": 3883.870273532308,
+        "dijkstra": 1285,
+        "a_estrella": 287
+      },
+      {
+        "longitud_m": 2940.452231429583,
+        "dijkstra": 1252,
+        "a_estrella": 184
+      },
+      {
+        "longitud_m": 2092.9080372616036,
+        "dijkstra": 645,
+        "a_estrella": 215
+      },
+      {
+        "longitud_m": 2243.829397684846,
+        "dijkstra": 504,
+        "a_estrella": 229
+      },
+      {
+        "longitud_m": 1850.6553793890048,
+        "dijkstra": 433,
+        "a_estrella": 112
+      },
+      {
+        "longitud_m": 1235.5603899424493,
+        "dijkstra": 247,
+        "a_estrella": 69
+      },
+      {
+        "longitud_m": 3690.9936582200676,
+        "dijkstra": 713,
+        "a_estrella": 415
+      },
+      {
+        "longitud_m": 1578.571484089321,
+        "dijkstra": 466,
+        "a_estrella": 79
+      },
+      {
+        "longitud_m": 2866.882371858266,
+        "dijkstra": 638,
+        "a_estrella": 177
+      },
+      {
+        "longitud_m": 2840.518919936032,
+        "dijkstra": 610,
+        "a_estrella": 277
+      },
+      {
+        "longitud_m": 1140.5485882638748,
+        "dijkstra": 189,
+        "a_estrella": 43
+      },
+      {
+        "longitud_m": 4087.1848299927283,
+        "dijkstra": 1117,
+        "a_estrella": 225
+      },
+      {
+        "longitud_m": 4547.814926448359,
+        "dijkstra": 1081,
+        "a_estrella": 563
+      },
+      {
+        "longitud_m": 2434.157497880402,
+        "dijkstra": 836,
+        "a_estrella": 199
+      },
+      {
+        "longitud_m": 2915.0329611036,
+        "dijkstra": 925,
+        "a_estrella": 227
+      },
+      {
+        "longitud_m": 3344.6775726497194,
+        "dijkstra": 937,
+        "a_estrella": 472
+      },
+      {
+        "longitud_m": 2019.3947861373542,
+        "dijkstra": 513,
+        "a_estrella": 128
+      },
+      {
+        "longitud_m": 1812.8503000557498,
+        "dijkstra": 607,
+        "a_estrella": 88
+      },
+      {
+        "longitud_m": 2463.9384942486154,
+        "dijkstra": 379,
+        "a_estrella": 236
+      },
+      {
+        "longitud_m": 2731.207963053764,
+        "dijkstra": 1087,
+        "a_estrella": 65
+      },
+      {
+        "longitud_m": 4646.010856827997,
+        "dijkstra": 1309,
+        "a_estrella": 292
+      },
+      {
+        "longitud_m": 2223.723641191182,
+        "dijkstra": 775,
+        "a_estrella": 77
+      },
+      {
+        "longitud_m": 2928.2656363534334,
+        "dijkstra": 725,
+        "a_estrella": 357
+      },
+      {
+        "longitud_m": 3986.9144033590924,
+        "dijkstra": 1204,
+        "a_estrella": 374
+      },
+      {
+        "longitud_m": 3138.8386807317397,
+        "dijkstra": 1168,
+        "a_estrella": 96
+      },
+      {
+        "longitud_m": 4106.289284406788,
+        "dijkstra": 1237,
+        "a_estrella": 465
+      },
+      {
+        "longitud_m": 2138.761563426462,
+        "dijkstra": 351,
+        "a_estrella": 150
+      },
+      {
+        "longitud_m": 2727.4469584682342,
+        "dijkstra": 815,
+        "a_estrella": 250
+      },
+      {
+        "longitud_m": 3955.6895490831894,
+        "dijkstra": 786,
+        "a_estrella": 371
+      },
+      {
+        "longitud_m": 2714.8685887864453,
+        "dijkstra": 881,
+        "a_estrella": 286
+      },
+      {
+        "longitud_m": 341.36044525999455,
+        "dijkstra": 25,
+        "a_estrella": 6
+      },
+      {
+        "longitud_m": 1935.5865095388003,
+        "dijkstra": 785,
+        "a_estrella": 41
+      },
+      {
+        "longitud_m": 4350.850221177821,
+        "dijkstra": 1165,
+        "a_estrella": 553
+      },
+      {
+        "longitud_m": 796.449288115238,
+        "dijkstra": 162,
+        "a_estrella": 28
+      },
+      {
+        "longitud_m": 1936.841715718964,
+        "dijkstra": 329,
+        "a_estrella": 122
+      },
+      {
+        "longitud_m": 2081.0126842244895,
+        "dijkstra": 356,
+        "a_estrella": 114
+      },
+      {
+        "longitud_m": 4924.864502567436,
+        "dijkstra": 1249,
+        "a_estrella": 731
+      },
+      {
+        "longitud_m": 1131.8175442516879,
+        "dijkstra": 272,
+        "a_estrella": 71
+      },
+      {
+        "longitud_m": 3300.9822615801927,
+        "dijkstra": 1044,
+        "a_estrella": 282
+      },
+      {
+        "longitud_m": 3758.4807133812064,
+        "dijkstra": 871,
+        "a_estrella": 323
+      },
+      {
+        "longitud_m": 920.8064818717762,
+        "dijkstra": 148,
+        "a_estrella": 21
+      },
+      {
+        "longitud_m": 353.7731557774222,
+        "dijkstra": 23,
+        "a_estrella": 5
+      },
+      {
+        "longitud_m": 1439.1958089069428,
+        "dijkstra": 131,
+        "a_estrella": 48
+      },
+      {
+        "longitud_m": 869.7471844931299,
+        "dijkstra": 213,
+        "a_estrella": 28
+      },
+      {
+        "longitud_m": 6479.762779649483,
+        "dijkstra": 1323,
+        "a_estrella": 953
+      },
+      {
+        "longitud_m": 2522.9803898585583,
+        "dijkstra": 628,
+        "a_estrella": 121
+      },
+      {
+        "longitud_m": 2490.336202676825,
+        "dijkstra": 853,
+        "a_estrella": 159
+      },
+      {
+        "longitud_m": 3175.2660013109153,
+        "dijkstra": 676,
+        "a_estrella": 476
+      },
+      {
+        "longitud_m": 2075.707683541782,
+        "dijkstra": 683,
+        "a_estrella": 74
+      },
+      {
+        "longitud_m": 1179.9290459200133,
+        "dijkstra": 310,
+        "a_estrella": 97
+      },
+      {
+        "longitud_m": 1878.193442325971,
+        "dijkstra": 610,
+        "a_estrella": 84
+      },
+      {
+        "longitud_m": 4701.9001318848495,
+        "dijkstra": 1335,
+        "a_estrella": 584
+      },
+      {
+        "longitud_m": 1377.0975337247487,
+        "dijkstra": 316,
+        "a_estrella": 70
+      },
+      {
+        "longitud_m": 3418.7413199096086,
+        "dijkstra": 1015,
+        "a_estrella": 300
+      },
+      {
+        "longitud_m": 357.6353230554316,
+        "dijkstra": 13,
+        "a_estrella": 5
+      },
+      {
+        "longitud_m": 2715.985086963792,
+        "dijkstra": 779,
+        "a_estrella": 249
+      },
+      {
+        "longitud_m": 3421.070175705816,
+        "dijkstra": 963,
+        "a_estrella": 159
+      },
+      {
+        "longitud_m": 3799.3024996307427,
+        "dijkstra": 662,
+        "a_estrella": 318
+      },
+      {
+        "longitud_m": 949.1853593715956,
+        "dijkstra": 211,
+        "a_estrella": 37
+      },
+      {
+        "longitud_m": 1944.7151841542948,
+        "dijkstra": 556,
+        "a_estrella": 146
+      },
+      {
+        "longitud_m": 338.5244144521622,
+        "dijkstra": 23,
+        "a_estrella": 18
+      },
+      {
+        "longitud_m": 1943.0488483331535,
+        "dijkstra": 765,
+        "a_estrella": 152
+      },
+      {
+        "longitud_m": 2536.722714296081,
+        "dijkstra": 954,
+        "a_estrella": 170
+      },
+      {
+        "longitud_m": 137.20064140985806,
+        "dijkstra": 7,
+        "a_estrella": 3
+      },
+      {
+        "longitud_m": 941.7394905383114,
+        "dijkstra": 174,
+        "a_estrella": 23
+      },
+      {
+        "longitud_m": 3579.5233919849748,
+        "dijkstra": 1178,
+        "a_estrella": 207
+      },
+      {
+        "longitud_m": 3691.993284738214,
+        "dijkstra": 1026,
+        "a_estrella": 266
+      },
+      {
+        "longitud_m": 1180.9505191085668,
+        "dijkstra": 77,
+        "a_estrella": 17
+      },
+      {
+        "longitud_m": 1938.5168292418462,
+        "dijkstra": 424,
+        "a_estrella": 50
+      },
+      {
+        "longitud_m": 3525.719949068097,
+        "dijkstra": 917,
+        "a_estrella": 259
+      },
+      {
+        "longitud_m": 2465.2483133436913,
+        "dijkstra": 642,
+        "a_estrella": 239
+      },
+      {
+        "longitud_m": 2660.3568827129598,
+        "dijkstra": 596,
+        "a_estrella": 216
+      },
+      {
+        "longitud_m": 1192.795298005969,
+        "dijkstra": 303,
+        "a_estrella": 45
+      },
+      {
+        "longitud_m": 2195.2326645890107,
+        "dijkstra": 943,
+        "a_estrella": 56
+      },
+      {
+        "longitud_m": 1912.7283239397718,
+        "dijkstra": 737,
+        "a_estrella": 87
+      },
+      {
+        "longitud_m": 2193.445844027863,
+        "dijkstra": 779,
+        "a_estrella": 145
+      },
+      {
+        "longitud_m": 1934.817504422925,
+        "dijkstra": 416,
+        "a_estrella": 124
+      },
+      {
+        "longitud_m": 1641.1149417816953,
+        "dijkstra": 606,
+        "a_estrella": 75
+      },
+      {
+        "longitud_m": 2444.5074381730515,
+        "dijkstra": 795,
+        "a_estrella": 211
+      },
+      {
+        "longitud_m": 3756.114860921837,
+        "dijkstra": 1254,
+        "a_estrella": 518
+      },
+      {
+        "longitud_m": 824.2014958113597,
+        "dijkstra": 123,
+        "a_estrella": 11
+      },
+      {
+        "longitud_m": 1094.7556300890576,
+        "dijkstra": 218,
+        "a_estrella": 24
+      },
+      {
+        "longitud_m": 794.8729351257883,
+        "dijkstra": 101,
+        "a_estrella": 29
+      },
+      {
+        "longitud_m": 3259.882448533855,
+        "dijkstra": 1295,
+        "a_estrella": 366
+      },
+      {
+        "longitud_m": 4429.801837215954,
+        "dijkstra": 1017,
+        "a_estrella": 500
+      },
+      {
+        "longitud_m": 3118.8302891886274,
+        "dijkstra": 735,
+        "a_estrella": 243
+      },
+      {
+        "longitud_m": 1240.9803436446998,
+        "dijkstra": 331,
+        "a_estrella": 64
+      },
+      {
+        "longitud_m": 1135.6986752527946,
+        "dijkstra": 272,
+        "a_estrella": 45
+      },
+      {
+        "longitud_m": 1914.7564681859692,
+        "dijkstra": 571,
+        "a_estrella": 186
+      },
+      {
+        "longitud_m": 974.7175460152442,
+        "dijkstra": 213,
+        "a_estrella": 18
+      },
+      {
+        "longitud_m": 3131.0739931006333,
+        "dijkstra": 1209,
+        "a_estrella": 338
+      },
+      {
+        "longitud_m": 2741.978630304344,
+        "dijkstra": 1000,
+        "a_estrella": 252
+      },
+      {
+        "longitud_m": 3713.642944279291,
+        "dijkstra": 1084,
+        "a_estrella": 175
+      },
+      {
+        "longitud_m": 2682.947921026889,
+        "dijkstra": 595,
+        "a_estrella": 202
+      },
+      {
+        "longitud_m": 2737.32859050625,
+        "dijkstra": 803,
+        "a_estrella": 168
+      },
+      {
+        "longitud_m": 504.8810679405742,
+        "dijkstra": 67,
+        "a_estrella": 13
+      },
+      {
+        "longitud_m": 4978.215602415152,
+        "dijkstra": 1141,
+        "a_estrella": 487
+      },
+      {
+        "longitud_m": 3591.4089697837626,
+        "dijkstra": 980,
+        "a_estrella": 412
+      },
+      {
+        "longitud_m": 2616.232017313355,
+        "dijkstra": 360,
+        "a_estrella": 179
+      },
+      {
+        "longitud_m": 4168.253962345191,
+        "dijkstra": 1088,
+        "a_estrella": 571
+      },
+      {
+        "longitud_m": 2185.894322654458,
+        "dijkstra": 801,
+        "a_estrella": 88
+      },
+      {
+        "longitud_m": 1092.3246539406646,
+        "dijkstra": 259,
+        "a_estrella": 14
+      },
+      {
+        "longitud_m": 3248.4232923761947,
+        "dijkstra": 657,
+        "a_estrella": 420
+      },
+      {
+        "longitud_m": 3820.3315598145014,
+        "dijkstra": 1335,
+        "a_estrella": 492
+      },
+      {
+        "longitud_m": 3596.704229011299,
+        "dijkstra": 1201,
+        "a_estrella": 305
+      },
+      {
+        "longitud_m": 228.46456702366643,
+        "dijkstra": 11,
+        "a_estrella": 4
+      },
+      {
+        "longitud_m": 2256.276270230375,
+        "dijkstra": 332,
+        "a_estrella": 164
+      },
+      {
+        "longitud_m": 3513.6419176992217,
+        "dijkstra": 1079,
+        "a_estrella": 312
+      },
+      {
+        "longitud_m": 430.0396432890184,
+        "dijkstra": 31,
+        "a_estrella": 11
+      },
+      {
+        "longitud_m": 1627.589162869301,
+        "dijkstra": 401,
+        "a_estrella": 105
+      },
+      {
+        "longitud_m": 1303.5170739369687,
+        "dijkstra": 252,
+        "a_estrella": 57
+      },
+      {
+        "longitud_m": 995.085483594001,
+        "dijkstra": 210,
+        "a_estrella": 26
+      },
+      {
+        "longitud_m": 5537.315409792278,
+        "dijkstra": 1161,
+        "a_estrella": 519
+      },
+      {
+        "longitud_m": 1947.9277619019404,
+        "dijkstra": 484,
+        "a_estrella": 109
+      },
+      {
+        "longitud_m": 2646.600909654295,
+        "dijkstra": 756,
+        "a_estrella": 350
+      },
+      {
+        "longitud_m": 3143.7291030622127,
+        "dijkstra": 897,
+        "a_estrella": 143
+      },
+      {
+        "longitud_m": 1231.9269885554716,
+        "dijkstra": 342,
+        "a_estrella": 46
+      },
+      {
+        "longitud_m": 2936.4115010703185,
+        "dijkstra": 972,
+        "a_estrella": 247
+      },
+      {
+        "longitud_m": 3499.862767879887,
+        "dijkstra": 1037,
+        "a_estrella": 254
+      },
+      {
+        "longitud_m": 1164.538164550128,
+        "dijkstra": 173,
+        "a_estrella": 53
+      },
+      {
+        "longitud_m": 1188.6041770883107,
+        "dijkstra": 274,
+        "a_estrella": 50
+      },
+      {
+        "longitud_m": 2279.235438923149,
+        "dijkstra": 688,
+        "a_estrella": 219
+      },
+      {
+        "longitud_m": 3229.23991592952,
+        "dijkstra": 622,
+        "a_estrella": 319
+      },
+      {
+        "longitud_m": 2181.8718333203647,
+        "dijkstra": 720,
+        "a_estrella": 181
+      },
+      {
+        "longitud_m": 2641.99088302998,
+        "dijkstra": 494,
+        "a_estrella": 219
+      },
+      {
+        "longitud_m": 2506.822251829876,
+        "dijkstra": 753,
+        "a_estrella": 185
+      },
+      {
+        "longitud_m": 4535.721115189107,
+        "dijkstra": 1146,
+        "a_estrella": 495
+      },
+      {
+        "longitud_m": 6286.885761026544,
+        "dijkstra": 1027,
+        "a_estrella": 330
+      },
+      {
+        "longitud_m": 568.5950307443117,
+        "dijkstra": 74,
+        "a_estrella": 25
+      },
+      {
+        "longitud_m": 915.7601695020311,
+        "dijkstra": 188,
+        "a_estrella": 39
+      },
+      {
+        "longitud_m": 2982.301072257508,
+        "dijkstra": 988,
+        "a_estrella": 364
+      },
+      {
+        "longitud_m": 2466.9417187694507,
+        "dijkstra": 531,
+        "a_estrella": 87
+      },
+      {
+        "longitud_m": 1440.6949974934023,
+        "dijkstra": 423,
+        "a_estrella": 40
+      },
+      {
+        "longitud_m": 1039.5471918160863,
+        "dijkstra": 231,
+        "a_estrella": 35
+      },
+      {
+        "longitud_m": 2165.121454819478,
+        "dijkstra": 273,
+        "a_estrella": 142
+      },
+      {
+        "longitud_m": 3578.855271884243,
+        "dijkstra": 920,
+        "a_estrella": 405
+      },
+      {
+        "longitud_m": 1261.993884416887,
+        "dijkstra": 300,
+        "a_estrella": 27
+      },
+      {
+        "longitud_m": 2630.012420701401,
+        "dijkstra": 633,
+        "a_estrella": 173
+      },
+      {
+        "longitud_m": 2847.5948767392497,
+        "dijkstra": 1105,
+        "a_estrella": 175
+      },
+      {
+        "longitud_m": 1618.266803168675,
+        "dijkstra": 439,
+        "a_estrella": 126
+      },
+      {
+        "longitud_m": 1022.5544392957357,
+        "dijkstra": 286,
+        "a_estrella": 17
+      },
+      {
+        "longitud_m": 1405.2548108551148,
+        "dijkstra": 268,
+        "a_estrella": 77
+      },
+      {
+        "longitud_m": 3808.144544803358,
+        "dijkstra": 1200,
+        "a_estrella": 313
+      },
+      {
+        "longitud_m": 4674.757287277733,
+        "dijkstra": 1327,
+        "a_estrella": 642
+      },
+      {
+        "longitud_m": 2806.3939177551392,
+        "dijkstra": 681,
+        "a_estrella": 183
+      },
+      {
+        "longitud_m": 1468.07274688311,
+        "dijkstra": 373,
+        "a_estrella": 88
+      },
+      {
+        "longitud_m": 1046.4585146459553,
+        "dijkstra": 83,
+        "a_estrella": 21
+      },
+      {
+        "longitud_m": 3056.363949063396,
+        "dijkstra": 595,
+        "a_estrella": 175
+      },
+      {
+        "longitud_m": 1321.5792988739524,
+        "dijkstra": 192,
+        "a_estrella": 70
+      },
+      {
+        "longitud_m": 3993.9350059913854,
+        "dijkstra": 1055,
+        "a_estrella": 438
+      },
+      {
+        "longitud_m": 3119.5671268676774,
+        "dijkstra": 753,
+        "a_estrella": 320
+      },
+      {
+        "longitud_m": 3427.5921795367394,
+        "dijkstra": 647,
+        "a_estrella": 372
+      },
+      {
+        "longitud_m": 1227.376011756099,
+        "dijkstra": 237,
+        "a_estrella": 99
+      },
+      {
+        "longitud_m": 1507.4849398384201,
+        "dijkstra": 267,
+        "a_estrella": 45
+      },
+      {
+        "longitud_m": 3667.227213306424,
+        "dijkstra": 1160,
+        "a_estrella": 407
+      },
+      {
+        "longitud_m": 2985.1503296225064,
+        "dijkstra": 1046,
+        "a_estrella": 323
+      },
+      {
+        "longitud_m": 2039.6250313724129,
+        "dijkstra": 889,
+        "a_estrella": 50
+      },
+      {
+        "longitud_m": 3546.5530847265686,
+        "dijkstra": 1036,
+        "a_estrella": 166
+      },
+      {
+        "longitud_m": 424.31740155424495,
+        "dijkstra": 23,
+        "a_estrella": 12
+      },
+      {
+        "longitud_m": 184.42435107104274,
+        "dijkstra": 4,
+        "a_estrella": 3
+      },
+      {
+        "longitud_m": 3130.047803607764,
+        "dijkstra": 1035,
+        "a_estrella": 204
+      },
+      {
+        "longitud_m": 5504.515475160552,
+        "dijkstra": 1337,
+        "a_estrella": 892
+      },
+      {
+        "longitud_m": 2256.5178675222523,
+        "dijkstra": 508,
+        "a_estrella": 64
+      },
+      {
+        "longitud_m": 3105.780660397514,
+        "dijkstra": 1038,
+        "a_estrella": 335
+      },
+      {
+        "longitud_m": 4354.950109801479,
+        "dijkstra": 1193,
+        "a_estrella": 382
+      },
+      {
+        "longitud_m": 1824.1429590586076,
+        "dijkstra": 573,
+        "a_estrella": 115
+      },
+      {
+        "longitud_m": 3366.4296812533557,
+        "dijkstra": 886,
+        "a_estrella": 215
+      },
+      {
+        "longitud_m": 3369.8661502340065,
+        "dijkstra": 1151,
+        "a_estrella": 182
+      },
+      {
+        "longitud_m": 2896.303856298823,
+        "dijkstra": 709,
+        "a_estrella": 333
+      },
+      {
+        "longitud_m": 3047.5764569638363,
+        "dijkstra": 1108,
+        "a_estrella": 196
+      },
+      {
+        "longitud_m": 1492.9952588631816,
+        "dijkstra": 437,
+        "a_estrella": 79
+      },
+      {
+        "longitud_m": 2271.5944624038325,
+        "dijkstra": 643,
+        "a_estrella": 222
+      },
+      {
+        "longitud_m": 1441.6136220956091,
+        "dijkstra": 376,
+        "a_estrella": 59
+      },
+      {
+        "longitud_m": 3034.708530828193,
+        "dijkstra": 659,
+        "a_estrella": 284
+      },
+      {
+        "longitud_m": 2522.8037676589706,
+        "dijkstra": 651,
+        "a_estrella": 185
+      },
+      {
+        "longitud_m": 953.6363392835412,
+        "dijkstra": 188,
+        "a_estrella": 42
+      },
+      {
+        "longitud_m": 1907.468470146938,
+        "dijkstra": 713,
+        "a_estrella": 102
+      },
+      {
+        "longitud_m": 332.7761601052123,
+        "dijkstra": 20,
+        "a_estrella": 4
+      },
+      {
+        "longitud_m": 1851.6301443248985,
+        "dijkstra": 554,
+        "a_estrella": 130
+      },
+      {
+        "longitud_m": 1007.9348568526531,
+        "dijkstra": 227,
+        "a_estrella": 30
+      },
+      {
+        "longitud_m": 4372.898265249048,
+        "dijkstra": 935,
+        "a_estrella": 296
+      },
+      {
+        "longitud_m": 4722.21883081443,
+        "dijkstra": 1083,
+        "a_estrella": 487
+      },
+      {
+        "longitud_m": 1994.6679572692738,
+        "dijkstra": 495,
+        "a_estrella": 150
+      },
+      {
+        "longitud_m": 3837.27829222558,
+        "dijkstra": 1043,
+        "a_estrella": 230
+      },
+      {
+        "longitud_m": 2651.118559396451,
+        "dijkstra": 986,
+        "a_estrella": 227
+      },
+      {
+        "longitud_m": 2868.9120347898047,
+        "dijkstra": 636,
+        "a_estrella": 352
+      },
+      {
+        "longitud_m": 4445.163913443963,
+        "dijkstra": 1252,
+        "a_estrella": 454
+      },
+      {
+        "longitud_m": 4033.4925940075464,
+        "dijkstra": 1258,
+        "a_estrella": 351
+      },
+      {
+        "longitud_m": 3430.612570275688,
+        "dijkstra": 1279,
+        "a_estrella": 250
+      },
+      {
+        "longitud_m": 1465.0990357378435,
+        "dijkstra": 264,
+        "a_estrella": 74
+      },
+      {
+        "longitud_m": 4360.977498561959,
+        "dijkstra": 1333,
+        "a_estrella": 657
+      },
+      {
+        "longitud_m": 1807.375153247259,
+        "dijkstra": 573,
+        "a_estrella": 108
+      },
+      {
+        "longitud_m": 3548.036780658161,
+        "dijkstra": 957,
+        "a_estrella": 287
+      },
+      {
+        "longitud_m": 2434.437180640974,
+        "dijkstra": 585,
+        "a_estrella": 116
+      },
+      {
+        "longitud_m": 1192.9368166923869,
+        "dijkstra": 274,
+        "a_estrella": 62
+      },
+      {
+        "longitud_m": 5536.019386037794,
+        "dijkstra": 1263,
+        "a_estrella": 510
+      },
+      {
+        "longitud_m": 2105.998172966737,
+        "dijkstra": 644,
+        "a_estrella": 80
+      },
+      {
+        "longitud_m": 3164.2906759368343,
+        "dijkstra": 1132,
+        "a_estrella": 265
+      },
+      {
+        "longitud_m": 1287.8434447194177,
+        "dijkstra": 349,
+        "a_estrella": 37
+      },
+      {
+        "longitud_m": 3041.292077859921,
+        "dijkstra": 998,
+        "a_estrella": 272
+      },
+      {
+        "longitud_m": 3741.0234581669806,
+        "dijkstra": 977,
+        "a_estrella": 386
+      },
+      {
+        "longitud_m": 3093.8682159183054,
+        "dijkstra": 947,
+        "a_estrella": 226
+      },
+      {
+        "longitud_m": 1675.992983751894,
+        "dijkstra": 517,
+        "a_estrella": 67
+      },
+      {
+        "longitud_m": 3640.054590799257,
+        "dijkstra": 1118,
+        "a_estrella": 362
+      },
+      {
+        "longitud_m": 4236.432753016274,
+        "dijkstra": 1102,
+        "a_estrella": 404
+      },
+      {
+        "longitud_m": 2606.778584352448,
+        "dijkstra": 810,
+        "a_estrella": 140
+      },
+      {
+        "longitud_m": 3173.2193859379736,
+        "dijkstra": 951,
+        "a_estrella": 365
+      },
+      {
+        "longitud_m": 2008.2781004280714,
+        "dijkstra": 531,
+        "a_estrella": 103
+      },
+      {
+        "longitud_m": 1271.0880295031911,
+        "dijkstra": 323,
+        "a_estrella": 30
+      },
+      {
+        "longitud_m": 3479.4338737693765,
+        "dijkstra": 1210,
+        "a_estrella": 391
+      },
+      {
+        "longitud_m": 3102.5855903249294,
+        "dijkstra": 1011,
+        "a_estrella": 302
+      },
+      {
+        "longitud_m": 3343.677186283918,
+        "dijkstra": 1024,
+        "a_estrella": 211
+      },
+      {
+        "longitud_m": 2453.2256355373943,
+        "dijkstra": 1091,
+        "a_estrella": 174
+      },
+      {
+        "longitud_m": 3828.058975737207,
+        "dijkstra": 1226,
+        "a_estrella": 328
+      },
+      {
+        "longitud_m": 36.28100182805343,
+        "dijkstra": 3,
+        "a_estrella": 2
+      },
+      {
+        "longitud_m": 1518.088176774096,
+        "dijkstra": 348,
+        "a_estrella": 84
+      },
+      {
+        "longitud_m": 2590.9122230265352,
+        "dijkstra": 529,
+        "a_estrella": 159
+      },
+      {
+        "longitud_m": 1921.3095806216186,
+        "dijkstra": 643,
+        "a_estrella": 84
+      },
+      {
+        "longitud_m": 3150.948780507449,
+        "dijkstra": 778,
+        "a_estrella": 314
+      },
+      {
+        "longitud_m": 1456.6013027625581,
+        "dijkstra": 328,
+        "a_estrella": 94
+      },
+      {
+        "longitud_m": 1855.6471429023293,
+        "dijkstra": 540,
+        "a_estrella": 118
+      },
+      {
+        "longitud_m": 2755.154717907042,
+        "dijkstra": 929,
+        "a_estrella": 189
+      },
+      {
+        "longitud_m": 2598.5325958261715,
+        "dijkstra": 734,
+        "a_estrella": 174
+      },
+      {
+        "longitud_m": 7037.778906541754,
+        "dijkstra": 1343,
+        "a_estrella": 1161
+      },
+      {
+        "longitud_m": 1945.3080024024573,
+        "dijkstra": 421,
+        "a_estrella": 76
+      },
+      {
+        "longitud_m": 2063.0369025248015,
+        "dijkstra": 563,
+        "a_estrella": 172
+      },
+      {
+        "longitud_m": 3304.1454655759217,
+        "dijkstra": 853,
+        "a_estrella": 252
+      },
+      {
+        "longitud_m": 1290.2053142352815,
+        "dijkstra": 387,
+        "a_estrella": 64
+      },
+      {
+        "longitud_m": 1119.7390528696437,
+        "dijkstra": 245,
+        "a_estrella": 29
+      },
+      {
+        "longitud_m": 2954.9220932578055,
+        "dijkstra": 807,
+        "a_estrella": 352
+      },
+      {
+        "longitud_m": 4417.8383388735,
+        "dijkstra": 1141,
+        "a_estrella": 478
+      },
+      {
+        "longitud_m": 2284.4797113621107,
+        "dijkstra": 530,
+        "a_estrella": 126
+      },
+      {
+        "longitud_m": 1004.0141383502729,
+        "dijkstra": 237,
+        "a_estrella": 27
+      },
+      {
+        "longitud_m": 4282.019782965284,
+        "dijkstra": 1206,
+        "a_estrella": 243
+      },
+      {
+        "longitud_m": 2092.6543206812376,
+        "dijkstra": 897,
+        "a_estrella": 229
+      },
+      {
+        "longitud_m": 1140.15636959834,
+        "dijkstra": 330,
+        "a_estrella": 45
+      },
+      {
+        "longitud_m": 3669.18907854019,
+        "dijkstra": 1176,
+        "a_estrella": 379
+      },
+      {
+        "longitud_m": 2832.654883834767,
+        "dijkstra": 478,
+        "a_estrella": 116
+      },
+      {
+        "longitud_m": 1987.615750175858,
+        "dijkstra": 567,
+        "a_estrella": 161
+      },
+      {
+        "longitud_m": 4193.262550916355,
+        "dijkstra": 1226,
+        "a_estrella": 350
+      },
+      {
+        "longitud_m": 2810.6611920266837,
+        "dijkstra": 1130,
+        "a_estrella": 257
+      },
+      {
+        "longitud_m": 4029.824174196724,
+        "dijkstra": 1311,
+        "a_estrella": 354
+      },
+      {
+        "longitud_m": 2019.7610548793446,
+        "dijkstra": 174,
+        "a_estrella": 94
+      },
+      {
+        "longitud_m": 1259.1116368162145,
+        "dijkstra": 284,
+        "a_estrella": 69
+      },
+      {
+        "longitud_m": 4140.442282585401,
+        "dijkstra": 1338,
+        "a_estrella": 606
+      },
+      {
+        "longitud_m": 1574.7615902836599,
+        "dijkstra": 303,
+        "a_estrella": 72
+      },
+      {
+        "longitud_m": 3181.917034213997,
+        "dijkstra": 791,
+        "a_estrella": 268
+      },
+      {
+        "longitud_m": 1279.3255412213257,
+        "dijkstra": 339,
+        "a_estrella": 41
+      },
+      {
+        "longitud_m": 3141.471046122275,
+        "dijkstra": 902,
+        "a_estrella": 282
+      },
+      {
+        "longitud_m": 365.06940285243627,
+        "dijkstra": 32,
+        "a_estrella": 7
+      },
+      {
+        "longitud_m": 1501.0785140937894,
+        "dijkstra": 300,
+        "a_estrella": 108
+      },
+      {
+        "longitud_m": 5026.490421867302,
+        "dijkstra": 1187,
+        "a_estrella": 582
+      },
+      {
+        "longitud_m": 426.3665411477565,
+        "dijkstra": 40,
+        "a_estrella": 7
+      },
+      {
+        "longitud_m": 1364.2420975700306,
+        "dijkstra": 309,
+        "a_estrella": 64
+      },
+      {
+        "longitud_m": 1222.2925787730576,
+        "dijkstra": 354,
+        "a_estrella": 48
+      },
+      {
+        "longitud_m": 3159.0267270158606,
+        "dijkstra": 1113,
+        "a_estrella": 270
+      },
+      {
+        "longitud_m": 2135.063999148909,
+        "dijkstra": 543,
+        "a_estrella": 162
+      },
+      {
+        "longitud_m": 4289.476170281361,
+        "dijkstra": 943,
+        "a_estrella": 308
+      }
+    ]
+  },
+  "despacho": {
+    "k": 5,
+    "solicitudes": 100,
+    "dijkstra_inverso_unico_ms_por_solicitud": 0.85871551,
+    "k_dijkstra_directos_ms_por_solicitud": 2.09327744
+  }
+}

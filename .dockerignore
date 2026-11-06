@@ -1,0 +1,14 @@
+.git
+.env
+**/__pycache__
+**/*.pyc
+.pytest_cache
+datos/cache_osmnx
+datos/*.db*
+datos/*.osm
+mapas
+benchmark
+tests
+presentacion
+docs
+*.pdf

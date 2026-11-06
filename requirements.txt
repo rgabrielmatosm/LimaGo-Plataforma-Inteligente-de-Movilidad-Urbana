@@ -1,0 +1,18 @@
+# Dependencias de ejecución de LimaGo (Python 3.11+)
+# osmnx/networkx: descarga, almacenamiento y carga del grafo; networkx también valida el benchmark.
+osmnx==2.1.1
+networkx==3.7
+geopandas==1.2.0
+shapely==2.2.0
+numpy==2.5.3
+pandas==3.0.5
+requests==2.34.2
+folium==0.20.0
+matplotlib==3.11.2
+fastapi==0.162.0
+uvicorn[standard]==0.54.0
+pydantic==2.13.5
+SQLAlchemy==2.1.8
+psycopg[binary]==3.3.8
+# Solo para el reto D (carpeta experimental/), aislado de la solución principal
+h3==4.5.0

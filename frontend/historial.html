@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mis viajes · LimaGo</title>
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header class="cabecera">
+  <div class="contenedor">
+    <a class="logo" href="index.html" aria-label="LimaGo, inicio"><img src="img/logo.svg" alt="" width="30" height="30"><span>Lima<b>Go</b></span></a>
+    <button class="menu-movil" aria-label="Abrir menú" aria-expanded="false">☰</button>
+    <nav class="navegacion" aria-label="Principal">
+      <a href="index.html">Inicio</a>
+      <a href="index.html#como-funciona">Cómo funciona</a>
+      <a href="index.html#cobertura">Cobertura</a>
+      <a href="historial.html" aria-current="page">Mis viajes</a>
+      <a class="boton pequeno" href="viaje.html">Pedir un viaje</a>
+    </nav>
+  </div>
+</header>
+
+<main class="seccion">
+  <div class="contenedor">
+    <h2>Historial de viajes</h2>
+    <p class="subtitulo">Cada solicitud con el conductor asignado, el tiempo estimado de llegada y su resultado.</p>
+    <div class="pestanas" role="tablist" aria-label="Filtro del historial">
+      <button type="button" role="tab" data-canal="app" aria-selected="true">Solicitudes desde la app</button>
+      <button type="button" role="tab" data-canal="todos" aria-selected="false">Toda la actividad del servicio</button>
+    </div>
+    <div class="tabla-envoltura">
+      <table>
+        <thead>
+          <tr><th>N.º</th><th>Fecha</th><th>Recojo</th><th>Destino</th><th>Conductor</th><th>ETA</th><th>Distancia</th><th>Estado</th><th>Resultado</th></tr>
+        </thead>
+        <tbody id="filas"><tr><td colspan="9" class="vacio">Cargando…</td></tr></tbody>
+      </table>
+    </div>
+    <p class="ayuda" id="actualizado" style="margin-top:10px"></p>
+  </div>
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <span>© 2026 LimaGo · Movilidad urbana en Miraflores, Lima</span>
+    <span>Servicio demostrativo: la flota y la demanda son simuladas sobre calles reales de OpenStreetMap. · <a href="operaciones.html">Acceso operadores</a></span>
+  </div>
+</footer>
+<script src="js/comun.js"></script>
+<script>
+"use strict";
+(() => {
+  let canal = "app";
+  const filas = document.getElementById("filas");
+  document.querySelectorAll("[data-canal]").forEach((b) => b.addEventListener("click", () => {
+    canal = b.dataset.canal;
+    document.querySelectorAll("[data-canal]").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
+    cargar();
+  }));
+  async function cargar() {
+    try {
+      const { solicitudes } = await LimaGo.api(`/viajes?canal=${canal}&limite=100`);
+      if (!solicitudes.length) {
+        filas.innerHTML = '<tr><td colspan="9" class="vacio">Aún no hay viajes. <a href="viaje.html">Pide el primero</a>.</td></tr>';
+      } else {
+        filas.innerHTML = solicitudes.map((s) => `
+          <tr>
+            <td class="num">#${s.id}</td>
+            <td class="num">${LimaGo.fecha(s.creada_en)}</td>
+            <td>${LimaGo.escapar(LimaGo.corto(s.origen_texto, 2)) || "—"}</td>
+            <td>${LimaGo.escapar(LimaGo.corto(s.destino_texto, 2)) || "—"}</td>
+            <td class="num">${s.conductor_id ? "LG-" + String(s.conductor_id).padStart(5, "0") : "—"}</td>
+            <td class="num">${LimaGo.minutos(s.eta_s)}</td>
+            <td class="num">${LimaGo.distancia(s.distancia_calles_m)}</td>
+            <td><span class="etiqueta estado-${s.estado}">${LimaGo.ESTADOS_VIAJE[s.estado] || s.estado}</span></td>
+            <td>${LimaGo.escapar(s.mensaje || "")}</td>
+          </tr>`).join("");
+      }
+      document.getElementById("actualizado").textContent = `Actualizado ${new Date().toLocaleTimeString("es-PE")}`;
+    } catch (e) {
+      filas.innerHTML = `<tr><td colspan="9" class="vacio">${LimaGo.escapar(e.message)}</td></tr>`;
+    }
+  }
+  cargar();
+  setInterval(cargar, 5000);
+})();
+</script>
+</body>
+</html>

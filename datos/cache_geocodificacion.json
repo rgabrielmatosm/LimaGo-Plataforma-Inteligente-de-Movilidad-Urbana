@@ -1,0 +1,94 @@
+{
+ "parque kennedy, miraflores": [
+  {
+   "direccion": "Parque John F. Kennedy, Surquillo Viejo, Miraflores, Lima, Miraflores, Lima, Lima Metropolitana, Lima, Perú",
+   "lat": -12.1217806,
+   "lon": -77.0304221,
+   "tipo": "park",
+   "importancia": 0.3775654447696771
+  }
+ ],
+ "larcomar, miraflores": [
+  {
+   "direccion": "Larcomar, 610, Malecón de la Reserva, Armendáriz, Miraflores, Lima, Lima Metropolitana, Lima, 15074, Perú",
+   "lat": -12.1322184,
+   "lon": -77.0302263,
+   "tipo": "mall",
+   "importancia": 0.3759021037005979
+  },
+  {
+   "direccion": "Armendáriz, Avenida José Larco, Armendáriz, Miraflores, Lima, Lima Metropolitana, Lima, 15074, Perú",
+   "lat": -12.1311024,
+   "lon": -77.0299986,
+   "tipo": "bus_stop",
+   "importancia": 7.730144197752372e-05
+  }
+ ],
+ "ovalo gutierrez, miraflores": [
+  {
+   "direccion": "Óvalo Gutiérrez, América, Miraflores, Lima, Lima Metropolitana, Lima, 15073, Perú",
+   "lat": -12.1102833,
+   "lon": -77.0369225,
+   "tipo": "secondary",
+   "importancia": 0.05341063477531087
+  },
+  {
+   "direccion": "Óvalo Gutierrez, Óvalo Gutiérrez, América, Miraflores, Lima, Lima Metropolitana, Lima, 15073, Perú",
+   "lat": -12.1103021,
+   "lon": -77.0369829,
+   "tipo": "parking",
+   "importancia": 7.730144197752372e-05
+  }
+ ],
+ "parque kennedy": [
+  {
+   "direccion": "Parque John F. Kennedy, Surquillo Viejo, Miraflores, Lima, Miraflores, Lima, Lima Metropolitana, Lima, Perú",
+   "lat": -12.1217806,
+   "lon": -77.0304221,
+   "tipo": "park",
+   "importancia": 0.3775654447696771
+  }
+ ],
+ "larcomar": [
+  {
+   "direccion": "Larcomar, 610, Malecón de la Reserva, Armendáriz, Miraflores, Lima, Lima Metropolitana, Lima, 15074, Perú",
+   "lat": -12.1322184,
+   "lon": -77.0302263,
+   "tipo": "mall",
+   "importancia": 0.3759021037005979
+  },
+  {
+   "direccion": "Armendáriz, Avenida José Larco, Armendáriz, Miraflores, Lima, Lima Metropolitana, Lima, 15074, Perú",
+   "lat": -12.1311024,
+   "lon": -77.0299986,
+   "tipo": "bus_stop",
+   "importancia": 7.730144197752372e-05
+  }
+ ],
+ "ovalo gutierrez": [
+  {
+   "direccion": "Óvalo Gutiérrez, América, Miraflores, Lima, Lima Metropolitana, Lima, 15073, Perú",
+   "lat": -12.1102833,
+   "lon": -77.0369225,
+   "tipo": "secondary",
+   "importancia": 0.05341063477531087
+  },
+  {
+   "direccion": "Óvalo Gutierrez, Óvalo Gutiérrez, América, Miraflores, Lima, Lima Metropolitana, Lima, 15073, Perú",
+   "lat": -12.1103021,
+   "lon": -77.0369829,
+   "tipo": "parking",
+   "importancia": 7.730144197752372e-05
+  }
+ ],
+ "inv:-12.12149,-77.02867": [
+  {
+   "direccion": "Pasaje Tello, Miraflores, Lima, Lima Metropolitana, Lima, 10574, Perú",
+   "lat": -12.121488,
+   "lon": -77.028666,
+   "tipo": "inverso",
+   "importancia": 0.0
+  }
+ ],
+ "calle que no existe 99999": []
+}

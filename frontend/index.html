@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LimaGo · Viajes en Miraflores</title>
+  <meta name="description" content="Pide un viaje en Miraflores y te asignamos el conductor que llega antes.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+<header class="cabecera">
+  <div class="contenedor">
+    <a class="logo" href="index.html" aria-label="LimaGo, inicio"><img src="img/logo.svg" alt="" width="30" height="30"><span>Lima<b>Go</b></span></a>
+    <button class="menu-movil" aria-label="Abrir menú" aria-expanded="false">☰</button>
+    <nav class="navegacion" aria-label="Principal">
+      <a href="index.html" aria-current="page">Inicio</a>
+      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#cobertura">Cobertura</a>
+      <a href="historial.html">Mis viajes</a>
+      <a class="boton pequeno" href="viaje.html">Pedir un viaje</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="heroe">
+    <div class="contenedor">
+      <div>
+        <span class="etiqueta estado-disponible"><span class="punto" style="background:var(--disponible)"></span><span id="disponibles-ahora">Conductores conectados en Miraflores</span></span>
+        <h1>Tu viaje por Miraflores, <span>con quien llega primero.</span></h1>
+        <p class="lema">Escribe dónde estás o márcalo en el mapa. LimaGo compara a los conductores cercanos por las calles reales y te asigna al que llega antes, no solo al que está más cerca.</p>
+        <div class="acciones">
+          <a class="boton grande" href="viaje.html">Pedir un viaje</a>
+          <a class="boton grande secundario" href="#como-funciona">Cómo funciona</a>
+        </div>
+        <div class="cifras">
+          <div><strong id="cifra-km">—</strong><span>km de vías cubiertas</span></div>
+          <div><strong id="cifra-intersecciones">—</strong><span>intersecciones</span></div>
+          <div><strong id="cifra-espera">—</strong><span>espera media hoy</span></div>
+        </div>
+      </div>
+      <div class="mapa-heroe" id="mapa-heroe" role="img" aria-label="Mapa de conductores disponibles en Miraflores"></div>
+    </div>
+  </section>
+
+  <section class="seccion" id="como-funciona">
+    <div class="contenedor">
+      <h2>Pedir un LimaGo es simple</h2>
+      <p class="subtitulo">Tres pasos y tu conductor ya está en camino. Sigue su recorrido en el mapa hasta que llegue.</p>
+      <div class="rejilla-3">
+        <article class="tarjeta paso"><div class="numero">1</div><h3>Indica tu ubicación</h3><p>Escribe una dirección, pega tus coordenadas o toca el punto exacto en el mapa.</p></article>
+        <article class="tarjeta paso"><div class="numero">2</div><h3>Te asignamos el mejor</h3><p>Comparamos a los conductores disponibles más cercanos y elegimos al que llega primero según el recorrido por las calles.</p></article>
+        <article class="tarjeta paso"><div class="numero">3</div><h3>Sigue tu viaje</h3><p>Ve el auto acercarse en tiempo real, el tiempo estimado de llegada y el estado de tu servicio.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" id="cobertura">
+    <div class="contenedor cobertura">
+      <div>
+        <h2>Cobertura en todo Miraflores</h2>
+        <p class="subtitulo">Operamos dentro del distrito de Miraflores, Lima. Recogemos en cualquier punto junto a una vía vehicular.</p>
+        <ul>
+          <li>Parque Kennedy, Larcomar y el Malecón.</li>
+          <li>Av. José Larco, Av. Arequipa, Av. Benavides y Vía Expresa.</li>
+          <li>Óvalo Gutiérrez, Huaca Pucllana y Santa Cruz.</li>
+        </ul>
+        <a class="boton" href="viaje.html">Ver conductores cerca de mí</a>
+      </div>
+      <div class="mapa-cobertura" id="mapa-cobertura" role="img" aria-label="Zona de cobertura de LimaGo"></div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="banda">
+        <div><h2>¿Listo para moverte?</h2><p>Pide tu viaje en segundos, sin registro.</p></div>
+        <a class="boton grande" href="viaje.html">Pedir un viaje ahora</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <span>© 2026 LimaGo · Movilidad urbana en Miraflores, Lima</span>
+    <span>Servicio demostrativo: la flota y la demanda son simuladas sobre calles reales de OpenStreetMap. · <a href="operaciones.html">Acceso operadores</a></span>
+  </div>
+</footer>
+
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/comun.js"></script>
+<script src="js/inicio.js"></script>
+</body>
+</html>

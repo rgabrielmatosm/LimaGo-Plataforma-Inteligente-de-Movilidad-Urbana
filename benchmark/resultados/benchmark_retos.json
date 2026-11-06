@@ -1,0 +1,326 @@
+{
+  "entorno": {
+    "fecha_utc": "2026-11-06T01:14:50+00:00",
+    "python": "3.13.18",
+    "implementacion": "CPython",
+    "sistema": "Linux-6.18.44-fc-v242-x86_64-with-glibc2.39",
+    "procesador": "x86_64",
+    "nucleos_logicos": 4,
+    "networkx": "3.7",
+    "osmnx": "2.1.1"
+  },
+  "parametros": {
+    "semilla": 11,
+    "pares_b": 300,
+    "ensayos_c": 40,
+    "tamanos_c": [
+      3,
+      5,
+      10,
+      20
+    ],
+    "red": "Red vial: 1368 intersecciones, 2670 tramos dirigidos (1833 de sentido único), 227.4 km de tramos"
+  },
+  "reto_b": {
+    "pares": 300,
+    "tiempo_medio_8_s": 513.9215924141519,
+    "tiempo_medio_15_s": 266.9775121271398,
+    "incremento_medio_porcentual": 90.0154648314677,
+    "rutas_que_cambian": 215,
+    "asignaciones_con_otro_conductor": "9/100",
+    "eta_media_asignacion_8_s": 28.35178310757344,
+    "eta_media_asignacion_15_s": 17.309537334945,
+    "perfil_horario": [
+      {
+        "hora": 0.0,
+        "primary": 1.0000000000000253,
+        "residential": 1.0000000000000058
+      },
+      {
+        "hora": 0.5,
+        "primary": 1.0000000000012208,
+        "residential": 1.0000000000002747
+      },
+      {
+        "hora": 1.0,
+        "primary": 1.000000000045801,
+        "residential": 1.0000000000103053
+      },
+      {
+        "hora": 1.5,
+        "primary": 1.0000000013384034,
+        "residential": 1.0000000003011407
+      },
+      {
+        "hora": 2.0,
+        "primary": 1.0000000304610097,
+        "residential": 1.0000000068537271
+      },
+      {
+        "hora": 2.5,
+        "primary": 1.0000005399271494,
+        "residential": 1.0000001214836085
+      },
+      {
+        "hora": 3.0,
+        "primary": 1.0000074534180257,
+        "residential": 1.0000016770190558
+      },
+      {
+        "hora": 3.5,
+        "primary": 1.00008013156967,
+        "residential": 1.0000180296031758
+      },
+      {
+        "hora": 4.0,
+        "primary": 1.000670932870795,
+        "residential": 1.0001509598959288
+      },
+      {
+        "hora": 4.5,
+        "primary": 1.0043750354632228,
+        "residential": 1.000984382979225
+      },
+      {
+        "hora": 5.0,
+        "primary": 1.022218325994558,
+        "residential": 1.0049991233487756
+      },
+      {
+        "hora": 5.5,
+        "primary": 1.0878757305734008,
+        "residential": 1.0197720393790153
+      },
+      {
+        "hora": 6.0,
+        "primary": 1.270679898707782,
+        "residential": 1.060902977209251
+      },
+      {
+        "hora": 6.5,
+        "primary": 1.6493467588903143,
+        "residential": 1.1461030207503207
+      },
+      {
+        "hora": 7.0,
+        "primary": 2.2132290507392183,
+        "residential": 1.2729765364163241
+      },
+      {
+        "hora": 7.5,
+        "primary": 2.765595735166605,
+        "residential": 1.397259040412486
+      },
+      {
+        "hora": 8.0,
+        "primary": 3.001932960069736,
+        "residential": 1.4504349160156906
+      },
+      {
+        "hora": 8.5,
+        "primary": 2.7705483034383134,
+        "residential": 1.3983733682736206
+      },
+      {
+        "hora": 9.0,
+        "primary": 2.227344069817586,
+        "residential": 1.2761524157089568
+      },
+      {
+        "hora": 9.5,
+        "primary": 1.6821691990260632,
+        "residential": 1.1534880697808643
+      },
+      {
+        "hora": 10.0,
+        "primary": 1.3383382081144517,
+        "residential": 1.0761260968257516
+      },
+      {
+        "hora": 10.5,
+        "primary": 1.2125499720375166,
+        "residential": 1.0478237437084412
+      },
+      {
+        "hora": 11.0,
+        "primary": 1.2277741442587637,
+        "residential": 1.0512491824582217
+      },
+      {
+        "hora": 11.5,
+        "primary": 1.3076403855837313,
+        "residential": 1.0692190867563396
+      },
+      {
+        "hora": 12.0,
+        "primary": 1.4010403925085222,
+        "residential": 1.0902340883144175
+      },
+      {
+        "hora": 12.5,
+        "primary": 1.4730665730238783,
+        "residential": 1.1064399789303727
+      },
+      {
+        "hora": 13.0,
+        "primary": 1.5000568471108093,
+        "residential": 1.1125127905999321
+      },
+      {
+        "hora": 13.5,
+        "primary": 1.473286016386894,
+        "residential": 1.106489353687051
+      },
+      {
+        "hora": 14.0,
+        "primary": 1.4019596192708466,
+        "residential": 1.0904409143359406
+      },
+      {
+        "hora": 14.5,
+        "primary": 1.310223987445685,
+        "residential": 1.0698003971752792
+      },
+      {
+        "hora": 15.0,
+        "primary": 1.231142769471515,
+        "residential": 1.0520071231310908
+      },
+      {
+        "hora": 15.5,
+        "primary": 1.203762584912002,
+        "residential": 1.0458465816052005
+      },
+      {
+        "hora": 16.0,
+        "primary": 1.2731588096357682,
+        "residential": 1.0614607321680478
+      },
+      {
+        "hora": 16.5,
+        "primary": 1.4816982401073988,
+        "residential": 1.1083821040241648
+      },
+      {
+        "hora": 17.0,
+        "primary": 1.838382801581181,
+        "residential": 1.1886361303557658
+      },
+      {
+        "hora": 17.5,
+        "primary": 2.2775213984130103,
+        "residential": 1.2874423146429272
+      },
+      {
+        "hora": 18.0,
+        "primary": 2.6522726003873887,
+        "residential": 1.3717613350871625
+      },
+      {
+        "hora": 18.5,
+        "primary": 2.800601929997414,
+        "residential": 1.4051354342494182
+      },
+      {
+        "hora": 19.0,
+        "primary": 2.650507371631603,
+        "residential": 1.3713641586171108
+      },
+      {
+        "hora": 19.5,
+        "primary": 2.2720087243175042,
+        "residential": 1.2862019629714383
+      },
+      {
+        "hora": 20.0,
+        "primary": 1.8241093834234625,
+        "residential": 1.185424611270279
+      },
+      {
+        "hora": 20.5,
+        "primary": 1.4488358391257192,
+        "residential": 1.1009880638032867
+      },
+      {
+        "hora": 21.0,
+        "primary": 1.20549150093551,
+        "residential": 1.0462355877104899
+      },
+      {
+        "hora": 21.5,
+        "primary": 1.0790865337489903,
+        "residential": 1.0177944700935229
+      },
+      {
+        "hora": 22.0,
+        "primary": 1.0255866317871165,
+        "residential": 1.0057569921521012
+      },
+      {
+        "hora": 22.5,
+        "primary": 1.006958657225935,
+        "residential": 1.0015656978758354
+      },
+      {
+        "hora": 23.0,
+        "primary": 1.0015908874641646,
+        "residential": 1.000357949679437
+      },
+      {
+        "hora": 23.5,
+        "primary": 1.0003057420292591,
+        "residential": 1.0000687919565834
+      },
+      {
+        "hora": 24.0,
+        "primary": 1.0000493938055155,
+        "residential": 1.000011113606241
+      }
+    ],
+    "mapa": "mapas/reto_b_congestion_8_vs_15.html"
+  },
+  "reto_c": {
+    "filas": [
+      {
+        "pasajeros": 3,
+        "ensayos": 40,
+        "espera_total_media_optima_s": 146.99334182058573,
+        "espera_total_media_codiciosa_s": 147.87163200958597,
+        "mejora_media_porcentual": 1.156720334053486,
+        "mejora_maxima_porcentual": 26.11054828955166,
+        "ensayos_con_mejora": 2,
+        "tiempo_medio_asignacion_optima_ms": 1.3037823249874236
+      },
+      {
+        "pasajeros": 5,
+        "ensayos": 40,
+        "espera_total_media_optima_s": 225.24116551977772,
+        "espera_total_media_codiciosa_s": 228.0143366201849,
+        "mejora_media_porcentual": 1.8932819266718437,
+        "mejora_maxima_porcentual": 31.433429228685473,
+        "ensayos_con_mejora": 6,
+        "tiempo_medio_asignacion_optima_ms": 1.7802595749344619
+      },
+      {
+        "pasajeros": 10,
+        "ensayos": 40,
+        "espera_total_media_optima_s": 437.31446086735093,
+        "espera_total_media_codiciosa_s": 451.148608284479,
+        "mejora_media_porcentual": 4.150689488751336,
+        "mejora_maxima_porcentual": 35.11735044886707,
+        "ensayos_con_mejora": 20,
+        "tiempo_medio_asignacion_optima_ms": 5.553554174980491
+      },
+      {
+        "pasajeros": 20,
+        "ensayos": 40,
+        "espera_total_media_optima_s": 917.0052343766341,
+        "espera_total_media_codiciosa_s": 991.9406901063054,
+        "mejora_media_porcentual": 8.324384462878731,
+        "mejora_maxima_porcentual": 24.24390475324818,
+        "ensayos_con_mejora": 40,
+        "tiempo_medio_asignacion_optima_ms": 15.847716374958054
+      }
+    ]
+  }
+}

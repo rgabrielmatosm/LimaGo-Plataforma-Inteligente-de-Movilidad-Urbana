@@ -1,0 +1,282 @@
+[
+  {
+    "mapa": "mapas/asignacion_1_parque_kennedy.html",
+    "entrada": "Parque Kennedy, Miraflores",
+    "direccion": "Parque John F. Kennedy, Surquillo Viejo, Miraflores, Lima, Miraflores, Lima, Lima Metropolitana, Lima, Perú",
+    "turno": 3,
+    "estado": "asignado",
+    "seleccionado": {
+      "conductor_id": 7,
+      "codigo": "LG-00007",
+      "distancia_recta_m": 228.5,
+      "distancia_calles_m": 200.8,
+      "eta_s": 28.9,
+      "alcanzable": true
+    },
+    "mas_cercano_en_linea_recta": {
+      "conductor_id": 2,
+      "codigo": "LG-00002",
+      "distancia_recta_m": 110.1,
+      "distancia_calles_m": 778.0,
+      "eta_s": 112.0,
+      "alcanzable": true
+    },
+    "candidatos": [
+      {
+        "conductor_id": 2,
+        "codigo": "LG-00002",
+        "distancia_recta_m": 110.1,
+        "distancia_calles_m": 778.0,
+        "eta_s": 112.0,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 228,
+        "codigo": "LG-00228",
+        "distancia_recta_m": 223.0,
+        "distancia_calles_m": 565.0,
+        "eta_s": 81.4,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 58,
+        "codigo": "LG-00058",
+        "distancia_recta_m": 227.3,
+        "distancia_calles_m": 560.2,
+        "eta_s": 80.7,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 198,
+        "codigo": "LG-00198",
+        "distancia_recta_m": 227.3,
+        "distancia_calles_m": 560.2,
+        "eta_s": 80.7,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 7,
+        "codigo": "LG-00007",
+        "distancia_recta_m": 228.5,
+        "distancia_calles_m": 200.8,
+        "eta_s": 28.9,
+        "alcanzable": true
+      }
+    ],
+    "conteo_flota": {
+      "disponible": 243,
+      "en_camino": 3,
+      "en_viaje": 54
+    }
+  },
+  {
+    "mapa": "mapas/asignacion_2_larcomar.html",
+    "entrada": "Larcomar, Miraflores",
+    "direccion": "Larcomar, 610, Malecón de la Reserva, Armendáriz, Miraflores, Lima, Lima Metropolitana, Lima, 15074, Perú",
+    "turno": 20,
+    "estado": "asignado",
+    "seleccionado": {
+      "conductor_id": 231,
+      "codigo": "LG-00231",
+      "distancia_recta_m": 85.7,
+      "distancia_calles_m": 0,
+      "eta_s": 0.0,
+      "alcanzable": true
+    },
+    "mas_cercano_en_linea_recta": {
+      "conductor_id": 231,
+      "codigo": "LG-00231",
+      "distancia_recta_m": 85.7,
+      "distancia_calles_m": 0,
+      "eta_s": 0.0,
+      "alcanzable": true
+    },
+    "candidatos": [
+      {
+        "conductor_id": 231,
+        "codigo": "LG-00231",
+        "distancia_recta_m": 85.7,
+        "distancia_calles_m": 0,
+        "eta_s": 0.0,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 242,
+        "codigo": "LG-00242",
+        "distancia_recta_m": 119.8,
+        "distancia_calles_m": 657.6,
+        "eta_s": 94.7,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 253,
+        "codigo": "LG-00253",
+        "distancia_recta_m": 119.8,
+        "distancia_calles_m": 657.6,
+        "eta_s": 94.7,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 190,
+        "codigo": "LG-00190",
+        "distancia_recta_m": 163.6,
+        "distancia_calles_m": 79.6,
+        "eta_s": 11.5,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 112,
+        "codigo": "LG-00112",
+        "distancia_recta_m": 178.2,
+        "distancia_calles_m": 132.8,
+        "eta_s": 19.1,
+        "alcanzable": true
+      }
+    ],
+    "conteo_flota": {
+      "disponible": 278,
+      "en_camino": 5,
+      "en_viaje": 17
+    }
+  },
+  {
+    "mapa": "mapas/asignacion_3_ovalo_gutierrez.html",
+    "entrada": "Óvalo Gutiérrez, Miraflores",
+    "direccion": "Óvalo Gutiérrez, América, Miraflores, Lima, Lima Metropolitana, Lima, 15073, Perú",
+    "turno": 45,
+    "estado": "asignado",
+    "seleccionado": {
+      "conductor_id": 11,
+      "codigo": "LG-00011",
+      "distancia_recta_m": 159.2,
+      "distancia_calles_m": 710.0,
+      "eta_s": 102.2,
+      "alcanzable": true
+    },
+    "mas_cercano_en_linea_recta": {
+      "conductor_id": 205,
+      "codigo": "LG-00205",
+      "distancia_recta_m": 141.4,
+      "distancia_calles_m": 1673.9,
+      "eta_s": 241.0,
+      "alcanzable": true
+    },
+    "candidatos": [
+      {
+        "conductor_id": 205,
+        "codigo": "LG-00205",
+        "distancia_recta_m": 141.4,
+        "distancia_calles_m": 1673.9,
+        "eta_s": 241.0,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 247,
+        "codigo": "LG-00247",
+        "distancia_recta_m": 141.4,
+        "distancia_calles_m": 1673.9,
+        "eta_s": 241.0,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 11,
+        "codigo": "LG-00011",
+        "distancia_recta_m": 159.2,
+        "distancia_calles_m": 710.0,
+        "eta_s": 102.2,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 106,
+        "codigo": "LG-00106",
+        "distancia_recta_m": 201.2,
+        "distancia_calles_m": 772.1,
+        "eta_s": 111.2,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 195,
+        "codigo": "LG-00195",
+        "distancia_recta_m": 286.1,
+        "distancia_calles_m": 1419.6,
+        "eta_s": 204.4,
+        "alcanzable": true
+      }
+    ],
+    "conteo_flota": {
+      "disponible": 272,
+      "en_camino": 5,
+      "en_viaje": 23
+    }
+  },
+  {
+    "mapa": "mapas/asignacion_4_coordenadas_huaca_pucllana.html",
+    "entrada": "-12.11103, -77.03366",
+    "direccion": "-12.111030, -77.033660",
+    "turno": 60,
+    "estado": "asignado",
+    "seleccionado": {
+      "conductor_id": 252,
+      "codigo": "LG-00252",
+      "distancia_recta_m": 169.4,
+      "distancia_calles_m": 150.6,
+      "eta_s": 21.7,
+      "alcanzable": true
+    },
+    "mas_cercano_en_linea_recta": {
+      "conductor_id": 104,
+      "codigo": "LG-00104",
+      "distancia_recta_m": 155.3,
+      "distancia_calles_m": 816.7,
+      "eta_s": 117.6,
+      "alcanzable": true
+    },
+    "candidatos": [
+      {
+        "conductor_id": 104,
+        "codigo": "LG-00104",
+        "distancia_recta_m": 155.3,
+        "distancia_calles_m": 816.7,
+        "eta_s": 117.6,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 252,
+        "codigo": "LG-00252",
+        "distancia_recta_m": 169.4,
+        "distancia_calles_m": 150.6,
+        "eta_s": 21.7,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 293,
+        "codigo": "LG-00293",
+        "distancia_recta_m": 223.5,
+        "distancia_calles_m": 209.8,
+        "eta_s": 30.2,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 16,
+        "codigo": "LG-00016",
+        "distancia_recta_m": 225.8,
+        "distancia_calles_m": 233.5,
+        "eta_s": 33.6,
+        "alcanzable": true
+      },
+      {
+        "conductor_id": 101,
+        "codigo": "LG-00101",
+        "distancia_recta_m": 225.8,
+        "distancia_calles_m": 233.5,
+        "eta_s": 33.6,
+        "alcanzable": true
+      }
+    ],
+    "conteo_flota": {
+      "disponible": 276,
+      "en_camino": 2,
+      "en_viaje": 22
+    }
+  }
+]

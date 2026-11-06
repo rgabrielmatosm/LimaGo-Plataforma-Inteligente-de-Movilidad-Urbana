@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Secretos y configuración local
+.env
+
+# Datos generados localmente (la red vial miraflores.graphml SÍ se versiona)
+datos/cache_osmnx/
+datos/*.db
+datos/*.db-*
+datos/*.osm
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Caché por defecto de osmnx
+cache/

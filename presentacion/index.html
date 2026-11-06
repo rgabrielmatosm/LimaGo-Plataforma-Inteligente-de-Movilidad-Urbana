@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sustentación LimaGo</title>
+<style>
+  :root {
+    color-scheme: light;
+    --fondo: #f6f7f5; --superficie: #ffffff; --superficie-2: #eef2f0; --borde: #dfe4e1;
+    --texto: #0f1f1c; --texto-2: #4b5a56; --marca: #0f766e; --marca-suave: #d7efec; --acento: #f26b3a;
+    --codigo: #0b2b28; --codigo-texto: #d7efec;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { color-scheme: dark; --fondo: #0d1413; --superficie: #152120; --superficie-2: #1c2b29;
+      --borde: #2a3b39; --texto: #ecf3f1; --texto-2: #b5c4c0; --marca: #2bb3a6; --marca-suave: #173f3b; --acento: #ff8a5c; }
+  }
+  :root[data-theme="dark"] { color-scheme: dark; --fondo: #0d1413; --superficie: #152120; --superficie-2: #1c2b29;
+    --borde: #2a3b39; --texto: #ecf3f1; --texto-2: #b5c4c0; --marca: #2bb3a6; --marca-suave: #173f3b; --acento: #ff8a5c; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--fondo); color: var(--texto);
+    font: 18px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .diapo { display: none; min-height: 100vh; padding: 48px max(16px, 6vw) 90px; }
+  .diapo.activa { display: block; animation: entrar .25s ease; }
+  @keyframes entrar { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  h1 { font-size: clamp(2rem, 5vw, 3.4rem); line-height: 1.08; letter-spacing: -.03em; margin: 0 0 12px; }
+  h2 { font-size: clamp(1.5rem, 3.2vw, 2.3rem); letter-spacing: -.02em; margin: 0 0 18px; }
+  h2 small { display: block; font-size: .5em; color: var(--marca); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
+  h3 { margin: 0 0 6px; font-size: 1.05rem; }
+  p, li { color: var(--texto-2); }
+  strong { color: var(--texto); }
+  .marca { color: var(--marca); }
+  .rejilla { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .dos { display: grid; gap: 28px; grid-template-columns: 1.1fr 1fr; align-items: start; }
+  @media (max-width: 900px) { .dos { grid-template-columns: 1fr; } }
+  .caja { background: var(--superficie); border: 1px solid var(--borde); border-radius: 16px; padding: 18px 20px; }
+  .caja p { margin: 4px 0 0; font-size: .95rem; }
+  .cifra { font-size: 2.4rem; font-weight: 800; letter-spacing: -.03em; color: var(--marca); line-height: 1.1; }
+  .etiqueta { display: inline-block; background: var(--marca-suave); color: var(--marca); border-radius: 999px; padding: 3px 12px; font-weight: 650; font-size: .85rem; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; background: var(--superficie); border-radius: 12px; overflow: hidden; }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--borde); text-align: left; vertical-align: top; }
+  th { background: var(--superficie-2); font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--texto-2); }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  pre, code { font-family: "JetBrains Mono", ui-monospace, Consolas, monospace; }
+  pre { background: var(--codigo); color: var(--codigo-texto); padding: 14px 16px; border-radius: 12px; overflow-x: auto; font-size: .82rem; line-height: 1.45; margin: 8px 0; }
+  code { background: var(--superficie-2); padding: 1px 6px; border-radius: 6px; font-size: .88em; color: var(--texto); }
+  pre code { background: none; padding: 0; color: inherit; }
+  img.grafico { width: 100%; border-radius: 12px; border: 1px solid var(--borde); background: #fcfcfb; }
+  ol.tiempos li { margin-bottom: 8px; }
+  .pregunta { margin-bottom: 12px; }
+  .pregunta summary { cursor: pointer; font-weight: 650; color: var(--texto); }
+  .pregunta p { margin: 6px 0 0 18px; }
+  .barra { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+    background: var(--superficie); border-top: 1px solid var(--borde); font-size: .85rem; color: var(--texto-2); z-index: 10; }
+  .barra button { border: 1px solid var(--borde); background: var(--superficie-2); color: var(--texto); border-radius: 10px; padding: 6px 12px; cursor: pointer; font: inherit; }
+  .progreso { flex: 1; height: 4px; background: var(--superficie-2); border-radius: 4px; overflow: hidden; }
+  .progreso div { height: 100%; background: var(--marca); width: 0; transition: width .2s; }
+  .diagrama { width: 100%; height: auto; }
+  .diagrama text { fill: var(--texto); font-size: 14px; font-family: inherit; }
+  .diagrama .nota { fill: var(--texto-2); font-size: 12px; }
+  .diagrama rect { fill: var(--superficie); stroke: var(--borde); stroke-width: 1.5; }
+  .diagrama rect.clave { stroke: var(--marca); stroke-width: 2.5; }
+  .diagrama line, .diagrama path { stroke: var(--texto-2); stroke-width: 1.6; fill: none; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="diapo">
+  <span class="etiqueta">Proyecto Integrador N.° 2 · Algoritmos y Estructura de Datos II</span>
+  <h1 style="margin-top:24px">LimaGo<br><span class="marca">Asignación del conductor más cercano</span></h1>
+  <p style="font-size:1.2rem;max-width:44em">Quadtree propio + heap + Haversine para encontrar candidatos, Dijkstra propio para el ETA real por calles, sobre la red vial real de Miraflores.</p>
+  <div class="rejilla" style="margin-top:36px">
+    <div class="caja"><div class="cifra">1 368</div><p>intersecciones · 2 670 tramos dirigidos (1 833 de sentido único)</p></div>
+    <div class="caja"><div class="cifra">×84</div><p>Quadtree frente a búsqueda lineal con 30 000 conductores</p></div>
+    <div class="caja"><div class="cifra">300/300</div><p>distancias de Dijkstra idénticas a networkx</p></div>
+  </div>
+  <p style="margin-top:28px">Navegación: ← → o barra espaciadora · <kbd>T</kbd> cronómetro · <kbd>F</kbd> pantalla completa</p>
+</section>
+
+<!-- 2 -->
+<section class="diapo">
+  <h2><small>Guion</small>15 minutos de sustentación</h2>
+  <div class="rejilla">
+    <div class="caja"><h3>0:00 – 5:00 · Demostración en vivo</h3><p>Pedir viajes por dirección, coordenadas y mapa; ver la asignación por menor ETA; simulación por turnos; mapas folium; pruebas.</p></div>
+    <div class="caja"><h3>5:00 – 10:00 · Preguntas individuales</h3><p>Cada integrante debe poder explicar Quadtree, Dijkstra, Haversine, simulación, benchmark y retos (ver «Preguntas difíciles»).</p></div>
+    <div class="caja"><h3>10:00 – 15:00 · Modificación en vivo</h3><p>Cambio pedido por el docente: localizar el archivo, editar, ejecutar la prueba correspondiente (ver «Ejercicios»).</p></div>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="diapo">
+  <h2><small>Problema</small>Dos etapas, como Uber, Cabify o InDrive</h2>
+  <div class="dos">
+    <div>
+      <ol class="tiempos">
+        <li><strong>Filtro espacial (barato):</strong> el Quadtree descarta casi toda la flota y un heap conserva los <em>k</em> = 5 disponibles más cercanos en línea recta (Haversine propio).</li>
+        <li><strong>Ruta real (cara, solo para k):</strong> un Dijkstra sobre el grafo invertido desde el pasajero da la distancia por calles de los k candidatos respetando sentidos de circulación.</li>
+        <li><strong>Decisión:</strong> ETA = distancia / velocidad promedio (25 km/h configurable). Se asigna el <strong>menor ETA</strong>, no el más cercano.</li>
+        <li><strong>Consistencia:</strong> el conductor pasa a ocupado en la flota y en el Quadtree dentro de una sección crítica.</li>
+      </ol>
+    </div>
+    <div class="caja">
+      <h3>Ejemplo real (mapa 1, Parque Kennedy)</h3>
+      <table>
+        <tr><th>Conductor</th><th>Línea recta</th><th>ETA por calles</th></tr>
+        <tr><td>Más cercano</td><td class="num">110 m</td><td class="num">112 s</td></tr>
+        <tr><td><strong>Seleccionado</strong></td><td class="num">228 m</td><td class="num"><strong>29 s</strong></td></tr>
+      </table>
+      <p>En 3 de los 4 mapas generados el asignado no es el más cercano en línea recta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="diapo">
+  <h2><small>Demo</small>Demostración guiada (5 min)</h2>
+  <div class="dos">
+    <ol class="tiempos">
+      <li><strong>Levantar:</strong> <code>docker compose up -d</code> → <code>http://localhost:8080</code> (ya levantado antes de entrar).</li>
+      <li><strong>Pedir viaje por dirección:</strong> «Parque Kennedy» → elegir sugerencia → destino «Larcomar» → <em>Pedir LimaGo</em>. Mostrar conductor, ETA y ruta.</li>
+      <li><strong>Por coordenadas:</strong> pestaña Coordenadas → <code>-12.11103, -77.03366</code>.</li>
+      <li><strong>En el mapa:</strong> pestaña «En el mapa» y tocar un punto. Probar uno en el mar → mensaje «sin conexión vial» o «fuera de cobertura».</li>
+      <li><strong>Turnos:</strong> <em>Acceso operadores</em> → Pausar, +1 turno, Continuar, Reiniciar con semilla 42.</li>
+      <li><strong>Historial:</strong> «Mis viajes».</li>
+      <li><strong>Entregables:</strong> abrir <code>mapas/asignacion_1_parque_kennedy.html</code> y ejecutar <code>pytest -q</code>.</li>
+    </ol>
+    <div class="caja">
+      <h3>Plan B sin Docker</h3>
+<pre><code>python -m api.worker          # terminal 1
+uvicorn api.main:app          # terminal 2 → http://localhost:8000
+python -m scripts.generar_mapas
+python -m pytest -q</code></pre>
+      <p>La red vial está guardada en <code>datos/miraflores.graphml</code>: la demo no depende de descargar OSM.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="diapo">
+  <h2><small>Arquitectura</small>Una sola versión de la flota</h2>
+  <svg class="diagrama" viewBox="0 0 980 330" role="img" aria-label="Diagrama de arquitectura">
+    <defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--texto-2);stroke:none"/></marker></defs>
+    <rect x="20" y="120" width="170" height="80" rx="12"/><text x="105" y="155" text-anchor="middle">Navegador</text><text x="105" y="178" text-anchor="middle" class="nota">HTML + Leaflet</text>
+    <rect x="250" y="120" width="170" height="80" rx="12"/><text x="335" y="155" text-anchor="middle">frontend</text><text x="335" y="178" text-anchor="middle" class="nota">Nginx · /api → backend</text>
+    <rect x="480" y="120" width="190" height="80" rx="12"/><text x="575" y="150" text-anchor="middle">backend</text><text x="575" y="172" text-anchor="middle" class="nota">FastAPI · geocodifica</text><text x="575" y="190" text-anchor="middle" class="nota">encola comandos</text>
+    <rect x="740" y="30" width="220" height="90" rx="12"/><text x="850" y="62" text-anchor="middle">postgres</text><text x="850" y="84" text-anchor="middle" class="nota">comandos · solicitudes</text><text x="850" y="102" text-anchor="middle" class="nota">instantánea versionada</text>
+    <rect x="740" y="210" width="220" height="100" rx="12" class="clave"/><text x="850" y="240" text-anchor="middle">worker</text><text x="850" y="262" text-anchor="middle" class="nota">Simulador + Despachador</text><text x="850" y="280" text-anchor="middle" class="nota">Quadtree + Dijkstra</text><text x="850" y="298" text-anchor="middle" class="nota">único dueño de la flota</text>
+    <line x1="190" y1="160" x2="248" y2="160" marker-end="url(#f)"/>
+    <line x1="420" y1="160" x2="478" y2="160" marker-end="url(#f)"/>
+    <path d="M670 145 C 705 120, 705 85, 738 80" marker-end="url(#f)"/>
+    <path d="M850 208 L 850 122" marker-end="url(#f)"/>
+    <path d="M840 122 L 840 208" marker-end="url(#f)"/>
+    <text x="728" y="56" class="nota" text-anchor="end">INSERT comando</text>
+    <text x="728" y="73" class="nota" text-anchor="end">SELECT estado</text>
+    <text x="866" y="160" class="nota">lee comandos</text>
+    <text x="866" y="178" class="nota">publica estado</text>
+  </svg>
+  <p><strong>Coordinación explícita:</strong> el backend nunca modifica la flota; inserta comandos y lee la instantánea. El worker los procesa en orden (un solo consumidor) ⇒ imposible asignar el mismo conductor dos veces. Al reiniciar el worker, restaura la instantánea desde PostgreSQL. Los algoritmos no dependen ni de la base de datos ni del frontend (se prueban directamente).</p>
+</section>
+
+<!-- 6 -->
+<section class="diapo">
+  <h2><small>Código</small>Organización y nomenclatura obligatoria</h2>
+  <div class="dos">
+<pre><code>datos/          red_vial.py · miraflores.graphml (RF-01)
+estructuras/    geografia.py (Haversine) · quadtree.py
+                busqueda_lineal.py (solo referencia)
+algoritmos/     grafo.py · dijkstra.py · a_estrella.py
+                congestion.py · asignacion_multiple.py
+simulacion/     modelos.py (Conductor, Pasajero)
+                flota.py · despachador.py (Despachador)
+                turnos.py · geocodificacion.py
+visualizacion/  mapa_folium.py (RF-07)
+experimental/   indice_h3.py (Reto D, aislado)
+benchmark/      busqueda · rutas · retos (RF-09)
+api/            main.py · worker.py · persistencia.py
+frontend/       sitio comercial · tests/ · mapas/</code></pre>
+    <div>
+      <div class="caja"><h3>Clases exigidas</h3><p><code>Conductor</code>, <code>Pasajero</code> (simulacion/modelos.py), <code>NodoQuadtree</code>, <code>Quadtree</code> (estructuras/quadtree.py), <code>Despachador</code> (simulacion/despachador.py).</p></div>
+      <div class="caja" style="margin-top:12px"><h3>Prohibido y verificado</h3><p>Una prueba analiza el AST de la solución: sin <code>shortest_path</code>, <code>nearest_nodes</code>, KDTree, rtree, STRtree ni h3 fuera de <code>experimental/</code>.</p></div>
+      <div class="caja" style="margin-top:12px"><h3>Semilla fija</h3><p><code>LIMAGO_SEMILLA=42</code>: misma flota, mismos movimientos y misma demanda en cada ejecución.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="diapo">
+  <h2><small>RF-03</small>Diseño del Quadtree</h2>
+  <div class="dos">
+    <ul>
+      <li><strong>Nodo hoja</strong> = lista de entradas; <strong>nodo interno</strong> = 4 hijos (NO, NE, SO, SE).</li>
+      <li>Contadores por subárbol <code>total</code> y <code>disponibles</code>: podar ramas sin conductores libres y decidir fusiones.</li>
+      <li>Diccionario <code>id → entrada</code>: eliminar / mover / cambiar estado en O(h).</li>
+      <li><strong>Bordes:</strong> regla determinista <code>lon ≥ centro → este</code>, <code>lat ≥ centro → norte</code>.</li>
+      <li><strong>Sin subdivisión infinita:</strong> divide solo si supera capacidad 8 <em>y</em> profundidad &lt; 18 <em>y</em> los puntos no son idénticos (si lo son, la hoja es una <em>cubeta</em>).</li>
+      <li><strong>Fusión:</strong> al eliminar, un nodo con total ≤ capacidad vuelve a ser hoja.</li>
+      <li><code>verificar_consistencia()</code> comprueba todos los invariantes (se usa en pruebas y en la simulación).</li>
+    </ul>
+<pre><code>def _dividir_si_corresponde(self, hoja):
+    ...
+    if (len(nodo.puntos) &lt;= self.capacidad
+            or nodo.profundidad &gt;= self.profundidad_maxima
+            or nodo.puntos_coincidentes()):
+        continue          # no se divide
+    nodo.hijos = [NodoQuadtree(r, nodo.profundidad + 1)
+                  for r in nodo.limites.subdividir()]</code></pre>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="diapo">
+  <h2><small>RF-04</small>k vecinos exactos con poda (best-first)</h2>
+  <div class="dos">
+    <div>
+      <ul>
+        <li><code>frontera</code>: min-heap de nodos por <strong>cota inferior</strong> de distancia a su rectángulo.</li>
+        <li><code>mejores</code>: max-heap de tamaño k (valores negados en <code>heapq</code>).</li>
+        <li>Si la menor cota pendiente &gt; la k-ésima distancia ⇒ <strong>parar</strong>: ningún nodo restante puede mejorar.</li>
+        <li>Cota rigurosa en la esfera: <code>R·|Δφ|</code> (latitud) y <code>R·asin(cos φ·sin Δλ)</code> (distancia a un meridiano); se toma el máximo.</li>
+        <li>Validado: resultados idénticos a la búsqueda lineal en 400/400 consultas por escala y en 300 consultas aleatorias de las pruebas.</li>
+      </ul>
+    </div>
+<pre><code>while frontera:
+    cota, _, nodo = heapq.heappop(frontera)
+    if len(mejores) == k and cota &gt; -mejores[0][0]:
+        break                         # poda
+    if nodo.hijos is None:
+        for p in nodo.puntos:
+            if solo_disponibles and not p.disponible: continue
+            d = haversine_metros(lat, lon, p.lat, p.lon)
+            clave = (-d, -p.id)
+            if len(mejores) &lt; k: heapq.heappush(mejores, clave)
+            elif clave &gt; mejores[0]: heapq.heapreplace(mejores, clave)
+    else:
+        for hijo in nodo.hijos: ...   # push con su cota</code></pre>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="diapo">
+  <h2><small>RF-05</small>Dijkstra propio, ETA y destinos inaccesibles</h2>
+  <div class="dos">
+    <ul>
+      <li>Grafo propio (<code>algoritmos/grafo.py</code>) con listas de adyacencia directa e <strong>inversa</strong>; se conserva la arista paralela más corta.</li>
+      <li><code>heapq</code> con borrado perezoso; <strong>parada temprana</strong> al asentar los objetivos.</li>
+      <li><strong>Un solo Dijkstra</strong> desde el pasajero sobre el grafo invertido = distancias de los k conductores hacia él (0,86 ms frente a 2,09 ms de k ejecuciones).</li>
+      <li>Ruta reconstruida con los predecesores del árbol inverso (siguiente nodo en el sentido real).</li>
+      <li>Inaccesible ⇒ ETA = ∞; si todos los candidatos lo son se duplica k (hasta 3 veces) y si no hay ruta: «sin_ruta».</li>
+      <li>Pasajero lejos de toda vía (&gt; 250 m) ⇒ «sin conexión vial».</li>
+    </ul>
+<pre><code>def calcular_eta(self, pasajero, candidatos):
+    _, inversa = self._adyacencias()
+    resultado = distancias_hacia_destino(
+        inversa, pasajero.nodo, nodos.values())
+    for c in candidatos:
+        if nodo not in resultado.asentados:
+            continue                    # ETA infinito
+        c.ruta = reconstruir_ruta_hacia(...)
+        c.distancia_calles_m = self.grafo.longitud_ruta(c.ruta)
+        c.eta_s = eta_segundos(c.distancia_calles_m,
+                               self.velocidad_kmh)
+
+mejor = min(alcanzables,
+            key=lambda c: (c.eta_s, c.distancia_recta_m, c.conductor_id))</code></pre>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="diapo">
+  <h2><small>RF-06</small>Simulación por turnos</h2>
+  <div class="rejilla">
+    <div class="caja"><h3>Cada turno = 30 s simulados</h3><p>Conductores en orden de id: disponible → paseo aleatorio por calles vecinas; en camino → sigue la ruta al pasajero; en viaje → sigue la ruta al destino y queda libre.</p></div>
+    <div class="caja"><h3>Sin movimientos imposibles</h3><p>Solo se avanza por aristas existentes; el avance parcial se acumula en <code>avance_m</code>. Las posiciones siempre son intersecciones.</p></div>
+    <div class="caja"><h3>Quadtree siempre al día</h3><p><code>Despachador.mover_conductor</code> actualiza la flota y el Quadtree en la misma operación; <code>cambiar_estado</code> ajusta los contadores.</p></div>
+    <div class="caja"><h3>Control</h3><p>Pausar, continuar, avanzar n turnos y reiniciar con semilla y tamaño de flota. Instantánea serializable ⇒ restauración exacta (probado).</p></div>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="diapo">
+  <h2><small>Análisis</small>Complejidad por operación</h2>
+  <table>
+    <tr><th>Operación</th><th>Costo</th><th>Por qué</th></tr>
+    <tr><td>Haversine</td><td class="num">O(1)</td><td>Operaciones trigonométricas fijas</td></tr>
+    <tr><td>insertar / cambiar_disponibilidad</td><td class="num">O(h)</td><td>Un camino raíz-hoja; h ≤ 18 (≈ log₄ n con datos dispersos)</td></tr>
+    <tr><td>eliminar / actualizar_posicion</td><td class="num">O(h + c)</td><td>Fusión o reinserción tocan ≤ c = 8 puntos</td></tr>
+    <tr><td>buscar_rectangulo</td><td class="num">O(h + v + m)</td><td>v nodos que intersectan, m resultados; peor caso O(n)</td></tr>
+    <tr><td>buscar_k_cercanos</td><td class="num">≈ O(log n + k log k)</td><td>Datos dispersos; peor caso (todos coincidentes) O(n log k)</td></tr>
+    <tr><td>Búsqueda lineal</td><td class="num">O(n log k)</td><td>n distancias + heap de tamaño k</td></tr>
+    <tr><td>Dijkstra / A*</td><td class="num">O((V + E) log V)</td><td>Cada arista se relaja una vez; operaciones de heap O(log V)</td></tr>
+    <tr><td>Húngaro (Reto C)</td><td class="num">O(p² m)</td><td>p pasajeros, m candidatos</td></tr>
+  </table>
+</section>
+
+<!-- 12 -->
+<section class="diapo">
+  <h2><small>RF-09</small>Lineal frente a Quadtree (mediciones reales)</h2>
+  <div class="dos">
+    <img class="grafico" src="../benchmark/resultados/busqueda_tiempos.png" alt="Tiempo por consulta según el tamaño de la flota">
+    <div>
+      <table>
+        <tr><th>Conductores</th><th>Lineal</th><th>Quadtree</th><th>×</th><th>Distancias QT</th></tr>
+        <tr><td class="num">300</td><td class="num">0,137 ms</td><td class="num">0,032 ms</td><td class="num">4,2</td><td class="num">19</td></tr>
+        <tr><td class="num">3 000</td><td class="num">1,418 ms</td><td class="num">0,049 ms</td><td class="num">29,0</td><td class="num">32</td></tr>
+        <tr><td class="num">30 000</td><td class="num">12,824 ms</td><td class="num">0,152 ms</td><td class="num">84,2</td><td class="num">173</td></tr>
+      </table>
+      <ul>
+        <li>Lineal crece ~×94 al multiplicar n por 100: O(n).</li>
+        <li>Con 300 conductores la ganancia es modesta: el índice tiene costo propio.</li>
+        <li>Posiciones uniformes: ×252 a 30 000. En intersecciones ~23 conductores comparten nodo ⇒ cubetas ⇒ más distancias.</li>
+        <li>400 consultas × 5 repeticiones, mediana, GC desactivado; 400/400 resultados idénticos.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="diapo">
+  <h2><small>RF-09 + Reto A</small>Dijkstra propio frente a networkx y A*</h2>
+  <div class="dos">
+    <img class="grafico" src="../benchmark/resultados/a_estrella_nodos.png" alt="Nodos expandidos por A* y Dijkstra">
+    <div>
+      <div class="rejilla">
+        <div class="caja"><div class="cifra">300/300</div><p>distancias idénticas (diferencia máx. 0 m; tolerancia 1e-6 m)</p></div>
+        <div class="caja"><div class="cifra">−69 %</div><p>nodos expandidos por A* (208 frente a 678) con el mismo coste</p></div>
+      </div>
+      <p>Tiempo por par: Dijkstra propio 0,467 ms · networkx 1,200 ms · A* 0,333 ms. networkx recorre el MultiDiGraph con diccionarios de atributos; nuestra adyacencia ya trae el peso mínimo.</p>
+      <p><strong>Admisibilidad:</strong> osmnx calcula <code>length</code> con arcos de círculo máximo y radio 6 371 009 m; nuestro Haversine usa el mismo radio ⇒ h(n) ≤ coste real y consistente por la desigualdad triangular.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="diapo">
+  <h2><small>Retos B · C · D</small>Hora punta, varios pasajeros y H3</h2>
+  <div class="rejilla">
+    <div class="caja"><h3>B · Congestión simulada</h3><p>Peso = longitud / velocidad libre × factor horario por tipo de vía. 8:00 → 8,6 min medios; 15:00 → 4,4 min. 215/300 rutas cambian de trazado y 9/100 asignaciones eligen otro conductor. <code>mapas/reto_b_congestion_8_vs_15.html</code></p></div>
+    <div class="caja"><h3>C · Algoritmo húngaro</h3><p>Matriz de ETA pasajeros × candidatos; óptimo validado contra fuerza bruta. Espera total −1,2 % (3 pasajeros) a −8,3 % (20) frente a la estrategia codiciosa.</p><img class="grafico" src="../benchmark/resultados/reto_c_asignacion.png" alt="Espera total codiciosa frente a óptima" style="margin-top:8px"></div>
+    <div class="caja"><h3>D · H3 experimental</h3><p>Aislado en <code>experimental/</code>. Anillos de hexágonos con cota de parada conservadora: mismos resultados que la lineal, pero 2,76 ms frente a 0,15 ms del Quadtree con 30 000 conductores: resolución fija, sin adaptarse a la densidad.</p></div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="diapo">
+  <h2><small>Calidad</small>Pruebas automatizadas</h2>
+  <div class="dos">
+    <ul>
+      <li>Quadtree vacío, puntos coincidentes (500 en el mismo punto), bordes, subdivisión, fusión, 3 000 actualizaciones.</li>
+      <li>k exactos frente a lineal, poda, no disponibles, búsqueda sin disponibles, empates deterministas.</li>
+      <li>Haversine con valores conocidos y validez de la cota inferior.</li>
+      <li>Dijkstra frente a networkx (malla y Miraflores), reconstrucción, sentido único, inaccesible, pesos negativos.</li>
+      <li>Menor ETA ≠ más cercano, concurrencia (25 hilos), pasajero sin conexión vial, coordenadas inválidas.</li>
+      <li>Simulación consistente, ciclo de vida del viaje, reinicio, restauración exacta.</li>
+      <li>Retos A–D, geocodificación ambigua / inexistente, API + worker + base de datos.</li>
+    </ul>
+<pre><code>python -m pytest -q
+.....................................
+52 passed</code></pre>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="diapo">
+  <h2><small>Preparación</small>Preguntas difíciles (1/2)</h2>
+  <details class="pregunta"><summary>¿Por qué la búsqueda k-NN del Quadtree es exacta y no aproximada?</summary><p>Porque solo se descarta un nodo cuando una cota inferior garantizada de su distancia supera la k-ésima mejor distancia real; ningún punto dentro puede estar más cerca. Además se verificó contra la lineal.</p></details>
+  <details class="pregunta"><summary>¿Qué pasa si muchos conductores están en el mismo punto?</summary><p>No se subdivide (sería infinito): la hoja actúa como cubeta. La profundidad máxima (18) limita los casos casi idénticos. La búsqueda debe examinar toda la cubeta: por eso con 30 000 conductores en intersecciones la ganancia es ×84 y no ×252.</p></details>
+  <details class="pregunta"><summary>¿Por qué un Dijkstra sobre el grafo invertido?</summary><p>Queremos distancias de k conductores <em>hacia</em> el pasajero. En el grafo invertido, la distancia pasajero→x es la distancia real x→pasajero. Una ejecución en lugar de k.</p></details>
+  <details class="pregunta"><summary>¿El menor ETA entre k candidatos es el óptimo global?</summary><p>No necesariamente: un conductor fuera de los k más cercanos en línea recta podría llegar antes. Es el compromiso de la guía (RF-04/05); aumentar k reduce ese riesgo a cambio de más cálculo.</p></details>
+  <details class="pregunta"><summary>¿Por qué con 300 conductores la ganancia es solo ×4?</summary><p>El costo de visitar nodos, calcular cotas y usar dos heaps es comparable a calcular 300 Haversine. El índice se amortiza cuando n crece.</p></details>
+  <details class="pregunta"><summary>¿Cómo se evita asignar el mismo conductor a dos pasajeros?</summary><p>El worker procesa los comandos en orden (un solo consumidor) y el Despachador usa un candado y verifica que el conductor siga disponible antes de ocuparlo. Probado con 25 hilos concurrentes.</p></details>
+</section>
+
+<!-- 17 -->
+<section class="diapo">
+  <h2><small>Preparación</small>Preguntas difíciles (2/2)</h2>
+  <details class="pregunta"><summary>¿Por qué Haversine y no distancia euclidiana en grados?</summary><p>Un grado de longitud mide distinto según la latitud (cos φ). Haversine da metros sobre la esfera y es estable numéricamente para distancias cortas.</p></details>
+  <details class="pregunta"><summary>¿Por qué la heurística de A* es admisible?</summary><p>La distancia de círculo máximo es la mínima posible sobre la esfera; las calles miden lo mismo o más (osmnx suma arcos con el mismo radio). Con pesos en segundos dividimos por la velocidad libre máxima.</p></details>
+  <details class="pregunta"><summary>¿Cómo se comprobó que Dijkstra iguala a networkx?</summary><p>300 pares aleatorios + un árbol completo; tolerancia 1e-6 m justificada por el redondeo float64. La diferencia medida fue 0.</p></details>
+  <details class="pregunta"><summary>¿Por qué hexágonos (H3) y no cuadrados?</summary><p>Seis vecinos equidistantes (los cuadrados tienen 8 a dos distancias), anillos más circulares, menos sesgo direccional. Costo: jerarquía aproximada y 12 pentágonos por resolución.</p></details>
+  <details class="pregunta"><summary>¿Los datos son reales?</summary><p>La red vial sí (OpenStreetMap, guardada localmente). La flota, la demanda y la congestión son simuladas, y así se indica en la web y en el informe.</p></details>
+  <details class="pregunta"><summary>¿Por qué PostgreSQL si el Quadtree está en memoria?</summary><p>Para coordinar procesos (cola de comandos e instantánea) y persistir el historial; las búsquedas espaciales nunca se delegan a la base de datos.</p></details>
+</section>
+
+<!-- 18 -->
+<section class="diapo">
+  <h2><small>Modificación en vivo</small>Ejercicios preparados</h2>
+  <div class="rejilla">
+    <div class="caja"><h3>1 · Cambiar k o la velocidad</h3><p><code>config/ajustes.py</code> → <code>k_candidatos</code>, <code>velocidad_promedio_kmh</code> (o variables <code>LIMAGO_*</code>). Prueba: <code>pytest tests/test_despachador.py</code>.</p></div>
+    <div class="caja"><h3>2 · Desempate por menor distancia por calles</h3><p><code>Despachador.elegir_mejor</code>: cambiar la clave a <code>(c.eta_s, c.distancia_calles_m, c.conductor_id)</code>.</p></div>
+    <div class="caja"><h3>3 · Búsqueda por radio</h3>
+<pre><code>def buscar_en_radio(self, lat, lon, radio_m):
+    caja = Rectangulo.alrededor(lat, lon, radio_m)
+    return [i for i in self.buscar_rectangulo(caja, True)
+            if haversine_metros(lat, lon,
+               *self.obtener_posicion(i)) &lt;= radio_m]</code></pre></div>
+    <div class="caja"><h3>4 · Capacidad del Quadtree</h3><p><code>LIMAGO_CAPACIDAD_NODO=4</code> y volver a correr <code>python -m benchmark.benchmark_busqueda</code>: comparar profundidad y tiempos.</p></div>
+    <div class="caja"><h3>5 · Evitar un tipo de vía</h3><p>Con <code>grafo.adyacencia_ponderada(lambda u, v, d: math.inf if d.tipo_via == "trunk" else d.longitud)</code> y <code>ruta_mas_corta</code>.</p></div>
+    <div class="caja"><h3>6 · Contar disponibles en una zona</h3><p><code>len(quadtree.buscar_rectangulo(rect, solo_disponibles=True))</code>; o leer <code>nodo.disponibles</code> de los nodos totalmente contenidos.</p></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="diapo">
+  <h2><small>Cierre</small>Conclusiones</h2>
+  <div class="rejilla">
+    <div class="caja"><h3>El índice escala</h3><p>De 30 000 distancias a ~173 por consulta, con resultados exactos. Con flotas pequeñas la ventaja es menor: medir antes de suponer.</p></div>
+    <div class="caja"><h3>La línea recta engaña</h3><p>Con 1 833 tramos de sentido único, el ETA por calles cambia la decisión en la mayoría de los mapas de ejemplo.</p></div>
+    <div class="caja"><h3>Reproducible</h3><p>Semilla fija, red guardada, benchmarks y mapas regenerables con un comando, Docker Compose y pruebas automatizadas.</p></div>
+    <div class="caja"><h3>Límites honestos</h3><p>Flota, demanda y congestión simuladas; posiciones discretizadas en intersecciones; k candidatos no garantizan el óptimo global.</p></div>
+  </div>
+</section>
+
+<div class="barra">
+  <button id="anterior" aria-label="Diapositiva anterior">←</button>
+  <span id="contador">1 / 1</span>
+  <div class="progreso"><div id="progreso"></div></div>
+  <span id="cronometro" title="Cronómetro (T)">00:00</span>
+  <button id="siguiente" aria-label="Diapositiva siguiente">→</button>
+</div>
+
+<script>
+"use strict";
+(() => {
+  const diapos = [...document.querySelectorAll(".diapo")];
+  let actual = 0;
+  const leerHash = () => Math.min(diapos.length - 1, Math.max(0, (parseInt(location.hash.slice(1), 10) || 1) - 1));
+  function mostrar(i) {
+    actual = Math.min(diapos.length - 1, Math.max(0, i));
+    diapos.forEach((d, j) => d.classList.toggle("activa", j === actual));
+    document.getElementById("contador").textContent = `${actual + 1} / ${diapos.length}`;
+    document.getElementById("progreso").style.width = `${((actual + 1) / diapos.length) * 100}%`;
+    history.replaceState(null, "", `#${actual + 1}`);
+    window.scrollTo(0, 0);
+  }
+  document.getElementById("anterior").onclick = () => mostrar(actual - 1);
+  document.getElementById("siguiente").onclick = () => mostrar(actual + 1);
+  let inicio = null, temporizador = null;
+  function alternarCronometro() {
+    if (temporizador) { clearInterval(temporizador); temporizador = null; return; }
+    inicio = inicio || Date.now();
+    temporizador = setInterval(() => {
+      const s = Math.floor((Date.now() - inicio) / 1000);
+      document.getElementById("cronometro").textContent = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    }, 500);
+  }
+  document.addEventListener("keydown", (e) => {
+    if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); mostrar(actual + 1); }
+    if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); mostrar(actual - 1); }
+    if (e.key === "Home") mostrar(0);
+    if (e.key === "End") mostrar(diapos.length - 1);
+    if (e.key.toLowerCase() === "t") alternarCronometro();
+    if (e.key.toLowerCase() === "f") document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen?.();
+  });
+  window.addEventListener("hashchange", () => mostrar(leerHash()));
+  mostrar(leerHash());
+})();
+</script>
+</body>
+</html>

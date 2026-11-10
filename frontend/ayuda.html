@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Centro de ayuda · LimaGo</title>
+  <meta name="description" content="Respuestas sobre cómo pedir, seguir y revisar tus viajes en LimaGo.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
+</head>
+<body data-pagina="ayuda">
+<div data-cabecera></div>
+
+<main id="contenido">
+  <header class="encabezado-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="index.html">Inicio</a> › Centro de ayuda</nav>
+      <h1>¿En qué podemos ayudarte?</h1>
+      <p>Encuentra respuestas sobre cómo pedir un viaje, indicar tu ubicación, seguir al conductor y revisar tus viajes.</p>
+      <div class="campo" style="max-width:560px;margin-top:20px">
+        <label class="sr" for="buscar">Buscar en la ayuda</label>
+        <input class="entrada" id="buscar" type="search" placeholder="Busca una pregunta, por ejemplo «cancelar»">
+      </div>
+    </div>
+  </header>
+
+  <section class="seccion" style="padding-top:12px" id="preguntas">
+    <div class="contenedor con-indice">
+      <nav class="indice" aria-label="Temas de ayuda">
+        <a href="#solicitud">Solicitar un viaje</a>
+        <a href="#ubicacion">Ubicación</a>
+        <a href="#disponibilidad">Disponibilidad</a>
+        <a href="#seguimiento">Seguimiento</a>
+        <a href="#historial">Historial</a>
+        <a href="#cancelaciones">Cancelaciones</a>
+        <a href="#tarifas">Tarifas</a>
+      </nav>
+      <div>
+        <p class="aviso info oculto" id="sin-resultados">No encontramos preguntas con esas palabras. Prueba con otros términos.</p>
+
+        <div class="grupo-faq" id="solicitud">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Solicitar un viaje</h2>
+          <div class="faq">
+            <details><summary>¿Cómo pido un viaje?</summary><p>Entra en <a href="viaje.html">Pedir un viaje</a>, con tu permiso detectamos tu punto de recojo; escribe el destino y pulsa «Ver tarifa». Revisa la ruta y el total, y pulsa «Confirmar viaje». Ofrecemos el viaje a los conductores y, cuando uno acepta, verás quién es y cuánto tardará.</p></details>
+            <details><summary>¿Es obligatorio indicar el destino?</summary><p>Sí. Con el destino calculamos la ruta, la duración y la tarifa antes de que confirmes.</p></details>
+            <details><summary>¿Qué pasa si el primer conductor no acepta?</summary><p>Cada conductor tiene unos segundos para aceptar. Si no acepta o no responde, ofrecemos el viaje al siguiente que llega antes. Mientras tanto verás «Buscando conductor». Si ninguno acepta, te avisamos para que lo intentes de nuevo.</p></details>
+            <details><summary>¿Cómo se elige a mi conductor?</summary><p>Revisamos a los conductores disponibles más próximos a tu ubicación y calculamos cuánto tardaría cada uno por las calles, respetando los sentidos de circulación. Ofrecemos el viaje primero al que llega antes; el viaje es de quien lo acepta.</p></details>
+            <details><summary>¿Necesito una cuenta?</summary><p>No. LimaGo no pide registro ni datos personales para solicitar un viaje.</p></details>
+          </div>
+        </div>
+
+        <div class="grupo-faq" id="ubicacion" style="margin-top:32px">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Ubicación</h2>
+          <div class="faq">
+            <details><summary>¿Por qué el navegador me pide mi ubicación?</summary><p>Para proponerte como punto de recojo el lugar donde estás. Solo la pedimos una vez; si no la concedes, puedes escribir tu dirección o marcarla en el mapa y todo funciona igual. Tu ubicación se usa solo para calcular el viaje.</p></details>
+            <details><summary>¿Por qué mi punto de recojo se movió un poco?</summary><p>Lo ajustamos a la vía más cercana por la que circulan autos, para que el conductor pueda llegar. Si el ajuste es grande te lo indicamos.</p></details>
+            <details><summary>¿De qué formas puedo indicar dónde estoy?</summary><p>Escribiendo una dirección (te mostraremos sugerencias), pegando coordenadas como «-12.1218, -77.0304» o tocando el punto exacto en el mapa.</p></details>
+            <details><summary>Me dice que la dirección coincide con varios lugares</summary><p>Hay más de un lugar con ese nombre. Elige el correcto de la lista o escribe una dirección más precisa (con número o una referencia).</p></details>
+            <details><summary>Me dice que mi punto está lejos de una calle</summary><p>Solo recogemos junto a vías por las que circulan autos. Si marcaste un parque, la playa o el interior de una manzana, elige un punto en la calle más cercana.</p></details>
+            <details><summary>Me dice que estoy fuera de la zona de cobertura</summary><p>Operamos en los 50 distritos de Lima Metropolitana (provincias de Lima y Callao). Si el punto está fuera de ese límite o en el mar, elige otro. Revisa el <a href="cobertura.html">mapa de cobertura</a>.</p></details>
+          </div>
+        </div>
+
+        <div class="grupo-faq" id="disponibilidad" style="margin-top:32px">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Disponibilidad</h2>
+          <div class="faq">
+            <details><summary>¿Qué significan los puntos de colores del mapa?</summary><p>En la página de inicio y al pedir un viaje solo mostramos los conductores disponibles más cercanos (en verde). Durante tu viaje solo ves a tu conductor.</p></details>
+            <details><summary>Me dice que no hay conductores disponibles</summary><p>En ese momento todos los conductores cercanos están ocupados. Inténtalo de nuevo en unos instantes.</p></details>
+          </div>
+        </div>
+
+        <div class="grupo-faq" id="seguimiento" style="margin-top:32px">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Seguimiento</h2>
+          <div class="faq">
+            <details><summary>¿Cómo sigo a mi conductor?</summary><p>Después de pedir, pulsa «Seguir mi viaje». En <a href="seguimiento.html">Seguimiento</a> verás su posición, la ruta restante, el tiempo estimado y el avance del recorrido.</p></details>
+            <details><summary>Cerré la página, ¿cómo vuelvo a mi viaje?</summary><p>Abre <a href="seguimiento.html">Seguimiento</a>: recordamos tu último viaje en este navegador. También puedes buscarlo en <a href="historial.html">Mis viajes</a> o escribir su número.</p></details>
+            <details><summary>¿Para qué sirve el botón «Alerta»?</summary><p>Durante un viaje activo, avisa al centro de operaciones de LimaGo, que registra tu ubicación y asigna una unidad de apoyo de la simulación. Es una función demostrativa: <strong>no contacta a la Policía, al SAMU, al serenazgo ni a ningún servicio de emergencia real</strong>. Ante una emergencia real, llama al 105 (Policía) o al 106 (SAMU).</p></details>
+            <details><summary>¿Por qué el tiempo estimado cambia?</summary><p>Se recalcula con la posición actual del conductor y la ruta que le falta recorrer.</p></details>
+          </div>
+        </div>
+
+        <div class="grupo-faq" id="historial" style="margin-top:32px">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Historial</h2>
+          <div class="faq">
+            <details><summary>¿Dónde veo mis viajes anteriores?</summary><p>En <a href="historial.html">Mis viajes</a>. Puedes filtrarlos por estado, buscar por lugar o número y abrir el detalle de cada uno.</p></details>
+            <details><summary>¿Qué significa «No atendido»?</summary><p>La solicitud no pudo asignarse: no había conductores disponibles, no existía una ruta por calles o la ubicación no era válida.</p></details>
+          </div>
+        </div>
+
+        <div class="grupo-faq" id="cancelaciones" style="margin-top:32px">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Cancelaciones</h2>
+          <div class="faq">
+            <details><summary>¿Puedo cancelar mi viaje?</summary><p>Sí, mientras buscamos conductor, mientras va en camino o cuando ya te está esperando, con el botón «Cancelar viaje».</p></details>
+            <details><summary>¿Puedo cancelar cuando ya estoy a bordo?</summary><p>No. Una vez que el conductor te recoge, el viaje continúa hasta el destino.</p></details>
+          </div>
+        </div>
+
+        <div class="grupo-faq" id="tarifas" style="margin-top:32px">
+          <h2 style="font-size:1.35rem;margin:0 0 12px">Tarifas</h2>
+          <div class="faq">
+            <details><summary>¿Cuánto cuesta un viaje?</summary><p>Puedes calcular una tarifa orientativa en <a href="tarifas.html">Tarifas</a>. Se compone de una tarifa base, la distancia y el tiempo del recorrido (con el tráfico de la hora) y, si el conductor está lejos, un cargo de recogida con tope.</p></details>
+            <details><summary>¿Puede cambiar el precio después de confirmar?</summary><p>No. El total que ves al confirmar queda registrado con tu viaje. Si la cotización vence (5 minutos) antes de confirmar, la calculamos de nuevo.</p></details>
+            <details><summary>¿Cómo pago?</summary><p>LimaGo es un servicio demostrativo y no realiza cobros. Las tarifas que mostramos son estimaciones.</p></details>
+          </div>
+        </div>
+
+        <div class="tarjeta plana" style="margin-top:36px">
+          <h2 style="font-size:1.15rem;margin:0 0 6px">¿No encontraste lo que buscabas?</h2>
+          <p class="texto-2" style="margin:0">Revisa la <a href="legal.html#simulacion">información sobre el servicio</a> o los <a href="legal.html#terminos">términos de uso</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-pie></div>
+<script>
+"use strict";
+(() => {
+  const campo = document.getElementById("buscar");
+  const normalizar = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  campo.addEventListener("input", () => {
+    const q = normalizar(campo.value.trim());
+    let total = 0;
+    document.querySelectorAll(".grupo-faq").forEach((grupo) => {
+      let visibles = 0;
+      grupo.querySelectorAll("details").forEach((d) => {
+        const coincide = !q || normalizar(d.textContent).includes(q);
+        d.classList.toggle("oculto", !coincide);
+        if (q && coincide) d.open = true;
+        visibles += coincide ? 1 : 0;
+      });
+      grupo.classList.toggle("oculto", visibles === 0);
+      total += visibles;
+    });
+    document.getElementById("sin-resultados").classList.toggle("oculto", total > 0);
+  });
+})();
+</script>
+</body>
+</html>

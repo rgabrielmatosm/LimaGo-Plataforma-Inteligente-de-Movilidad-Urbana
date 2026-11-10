@@ -11,10 +11,10 @@ from config.ajustes import cargar_ajustes
 
 def main() -> int:
     try:
-        estado = BaseDatos(cargar_ajustes().url_base_datos).leer_estado()
+        latido = BaseDatos(cargar_ajustes().url_base_datos).latido_estado()  # sin leer la instantánea completa
     except Exception:  # noqa: BLE001
         return 1
-    return 0 if estado and ahora() - estado["latido_en"] < timedelta(seconds=20) else 1
+    return 0 if latido and ahora() - latido < timedelta(seconds=20) else 1
 
 
 if __name__ == "__main__":

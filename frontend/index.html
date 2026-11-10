@@ -3,95 +3,131 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>LimaGo · Viajes en Miraflores</title>
-  <meta name="description" content="Pide un viaje en Miraflores y te asignamos el conductor que llega antes.">
+  <title>LimaGo · Viajes en Lima</title>
+  <meta name="description" content="Pide un viaje en Lima Metropolitana y te asignamos el conductor que llega antes por las calles.">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
 </head>
-<body>
-<header class="cabecera">
-  <div class="contenedor">
-    <a class="logo" href="index.html" aria-label="LimaGo, inicio"><img src="img/logo.svg" alt="" width="30" height="30"><span>Lima<b>Go</b></span></a>
-    <button class="menu-movil" aria-label="Abrir menú" aria-expanded="false">☰</button>
-    <nav class="navegacion" aria-label="Principal">
-      <a href="index.html" aria-current="page">Inicio</a>
-      <a href="#como-funciona">Cómo funciona</a>
-      <a href="#cobertura">Cobertura</a>
-      <a href="historial.html">Mis viajes</a>
-      <a class="boton pequeno" href="viaje.html">Pedir un viaje</a>
-    </nav>
-  </div>
-</header>
+<body data-pagina="inicio">
+<div data-cabecera></div>
 
-<main>
+<main id="contenido">
   <section class="heroe">
     <div class="contenedor">
       <div>
-        <span class="etiqueta estado-disponible"><span class="punto" style="background:var(--disponible)"></span><span id="disponibles-ahora">Conductores conectados en Miraflores</span></span>
-        <h1>Tu viaje por Miraflores, <span>con quien llega primero.</span></h1>
-        <p class="lema">Escribe dónde estás o márcalo en el mapa. LimaGo compara a los conductores cercanos por las calles reales y te asigna al que llega antes, no solo al que está más cerca.</p>
-        <div class="acciones">
-          <a class="boton grande" href="viaje.html">Pedir un viaje</a>
-          <a class="boton grande secundario" href="#como-funciona">Cómo funciona</a>
-        </div>
-        <div class="cifras">
-          <div><strong id="cifra-km">—</strong><span>km de vías cubiertas</span></div>
-          <div><strong id="cifra-intersecciones">—</strong><span>intersecciones</span></div>
-          <div><strong id="cifra-espera">—</strong><span>espera media hoy</span></div>
-        </div>
+        <span class="etiqueta estado-disponible"><span class="punto" style="background:var(--disponible)"></span><span id="disponibles-ahora">Conectando con conductores…</span></span>
+        <h1>Muévete por Lima <span>con quien llega primero.</span></h1>
+        <p class="lema">Detectamos dónde estás, tú eliges el destino y ves la tarifa antes de confirmar. Te asignamos al conductor que llega antes por las calles, en toda Lima Metropolitana.</p>
+        <form class="tarjeta pedido-rapido" id="pedido-rapido" action="viaje.html" method="get">
+          <label class="sr" for="rapido-destino">¿A dónde vas?</label>
+          <div class="fila-entrada">
+            <div class="entrada-icono"><span class="destino" aria-hidden="true"></span>
+              <input class="entrada" id="rapido-destino" name="destino" required minlength="3" autocomplete="off" placeholder="¿A dónde vas? Ej.: Jockey Plaza"></div>
+            <button class="boton" type="submit">Pedir viaje</button>
+          </div>
+          <span class="ayuda">Te recogemos donde estás: con tu permiso detectamos tu ubicación. También puedes escribirla o marcarla en el mapa.</span>
+        </form>
       </div>
-      <div class="mapa-heroe" id="mapa-heroe" role="img" aria-label="Mapa de conductores disponibles en Miraflores"></div>
+      <div class="mapa-heroe" role="img" aria-label="Mapa de conductores disponibles en Lima">
+        <div id="mapa-heroe" style="position:absolute;inset:0"></div>
+        <span class="insignia-mapa"><span class="punto" style="background:var(--disponible)"></span>Conductores disponibles en la zona</span>
+      </div>
     </div>
   </section>
 
-  <section class="seccion" id="como-funciona">
+  <section class="seccion" aria-labelledby="titulo-cifras" style="padding-top:8px">
     <div class="contenedor">
-      <h2>Pedir un LimaGo es simple</h2>
-      <p class="subtitulo">Tres pasos y tu conductor ya está en camino. Sigue su recorrido en el mapa hasta que llegue.</p>
-      <div class="rejilla-3">
-        <article class="tarjeta paso"><div class="numero">1</div><h3>Indica tu ubicación</h3><p>Escribe una dirección, pega tus coordenadas o toca el punto exacto en el mapa.</p></article>
-        <article class="tarjeta paso"><div class="numero">2</div><h3>Te asignamos el mejor</h3><p>Comparamos a los conductores disponibles más cercanos y elegimos al que llega primero según el recorrido por las calles.</p></article>
-        <article class="tarjeta paso"><div class="numero">3</div><h3>Sigue tu viaje</h3><p>Ve el auto acercarse en tiempo real, el tiempo estimado de llegada y el estado de tu servicio.</p></article>
+      <h2 class="sr" id="titulo-cifras">LimaGo en cifras</h2>
+      <div class="cifras">
+        <div class="tarjeta plana cifra"><strong id="cifra-disponibles">—</strong><span>conductores disponibles ahora</span></div>
+        <div class="tarjeta plana cifra"><strong id="cifra-viajes">—</strong><span>viajes completados</span></div>
+        <div class="tarjeta plana cifra"><strong id="cifra-espera">—</strong><span>llegada media del conductor</span></div>
+        <div class="tarjeta plana cifra"><strong id="cifra-distritos">—</strong><span>distritos con servicio</span></div>
+      </div>
+      <p class="nota-escenario">Cifras en vivo del escenario de demostración de LimaGo: la flota y la demanda son simuladas sobre calles reales.</p>
+    </div>
+  </section>
+
+  <section class="seccion alterna" id="beneficios" aria-labelledby="titulo-beneficios">
+    <div class="contenedor">
+      <span class="antetitulo">Por qué LimaGo</span>
+      <h2 id="titulo-beneficios">Pensado para moverte mejor</h2>
+      <p class="subtitulo">Menos espera, más claridad. Sabes quién viene, por dónde y cuánto falta.</p>
+      <div class="rejilla-4">
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="reloj"></div><h3>Llega quien llega antes</h3><p>No asignamos al más cercano en línea recta: elegimos al que tarda menos según las calles y sus sentidos.</p></article>
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="ruta"></div><h3>Seguimiento en vivo</h3><p>Ve el auto avanzar en el mapa, la ruta que seguirá y el tiempo que falta en cada momento.</p></article>
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="moneda"></div><h3>Tarifa antes de confirmar</h3><p>Ves el total y su desglose (recorrido, tiempo y recogida) antes de pedir, con el tráfico de la hora ya considerado.</p></article>
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="escudo"></div><h3>Botón de alerta</h3><p>Durante el viaje puedes avisar al centro de operaciones con un toque. Tu historial guarda cada solicitud.</p></article>
       </div>
     </div>
   </section>
 
-  <section class="seccion" id="cobertura">
-    <div class="contenedor cobertura">
+  <section class="seccion" id="como-funciona" aria-labelledby="titulo-como">
+    <div class="contenedor">
+      <span class="antetitulo">Cómo funciona</span>
+      <h2 id="titulo-como">Pedir un LimaGo en tres pasos</h2>
+      <p class="subtitulo">Sin registro y sin formularios largos: tu ubicación se detecta sola y solo escribes el destino.</p>
+      <div class="rejilla-3">
+        <article class="tarjeta plana paso"><div class="numero">1</div><h3>Elige tu destino</h3><p>Detectamos tu punto de recojo (con tu permiso) y lo ajustamos a la vía más cercana. Escribe a dónde vas: te sugerimos direcciones reales.</p></article>
+        <article class="tarjeta plana paso"><div class="numero">2</div><h3>Confirma la tarifa</h3><p>Ves la ruta, la duración con el tráfico de la hora y el total estimado. Al confirmar, ofrecemos el viaje al conductor que llega antes; si no puede, al siguiente.</p></article>
+        <article class="tarjeta plana paso"><div class="numero">3</div><h3>Sigue tu viaje</h3><p>Mira al auto acercarse por las calles, te avisamos cuando llega y sigues el recorrido hasta tu destino.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion alterna" id="cobertura" aria-labelledby="titulo-cobertura">
+    <div class="contenedor dividido">
       <div>
-        <h2>Cobertura en todo Miraflores</h2>
-        <p class="subtitulo">Operamos dentro del distrito de Miraflores, Lima. Recogemos en cualquier punto junto a una vía vehicular.</p>
-        <ul>
-          <li>Parque Kennedy, Larcomar y el Malecón.</li>
-          <li>Av. José Larco, Av. Arequipa, Av. Benavides y Vía Expresa.</li>
-          <li>Óvalo Gutiérrez, Huaca Pucllana y Santa Cruz.</li>
+        <span class="antetitulo">Cobertura</span>
+        <h2 id="titulo-cobertura">Toda Lima Metropolitana</h2>
+        <p class="subtitulo">Los 50 distritos de Lima y el Callao: viajes dentro de un distrito o de uno a otro.</p>
+        <ul class="lista-check">
+          <li>Lima Centro, Miraflores, San Isidro, Surco, La Molina y San Borja.</li>
+          <li>Lima Norte, Lima Este y Lima Sur, incluidas las playas del sur.</li>
+          <li>El Callao, con el aeropuerto internacional y Ventanilla.</li>
         </ul>
-        <a class="boton" href="viaje.html">Ver conductores cerca de mí</a>
+        <a class="boton" href="cobertura.html">Ver mapa de cobertura</a>
       </div>
       <div class="mapa-cobertura" id="mapa-cobertura" role="img" aria-label="Zona de cobertura de LimaGo"></div>
     </div>
   </section>
 
-  <section class="seccion">
+  <section class="seccion" id="preguntas" aria-labelledby="titulo-faq">
+    <div class="contenedor dividido" style="align-items:start">
+      <div>
+        <span class="antetitulo">Preguntas frecuentes</span>
+        <h2 id="titulo-faq">Lo que más nos preguntan</h2>
+        <p class="subtitulo">¿Tienes otra duda? Revisa el centro de ayuda.</p>
+        <a class="boton secundario" href="ayuda.html">Ir al centro de ayuda</a>
+      </div>
+      <div class="faq">
+        <details><summary>¿Necesito crear una cuenta?</summary><p>No. Puedes pedir un viaje indicando solo tu punto de recojo. Tus viajes recientes aparecen en «Mis viajes».</p></details>
+        <details><summary>¿Por qué no me asignan al conductor más cercano?</summary><p>Porque el más cercano en el mapa no siempre llega primero: puede tener que rodear manzanas o calles de un solo sentido. Elegimos al que tarda menos.</p></details>
+        <details><summary>¿En qué zonas puedo pedir un viaje?</summary><p>En toda Lima Metropolitana (provincias de Lima y Callao). Si marcas un punto fuera de la zona o lejos de una vía, te lo indicamos antes de calcular la tarifa.</p></details>
+        <details><summary>¿Puedo cancelar?</summary><p>Sí, mientras buscamos conductor, cuando está en camino o cuando ya te espera. Una vez a bordo, el viaje ya no puede cancelarse.</p></details>
+        <details><summary>¿Cuánto cuesta?</summary><p>Antes de confirmar ves el total en soles y su desglose. Es una estimación: LimaGo es un servicio demostrativo y no realiza cobros.</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion" style="padding-top:0">
     <div class="contenedor">
       <div class="banda">
-        <div><h2>¿Listo para moverte?</h2><p>Pide tu viaje en segundos, sin registro.</p></div>
-        <a class="boton grande" href="viaje.html">Pedir un viaje ahora</a>
+        <div><h2>¿Listo para moverte?</h2><p>Pide tu viaje en segundos o consulta cuánto costaría.</p></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <a class="boton grande" href="viaje.html">Pedir un viaje</a>
+          <a class="boton grande" href="tarifas.html" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)">Calcular tarifa</a>
+        </div>
       </div>
     </div>
   </section>
 </main>
 
-<footer class="pie">
-  <div class="contenedor">
-    <span>© 2026 LimaGo · Movilidad urbana en Miraflores, Lima</span>
-    <span>Servicio demostrativo: la flota y la demanda son simuladas sobre calles reales de OpenStreetMap. · <a href="operaciones.html">Acceso operadores</a></span>
-  </div>
-</footer>
-
+<div data-pie></div>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/comun.js"></script>
-<script src="js/inicio.js"></script>
+<script src="js/comun.js?v=3"></script>
+<script src="js/inicio.js?v=3"></script>
 </body>
 </html>

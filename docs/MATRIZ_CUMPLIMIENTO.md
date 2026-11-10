@@ -1,7 +1,7 @@
 # Matriz de cumplimiento y trazabilidad
 
 Documento base: *Proyecto Integrador N.° 2 — Asignación del conductor más cercano* (4 páginas).
-Fecha de la auditoría: 2026-11-06. Entorno de verificación: Linux x86_64, Python 3.13.18, Docker Engine 29.9.2 / Compose v5.6.1.
+Fecha de la auditoría: 2026-11-06 (V1) y 2026-11-06 (V2). Entorno de verificación: Linux x86_64, Python 3.13.18, Docker Engine 29.9.2 / Compose v5.6.1.
 
 **Estados**
 
@@ -9,7 +9,7 @@ Fecha de la auditoría: 2026-11-06. Entorno de verificación: Linux x86_64, Pyth
 - **IMPLEMENTADO SIN VERIFICAR**: el código o la configuración existen, pero no se pudo ejecutar en este entorno; se indica por qué.
 - **PENDIENTE**: depende del equipo o de algo que no puede hacerse desde el código.
 
-Evidencias principales: `python -m pytest -q` → **52 passed** (0 omitidas); `benchmark/resultados/*.json` y `*.png`; `mapas/*.html`; `informe.pdf` (3 páginas); `docker compose ps` con los 4 servicios *healthy*.
+Evidencias principales: `python -m pytest -q` → **65 passed** (0 omitidas); `benchmark/resultados/*.json` y `*.png`; `mapas/*.html`; `informe.pdf` (3 páginas); `docker compose ps` con los 6 servicios *healthy* (V2).
 
 ---
 
@@ -47,7 +47,7 @@ Evidencias principales: `python -m pytest -q` → **52 passed** (0 omitidas); `b
 |---|---|---|---|
 | README con instalación, ejecución y ejemplos | `README.md` | Comandos usados en esta auditoría | VERIFICADO |
 | Commits de todos los integrantes | Historial de Git | Debe hacerlo cada integrante con su cuenta ([`docs/CONTRIBUCION.md`](CONTRIBUCION.md)) | PENDIENTE |
-| Pytest ≥ 10 casos con Quadtree vacío, mismo punto, sin disponibles, sin conexión vial | `tests/` (52 pruebas) | `test_quadtree_vacio`, `test_conductores_en_el_mismo_punto_no_subdividen_infinitamente`, `test_conductores_no_disponibles_se_excluyen`, `test_estado_actualizado_y_sin_asignacion_duplicada`, `test_pasajero_sin_conexion_vial` | VERIFICADO |
+| Pytest ≥ 10 casos con Quadtree vacío, mismo punto, sin disponibles, sin conexión vial | `tests/` (65 pruebas) | `test_quadtree_vacio`, `test_conductores_en_el_mismo_punto_no_subdividen_infinitamente`, `test_conductores_no_disponibles_se_excluyen`, `test_estado_actualizado_y_sin_asignacion_duplicada`, `test_pasajero_sin_conexion_vial` | VERIFICADO |
 | Informe de 3 a 5 páginas: diseño, Big-O, benchmark con gráficos, comparación con H3 | `informe.pdf` (generado por `scripts/generar_informe.py` desde los JSON) | 3 páginas, revisado visualmente | VERIFICADO |
 | Respuestas a las 3 preguntas de investigación | `informe.pdf`, sección 7 | Revisión del PDF | VERIFICADO |
 | Mapas HTML de ≥ 3 asignaciones | `mapas/` | 4 mapas + resumen JSON | VERIFICADO |
@@ -88,12 +88,72 @@ Evidencias principales: `python -m pytest -q` → **52 passed** (0 omitidas); `b
 | Estructuras propias (5) | Quadtree, Dijkstra y Haversine propios, correctos y con la nomenclatura | Secciones 1–2; `tests/test_quadtree.py`, `tests/test_rutas.py`; prueba AST de librerías prohibidas |
 | Funcionalidad completa (4) | RF-01 a RF-09, con mapa y simulación demostrados en vivo | Sección 1; web + centro de operaciones; `mapas/` |
 | Complejidad y benchmark (3) | Big-O justificado por operación, contrastado con mediciones, gráficos interpretados | `informe.pdf` secciones 3–5; `benchmark/resultados/` |
-| Pruebas automatizadas (2) | ≥ 10 casos con casos límite; todos pasan | 52 pruebas, todas pasan |
+| Pruebas automatizadas (2) | ≥ 10 casos con casos límite; todos pasan | 86 pruebas (V3), todas pasan |
 | Repositorio y calidad (2) | README claro, instalación reproducible, commits de todos, código modular | README, Docker, módulos separados; commits del equipo **pendientes** |
 | Sustentación individual (4) | Explicar cualquier parte y resolver la modificación en vivo | `presentacion/index.html` (preguntas difíciles y ejercicios); **depende de cada integrante** |
 | Retos opcionales (+2) | A*, hora punta, varios pasajeros, H3 | Sección 4 |
 
-## 7. Bloqueos externos encontrados y cómo resolverlos
+## 7. Ampliación V2 (sitio comercial, operaciones y monitoreo)
+
+Referencia recuperable del estado anterior: etiqueta Git local `v1.0-base` (= `origin/main` antes de la V2).
+
+| Requisito V2 | Código | Prueba / evidencia | Estado |
+|---|---|---|---|
+| Algoritmos y RF-01..RF-09 intactos | `estructuras/`, `algoritmos/` sin cambios; `UbicadorRed` extraído del Despachador con el mismo comportamiento | 52 pruebas de la V1 siguen pasando; mapas regenerados con `resumen_mapas.json` idéntico al de la V1; benchmark de rutas 300/300 idénticas a networkx; Quadtree y H3 idénticos a la lineal en 300/3 000/30 000 (60 consultas de control) | VERIFICADO |
+| Sitio multipágina con cabecera y footer compartidos | `frontend/js/plantilla.js` + 10 páginas | `test_todas_las_paginas_usan_cabecera_y_pie_compartidos`; E2E: cabecera y footer en las 10 páginas | VERIFICADO |
+| Footer corporativo oscuro de 4 columnas + franja inferior | `plantilla.js:pie()`, `estilos.css` (`.pie`) | Capturas de escritorio, tableta y móvil. Sin RUC, teléfonos, correos ni logos de pago; único enlace social: repositorio real del proyecto | VERIFICADO |
+| Sin enlaces rotos | Todas las páginas | `test_sin_enlaces_internos_rotos`; E2E: 10 URL internas con respuesta 200 | VERIFICADO |
+| Sin información técnica en páginas públicas | `frontend/*.html`, `plantilla.js` | `test_paginas_publicas_sin_terminos_tecnicos` (texto visible) | VERIFICADO |
+| Inicio: hero, pedido rápido, mapa, cifras reales, beneficios, pasos, cobertura, FAQ, CTA | `index.html`, `js/inicio.js`, `GET /api/estadisticas` | E2E: cifras desde la API; pedido rápido prellena `viaje.html`. Cifras rotuladas como escenario simulado | VERIFICADO |
+| Solicitar viaje: dirección, coordenadas, mapa, validación, búsqueda, candidatos, ETA, ruta, mensajes | `viaje.html`, `js/viaje.js`, `js/comun.js:SelectorLugar` | E2E: sugerencias, coordenadas, tarifa previa, 5 candidatos con el elegido marcado, punto en el mar rechazado | VERIFICADO |
+| Seguimiento con posición, ruta, ETA, progreso y finalización | `seguimiento.html`, `js/seguimiento.js`; `metros_totales_fase` en `GET /api/viajes/{id}` | E2E: el estado y el progreso avanzan con la simulación; cancelación verificada con la simulación en pausa | VERIFICADO |
+| Historial con filtros, fechas, conductor, ETA y detalle | `historial.html`, `js/historial.js`; filtros `estado` y `antes_de` | E2E: filtro «cancelados», vista tabla, modal con mapa y candidatos, cierre con Escape | VERIFICADO |
+| Cobertura con mapa y límites | `cobertura.html`, `GET /api/cobertura/verificar` | `test_tarifas_cobertura_y_estadisticas`; E2E: punto fuera, punto dentro, capa de calles | VERIFICADO |
+| Tarifas estimadas conectadas a distancia y tiempo reales | `simulacion/tarifas.py`, `POST /api/tarifas/estimar`, `tarifas.html` | `test_tarifa_formula_y_minimo`, `test_estimacion_usa_ruta_real_y_hora_punta`; E2E: tarifa a las 08:00. Rotulada como estimación, sin pasarela de pago | VERIFICADO |
+| Ayuda, Sobre LimaGo, Legal (privacidad, términos, simulación) | `ayuda.html`, `nosotros.html`, `legal.html` | E2E: buscador de ayuda. Sin empresa, RUC, teléfonos ni correos inventados | VERIFICADO |
+| Centro de operaciones protegido | `operaciones.html`, `js/operaciones.js`, `verificar_operador` en `api/main.py` | `test_operaciones_requieren_token`, `test_operaciones_deshabilitadas_sin_token_configurado`; E2E: código incorrecto rechazado; Docker: 401 sin código, 200 con código | VERIFICADO |
+| Configuración de escenario (hora punta, hora, demanda, k) y lotes de pasajeros | `Simulador.configurar`, comandos `configurar` y `lote_aleatorio` | `test_configuracion_del_escenario_se_conserva`, `test_resumen_configuracion_y_lote_aleatorio`; E2E en Docker: lote de 10 con espera total 12 min (óptima) frente a 15 min (por orden de llegada) | VERIFICADO |
+| UX: menú responsive, carga, validación, notificaciones, modales, vacíos, errores, teclado, tema claro/oscuro | `estilos.css`, `plantilla.js` | E2E: menú móvil, sin desplazamiento horizontal a 390 y 768 px en las 10 páginas, «Saltar al contenido» con Tab, tema persistente, 0 errores de consola | VERIFICADO |
+| Migración de base de datos de la V1 | `BaseDatos._migrar` | `test_migracion_agrega_columnas_nuevas` (SQLite); PostgreSQL real con volumen de la V1: columnas añadidas e instantánea restaurada (turno 1267) | VERIFICADO |
+| Prometheus con métricas reales | `api/metricas.py`, `docker/prometheus/prometheus.yml` | `test_metricas_prometheus`; Docker: objetivos `backend`, `worker` y `prometheus` en estado *up*; consultas con datos reales | VERIFICADO |
+| Grafana aprovisionado con dashboard funcional | `docker/grafana/` | Docker: datasource y dashboard «LimaGo · Operación» creados automáticamente; 14 paneles, ninguno con «No data» tras generar tráfico; 401 sin credenciales | VERIFICADO |
+| Métricas no públicas | `docker/nginx.conf` | `http://localhost:8080/metrics` → 404; Prometheus y Grafana publicados solo en 127.0.0.1 | VERIFICADO |
+| Redis | — | Evaluado y descartado con justificación en `docs/ARQUITECTURA.md` | NO APLICA |
+| Docker Desktop en Windows con 6 servicios | `compose.yaml`, `scripts/iniciar_docker.ps1` | Verificado en Linux (Docker 29.9.2); no hay Windows en este entorno | IMPLEMENTADO SIN VERIFICAR |
+| Referencia visual del footer | — | No se recibió la imagen de referencia; el diseño sigue la distribución descrita (oscuro, varias columnas y franja inferior) | IMPLEMENTADO SIN VERIFICAR contra la imagen |
+
+## 7b. Ampliación V3 (Lima Metropolitana, aceptación, tarifa dinámica, alertas)
+
+Origen de cada mejora (requisito del profesor, feedback de la grabación o propuesta del equipo) en [`MEJORAS_V3.md`](MEJORAS_V3.md). Verificación del 7-nov-2026 en el equipo de desarrollo (Linux).
+
+| Requisito V3 | Código | Prueba / evidencia | Estado |
+|---|---|---|---|
+| Algoritmos propios y RF-01..RF-09 intactos | `estructuras/`, `algoritmos/dijkstra.py`; `ajustes_academicos()` en benchmarks, mapas e informe | 65 pruebas previas pasan; mapas regenerados con asignaciones, ETA y conteos idénticos a la V1 (solo aparecen estados nuevos con valor 0); benchmarks 400/400 y 300/300 | VERIFICADO |
+| Cobertura de Lima Metropolitana con polígono real | `datos/red_metropolitana.py`, `estructuras/geografia.py:PoligonoCobertura`, `simulacion/ubicacion.py` | `test_poligono_propio_igual_a_shapely`, `test_cobertura_metropolitana_y_distritos`; 152 441 nodos, 50 distritos | VERIFICADO |
+| Miraflores como escenario académico configurable | `config/ajustes.py:ESCENARIOS`, `LIMAGO_ESCENARIO` | Pruebas académicas con el escenario `miraflores` | VERIFICADO |
+| Caché y carga eficiente del grafo | `GrafoVial.guardar_compacto` / `cargar_compacto` (.npz) | Carga 2,3 s; ida y vuelta idéntica | VERIFICADO |
+| Geolocalización con permiso, sin repetir ni bloquear | `js/viaje.js` (`limago.geo`), `GET /api/ubicacion/ajustar` | E2E: concedida (Comas) y no concedida (editor visible) | VERIFICADO (emulada; sin GPS físico) |
+| Autocompletado de direcciones reales y ambigüedad | `simulacion/geocodificacion.py`, `SelectorLugar` | Pruebas de geocodificación; 409 con opciones | VERIFICADO |
+| Flujo cotizar → confirmar → oferta → aceptación → seguimiento → historial | `POST /api/viajes/cotizar`, `POST /api/viajes`, worker | `test_cotizar_confirmar_alerta`; E2E Comas → Miraflores | VERIFICADO |
+| Estados de conductor y transiciones válidas | `simulacion/modelos.py:TRANSICIONES` | `test_transiciones_validas_e_invalidas`, `test_conductor_desconectado_no_es_candidato` | VERIFICADO |
+| Motor de aceptación (aceptar, rechazar, vencer, reproducible) | `simulacion/aceptacion.py` | `test_aceptacion_automatica_y_comparacion_academica`, `test_rechazo_pasa_al_siguiente_candidato`, `test_oferta_vence_si_no_hay_respuesta`, `test_decisiones_reproducibles_e_independientes_del_orden` | VERIFICADO |
+| Sin doble asignación | worker único dueño de la flota | `test_sin_doble_asignacion_con_ofertas_concurrentes` | VERIFICADO |
+| Función académica de menor ETA conservada | `Despachador.asignar` | `test_funcion_academica_sigue_asignando_menor_eta`; panel de operaciones compara ambas | VERIFICADO |
+| Animación sobre la ruta con rumbo; backend como fuente de verdad | `GrafoVial.punto_en_tramo`, `geometria_desde`; `VehiculoAnimado` | `test_posicion_interpolada_coherente`; E2E: el vehículo avanza, se detiene en pausa y sigue al reanudar | VERIFICADO |
+| Otros vehículos ocultos al público; flota completa en operaciones | `seguimiento.js`, `inicio.js` (solo disponibles cercanos), `operaciones.js` | E2E: 4 capas en seguimiento; > 1 000 marcadores en operaciones. `/api/flota` sigue siendo público (lo usan pruebas académicas) | VERIFICADO (con esa salvedad) |
+| Tarifa dinámica en soles con desglose y sin doble congestión | `simulacion/tarifas.py` | `test_tarifa_componentes_unidades_y_tope_de_recogida`, `test_congestion_no_se_cuenta_dos_veces` | VERIFICADO |
+| Precio fijado al confirmar (cotización de 5 min; 404/409/410) | `api/main.py`, tabla `cotizaciones` | `test_cotizar_confirmar_alerta` | VERIFICADO |
+| Tráfico automático por hora de Lima, rotulado como simulado; 8:00 y 15:00 | `simulacion/reloj.py`, `GET /api/trafico`, `Simulador.configurar` | `test_trafico_automatico_con_hora_de_lima` | VERIFICADO |
+| Alerta de seguridad simulada, deduplicada, unidad más cercana por Quadtree | `simulacion/alertas.py`, `POST /api/viajes/{id}/alerta`, panel de operaciones | `test_cotizar_confirmar_alerta`, `test_alerta_rechazada_sin_viaje_activo_y_cancelacion_en_busqueda`; E2E: alerta, duplicado y «Atender» | VERIFICADO |
+| Rutas entre distritos y rendimiento metropolitano | `benchmark/benchmark_metropolitano.py` | `test_rutas_entre_distritos_y_rendimiento_metropolitano`, `test_quadtree_metropolitano_exacto`; Dijkstra = networkx 20/20 | VERIFICADO |
+| Recuperación tras reinicio | instantánea versionada | `test_simulacion_v3_ciclo_completo_y_recuperacion`; Docker: worker reiniciado y restaurado en el mismo turno | VERIFICADO |
+| 6 servicios Docker, memoria suficiente | `compose.yaml` (límite 1,5 GB backend/worker) | Docker 29.9.2 en Linux: 6 `healthy`; E2E 30/30 contra el puerto 8080 | VERIFICADO (Linux) / SIN VERIFICAR en Windows |
+| CDN evaluado; caché HTTP y compresión | `docker/nginx.conf`, [`CDN_Y_RENDIMIENTO.md`](CDN_Y_RENDIMIENTO.md) | `curl -I`: gzip, `no-cache` en HTML, 7 y 30 días en estáticos. **No hay CDN configurado** | VERIFICADO |
+| Métricas y paneles nuevos | `limago_ofertas_total`, `limago_aceptacion_coincide_academico_total`, `limago_alertas_total`; 3 paneles nuevos | Prometheus lee los 3 objetivos | VERIFICADO (paneles sin revisar visualmente) |
+| Sin términos técnicos en el sitio público | `frontend/` | `test_paginas_publicas_sin_terminos_tecnicos` | VERIFICADO |
+| Presentación actualizada | `presentacion/index.html` | Sección V3 añadida | VERIFICADO |
+
+## 8. Bloqueos externos encontrados y cómo resolverlos
 
 1. **Overpass no respondía** desde el entorno de desarrollo (cortes de conexión y tiempos de espera). Se resolvió con la ruta alternativa de la API oficial de OSM, aplicando el mismo filtro y los mismos pasos de osmnx. Para probar la ruta Overpass en otro equipo: `python -m datos.red_vial --forzar --fuente overpass`.
 2. **Windows/Docker Desktop no disponible** en este entorno. Para verificarlo: en Windows con Docker Desktop, `powershell -ExecutionPolicy Bypass -File scripts\iniciar_docker.ps1` y abrir `http://localhost:8080`.

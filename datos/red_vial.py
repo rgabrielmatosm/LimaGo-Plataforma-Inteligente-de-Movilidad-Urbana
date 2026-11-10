@@ -17,7 +17,7 @@ import logging
 import time
 from pathlib import Path
 
-from config.ajustes import Ajustes, cargar_ajustes
+from config.ajustes import Ajustes, ajustes_academicos, cargar_ajustes
 
 registro = logging.getLogger("limago.red_vial")
 
@@ -181,9 +181,20 @@ def cargar_grafo_networkx(ajustes: Ajustes | None = None, forzar_descarga: bool 
 
 
 def cargar_red_vial(ajustes: Ajustes | None = None, forzar_descarga: bool = False):
-    """Carga la red local y la convierte a la estructura propia ``GrafoVial``."""
+    """Carga la red del escenario y la convierte a la estructura propia ``GrafoVial``.
+
+    * ``.graphml`` (Miraflores, RF-01): se lee con osmnx y se convierte.
+    * ``.npz`` (Lima Metropolitana, V3): formato compacto propio; si falta, se indica
+      cómo prepararlo con ``python -m datos.red_metropolitana``.
+    """
     from algoritmos.grafo import GrafoVial
 
+    ajustes = ajustes or cargar_ajustes()
+    ruta = Path(ajustes.ruta_grafo)
+    if ruta.suffix == ".npz":
+        if not ruta.exists():
+            raise FileNotFoundError(f"No existe {ruta}. Prepárela con: python -m datos.red_metropolitana")
+        return GrafoVial.cargar_compacto(ruta)
     return GrafoVial.desde_networkx(cargar_grafo_networkx(ajustes, forzar_descarga))
 
 
@@ -194,7 +205,7 @@ def _principal() -> None:
                         help="auto: Overpass y, si falla, API oficial de OSM")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
-    ajustes = cargar_ajustes()
+    ajustes = ajustes_academicos()  # esta herramienta prepara la red académica de Miraflores (RF-01)
     if args.fuente == "api-osm" and (args.forzar or not Path(ajustes.ruta_grafo).exists()):
         guardar_red(descargar_red_api_osm(ajustes), Path(ajustes.ruta_grafo))
     elif args.fuente == "overpass" and (args.forzar or not Path(ajustes.ruta_grafo).exists()):

@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tarifas estimadas · LimaGo</title>
+  <meta name="description" content="Calcula una tarifa orientativa en soles para tu viaje en Lima.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
+</head>
+<body data-pagina="tarifas">
+<div data-cabecera></div>
+
+<main id="contenido">
+  <header class="encabezado-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="index.html">Inicio</a> › Tarifas</nav>
+      <h1>Tarifas estimadas</h1>
+      <p>Calcula cuánto costaría tu viaje antes de pedirlo. Usamos la distancia y el tiempo del recorrido por las calles, con el tráfico de la hora actual ya considerado.</p>
+    </div>
+  </header>
+
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor dividido" style="align-items:start">
+      <div class="tarjeta">
+        <form id="estimador" novalidate>
+          <div id="selector-origen"></div>
+          <div id="selector-destino"></div>
+          <p class="ayuda" id="trafico-actual" style="margin:0 0 12px">Consultando el tráfico de la hora…</p>
+          <button class="boton bloque grande" type="submit" id="calcular">Calcular tarifa</button>
+        </form>
+        <div id="resultado" aria-live="polite"></div>
+      </div>
+      <div>
+        <div class="mapa-cobertura" style="height:460px;position:relative">
+          <div id="mapa" style="position:absolute;inset:0"></div>
+          <div class="modo-mapa oculto" id="modo-mapa" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion alterna" aria-labelledby="titulo-calculo">
+    <div class="contenedor dividido" style="align-items:start">
+      <div>
+        <span class="antetitulo">Cómo se calcula</span>
+        <h2 id="titulo-calculo">Una tarifa simple y transparente</h2>
+        <p class="subtitulo">La tarifa estimada suma un monto base, la distancia del viaje, el tiempo estimado y, si el conductor más cercano está lejos, un cargo de recogida con tope. El tráfico de la hora solo cambia el tiempo, nunca la distancia.</p>
+        <div class="aviso advertencia">Las tarifas son <strong>orientativas</strong>. LimaGo es un servicio demostrativo: no realiza cobros ni solicita datos de pago.</div>
+      </div>
+      <div class="tabla-envoltura">
+        <table>
+          <caption class="sr">Componentes de la tarifa</caption>
+          <thead><tr><th scope="col">Concepto</th><th scope="col">Monto</th></tr></thead>
+          <tbody id="tabla-tarifas"><tr><td colspan="2"><div class="esqueleto" style="height:20px"></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-pie></div>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/comun.js?v=3"></script>
+<script src="js/tarifas.js?v=3"></script>
+</body>
+</html>

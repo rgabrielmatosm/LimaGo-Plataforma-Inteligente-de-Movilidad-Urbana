@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sobre LimaGo</title>
+  <meta name="description" content="Qué es LimaGo y cómo funciona su servicio en Lima Metropolitana.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
+</head>
+<body data-pagina="nosotros">
+<div data-cabecera></div>
+
+<main id="contenido">
+  <header class="encabezado-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="index.html">Inicio</a> › Sobre LimaGo</nav>
+      <h1>Movilidad urbana pensada para Lima</h1>
+      <p>LimaGo conecta a quien necesita moverse con el conductor que puede llegar antes, usando el recorrido real por las calles del distrito.</p>
+    </div>
+  </header>
+
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor dividido" style="align-items:start">
+      <div class="prosa">
+        <h2 style="margin-top:0">Nuestra idea</h2>
+        <p>En una ciudad con calles de un solo sentido, avenidas con giros restringidos y manzanas que obligan a rodear, el conductor más cercano en el mapa no siempre es el que llega primero. LimaGo compara a los conductores disponibles según el trayecto que realmente tendrían que recorrer y te asigna al más rápido.</p>
+        <h2>Qué ofrecemos</h2>
+        <ul>
+          <li>Punto de recojo detectado con tu permiso, o por dirección, coordenadas o tocando el mapa.</li>
+          <li>Tarifa con desglose antes de confirmar.</li>
+          <li>Oferta del viaje al conductor que llega antes y, si no acepta, al siguiente.</li>
+          <li>Botón de alerta conectado al centro de operaciones (demostrativo).</li>
+          <li>Seguimiento en vivo del conductor y de la ruta.</li>
+          <li>Tarifa orientativa antes de pedir.</li>
+          <li>Historial completo de solicitudes.</li>
+        </ul>
+        <h2>Dónde estamos</h2>
+        <p>El servicio cubre Lima Metropolitana: los 43 distritos de la provincia de Lima y los 7 del Callao. Consulta el <a href="cobertura.html">mapa de cobertura</a> para ver los límites exactos.</p>
+      </div>
+      <aside class="tarjeta">
+        <div class="icono-caja" data-icono="info"></div>
+        <h2 style="font-size:1.2rem;margin:0 0 8px">Un servicio de demostración</h2>
+        <p class="texto-2">LimaGo es una plataforma de simulación de movilidad urbana. Las calles, las distancias y los sentidos de circulación provienen de datos cartográficos reales, pero <strong>los conductores, los vehículos y la demanda son simulados</strong>.</p>
+        <p class="texto-2">No es una empresa de transporte, no presta servicios reales y no realiza cobros.</p>
+        <a class="boton secundario bloque" href="legal.html#simulacion">Más sobre la simulación</a>
+      </aside>
+    </div>
+  </section>
+
+  <section class="seccion alterna">
+    <div class="contenedor">
+      <span class="antetitulo">Nuestros principios</span>
+      <h2>Lo que nos importa</h2>
+      <div class="rejilla-3" style="margin-top:24px">
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="reloj"></div><h3>Tiempo de espera real</h3><p>Medimos la llegada por las calles, no en línea recta.</p></article>
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="escudo"></div><h3>Transparencia</h3><p>Indicamos con claridad qué datos son reales y cuáles son simulados.</p></article>
+        <article class="tarjeta plana beneficio"><div class="icono-caja" data-icono="persona"></div><h3>Sin registro</h3><p>No pedimos cuentas ni datos personales para pedir un viaje.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion">
+    <div class="contenedor">
+      <div class="banda">
+        <div><h2>Pruébalo ahora</h2><p>Pide un viaje y sigue a tu conductor en el mapa.</p></div>
+        <a class="boton grande" href="viaje.html">Pedir un viaje</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-pie></div>
+<script>document.querySelectorAll("[data-icono]").forEach((n) => { n.innerHTML = Plantilla.icono(n.dataset.icono); });</script>
+</body>
+</html>

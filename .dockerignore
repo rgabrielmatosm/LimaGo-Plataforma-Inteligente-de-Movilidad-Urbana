@@ -6,6 +6,8 @@
 datos/cache_osmnx
 datos/*.db*
 datos/*.osm
+datos/lima/*.osm
+datos/fuentes
 mapas
 benchmark
 tests

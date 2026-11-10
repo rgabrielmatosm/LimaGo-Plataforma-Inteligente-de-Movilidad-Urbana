@@ -23,7 +23,7 @@ import time
 
 from benchmark.utilidades import (AQUA, AZUL, NARANJA, TEXTO_SECUNDARIO, CARPETA_RESULTADOS, cronometrar,
                                   entorno, estilo_graficos, guardar_json)
-from config.ajustes import cargar_ajustes
+from config.ajustes import ajustes_academicos
 from datos.red_vial import cargar_red_vial
 from estructuras.busqueda_lineal import buscar_k_cercanos_lineal
 from estructuras.quadtree import Quadtree
@@ -51,7 +51,7 @@ def main(consultas: int = CONSULTAS, repeticiones: int = REPETICIONES) -> dict:
 
     from experimental.indice_h3 import IndiceH3
 
-    ajustes = cargar_ajustes()
+    ajustes = ajustes_academicos()
     grafo = cargar_red_vial(ajustes)
     limites = grafo.limites()
     r = random.Random(SEMILLA_CONSULTAS)

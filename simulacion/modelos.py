@@ -6,13 +6,43 @@ from enum import Enum
 
 
 class EstadoConductor(str, Enum):
+    """Estados explícitos del conductor (V3). «Ocupado» agrupa a todos menos disponible y desconectado."""
+
+    DESCONECTADO = "desconectado"            # fuera de servicio: sigue en la flota y en el Quadtree
     DISPONIBLE = "disponible"
-    EN_CAMINO = "en_camino"   # ocupado: va a recoger al pasajero
-    EN_VIAJE = "en_viaje"     # ocupado: lleva al pasajero a su destino
+    OFERTA_PENDIENTE = "oferta_pendiente"    # recibió una oferta y aún no responde (reservado)
+    ACEPTADO = "aceptado"                    # aceptó; pasa a «en camino» al calcular su ruta
+    EN_CAMINO = "en_camino"                  # va a recoger al pasajero
+    ESPERANDO_RECOGIDA = "esperando_recogida"  # llegó al punto de recojo
+    EN_VIAJE = "en_viaje"                    # lleva al pasajero a su destino
+    FINALIZADO = "finalizado"                # terminó el viaje; vuelve a estar disponible
 
     @property
     def ocupado(self) -> bool:
-        return self is not EstadoConductor.DISPONIBLE
+        return self not in (EstadoConductor.DISPONIBLE, EstadoConductor.DESCONECTADO)
+
+
+E = EstadoConductor
+#: Transiciones válidas. Cualquier otra se rechaza (evita estados contradictorios).
+TRANSICIONES: dict[EstadoConductor, frozenset[EstadoConductor]] = {
+    E.DESCONECTADO: frozenset({E.DISPONIBLE}),
+    E.DISPONIBLE: frozenset({E.DESCONECTADO, E.OFERTA_PENDIENTE, E.EN_CAMINO}),  # EN_CAMINO: asignación académica directa
+    E.OFERTA_PENDIENTE: frozenset({E.ACEPTADO, E.DISPONIBLE}),                 # DISPONIBLE: rechazo o expiración
+    E.ACEPTADO: frozenset({E.EN_CAMINO, E.DISPONIBLE}),
+    E.EN_CAMINO: frozenset({E.ESPERANDO_RECOGIDA, E.EN_VIAJE, E.DISPONIBLE}),   # DISPONIBLE: cancelación
+    E.ESPERANDO_RECOGIDA: frozenset({E.EN_VIAJE, E.DISPONIBLE}),
+    E.EN_VIAJE: frozenset({E.FINALIZADO, E.DISPONIBLE}),
+    E.FINALIZADO: frozenset({E.DISPONIBLE}),
+}
+
+
+class TransicionInvalida(ValueError):
+    pass
+
+
+def validar_transicion(actual: EstadoConductor, nuevo: EstadoConductor) -> None:
+    if actual is not nuevo and nuevo not in TRANSICIONES[actual]:
+        raise TransicionInvalida(f"Transición no permitida: {actual.value} → {nuevo.value}")
 
 
 @dataclass
@@ -29,6 +59,8 @@ class Conductor:
     destino_nodo: int | None = None
     distancia_recorrida_m: float = 0.0
     avance_m: float = 0.0                              # metros acumulados hacia el siguiente nodo
+    politica: str = "automatica"                       # V3: respuesta a ofertas (ver simulacion/aceptacion.py)
+    espera_restante: int = 0                           # V3: turnos de espera en el punto de recojo
 
     @property
     def esta_disponible(self) -> bool:
@@ -51,6 +83,8 @@ class Conductor:
             "ruta": list(self.ruta),
             "distancia_recorrida_m": self.distancia_recorrida_m,
             "avance_m": self.avance_m,
+            "politica": self.politica,
+            "espera_restante": self.espera_restante,
         }
 
     @classmethod
@@ -66,6 +100,8 @@ class Conductor:
             destino_nodo=datos.get("destino_nodo"),
             distancia_recorrida_m=float(datos.get("distancia_recorrida_m", 0.0)),
             avance_m=float(datos.get("avance_m", 0.0)),
+            politica=datos.get("politica", "automatica"),
+            espera_restante=int(datos.get("espera_restante", 0)),
         )
 
 

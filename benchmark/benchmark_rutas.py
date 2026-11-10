@@ -24,7 +24,7 @@ from algoritmos.a_estrella import a_estrella, heuristica_haversine
 from algoritmos.dijkstra import dijkstra, distancias_hacia_destino, ruta_mas_corta
 from benchmark.utilidades import (AQUA, AZUL, NARANJA, TEXTO_SECUNDARIO, CARPETA_RESULTADOS, cronometrar, entorno,
                                   estilo_graficos, guardar_json)
-from config.ajustes import cargar_ajustes
+from config.ajustes import ajustes_academicos
 from datos.red_vial import cargar_grafo_networkx
 from algoritmos.grafo import GrafoVial
 
@@ -35,7 +35,7 @@ TOLERANCIA_M = 1e-6
 
 
 def main(pares: int = PARES, repeticiones: int = REPETICIONES) -> dict:
-    ajustes = cargar_ajustes()
+    ajustes = ajustes_academicos()
     grafo_nx = cargar_grafo_networkx(ajustes)
     grafo = GrafoVial.desde_networkx(grafo_nx)
     principal = sorted(grafo.componente_principal())

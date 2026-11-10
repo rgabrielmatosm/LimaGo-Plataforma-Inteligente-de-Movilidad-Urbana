@@ -75,8 +75,9 @@ def tiempo_arista(datos: DatosArista, hora: float) -> float:
 class PesosDinamicos:
     """Genera (y memoriza por cuarto de hora) las adyacencias ponderadas en segundos."""
 
-    def __init__(self, grafo: GrafoVial) -> None:
+    def __init__(self, grafo: GrafoVial, maximo_cache: int = 2) -> None:
         self.grafo = grafo
+        self.maximo_cache = maximo_cache
         self._cache: dict[float, tuple[Adyacencia, Adyacencia]] = {}
 
     @staticmethod
@@ -87,6 +88,8 @@ class PesosDinamicos:
         """Devuelve ``(adyacencia, inversa)`` con pesos en segundos para la hora dada."""
         clave = self.redondear_hora(hora)
         if clave not in self._cache:
+            while len(self._cache) >= self.maximo_cache:  # con el reloj real la hora cambia todo el día
+                self._cache.pop(next(iter(self._cache)))
             directa: Adyacencia = {n: [] for n in self.grafo.nodos}
             inversa: Adyacencia = {n: [] for n in self.grafo.nodos}
             for (u, v), datos in self.grafo.aristas.items():

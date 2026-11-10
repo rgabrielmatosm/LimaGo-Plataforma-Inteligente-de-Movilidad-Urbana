@@ -1,0 +1,2179 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LimaGo V3.0 · Presentación interactiva</title>
+<meta name="description" content="Sustentación académica de LimaGo V3.0: Plataforma Inteligente de Movilidad Urbana para Lima Metropolitana.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%230f766e' d='M16 2c-6.1 0-11 4.8-11 10.8C5 21 16 30 16 30s11-9 11-17.2C27 6.8 22.1 2 16 2z'/%3E%3Cpath fill='%23f26b3a' d='M11 13.2l9.6-4.4-4.4 9.6-1.3-3.9z'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#05100e; --bg2:#0a1c19; --panel:rgba(16,38,34,.78); --panel2:rgba(22,52,47,.9);
+  --borde:rgba(94,234,212,.16); --borde2:rgba(94,234,212,.32);
+  --texto:#e9f5f2; --texto2:#a9c7c0; --tenue:#6d8f88;
+  --turq:#2dd4bf; --turq2:#14b8a6; --marca:#0f766e; --naranja:#f26b3a; --amarillo:#fbbf24;
+  --rojo:#f05252; --azul:#60a5fa; --violeta:#a78bfa; --verde:#4ade80;
+  --fuente:"Segoe UI Variable Display","Segoe UI",Inter,"Helvetica Neue",Arial,system-ui,sans-serif;
+  --mono:"Cascadia Code","Cascadia Mono",Consolas,"SF Mono",Menlo,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#020807;color:var(--texto);font-family:var(--fuente);overflow:hidden}
+body{-webkit-font-smoothing:antialiased}
+button,select,input{font:inherit;color:inherit}
+
+/* ---------- escenario 16:9 escalado ---------- */
+#escenario{position:fixed;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;
+  background:radial-gradient(1200px 800px at 85% 10%,rgba(20,184,166,.13),transparent 60%),
+             radial-gradient(900px 700px at 0% 100%,rgba(242,107,58,.07),transparent 60%),
+             linear-gradient(160deg,var(--bg2),var(--bg) 55%);
+  overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.03)}
+#escenario::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
+  background-image:linear-gradient(rgba(94,234,212,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(94,234,212,.05) 1px,transparent 1px);
+  background-size:60px 60px;mask-image:radial-gradient(ellipse at 70% 40%,#000 20%,transparent 75%)}
+.marca-agua{position:absolute;right:56px;top:44px;display:flex;align-items:center;gap:12px;font-weight:700;font-size:24px;color:var(--texto2);z-index:3;letter-spacing:.2px}
+.marca-agua svg{width:30px;height:30px}
+.marca-agua b{color:var(--turq);font-weight:700}
+
+/* ---------- diapositivas ---------- */
+.slide{position:absolute;inset:0;padding:64px 100px 56px;opacity:0;visibility:hidden;transform:scale(1.015);
+  transition:opacity .75s ease,transform 1s cubic-bezier(.2,.7,.2,1),visibility 0s linear .75s}
+.slide.activa{opacity:1;visibility:visible;transform:none;transition:opacity .75s ease,transform 1s cubic-bezier(.2,.7,.2,1),visibility 0s}
+.slide [data-t]{opacity:0;transform:translateY(22px);transition:opacity .8s ease,transform .9s cubic-bezier(.2,.7,.2,1)}
+.slide [data-t].on{opacity:1;transform:none}
+.slide .visual[data-t]{transform:translateY(16px) scale(.975)}
+.slide .visual[data-t].on{transform:none}
+.slide.sin-transicion [data-t]{transition:none}
+
+.cab{position:relative;z-index:2;max-width:1500px}
+.kicker{display:inline-flex;align-items:center;gap:12px;font-size:23px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--turq)}
+.kicker i{display:inline-block;width:38px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--turq),transparent)}
+h1,h2{margin:0;letter-spacing:-.8px;line-height:1.06}
+h2{font-size:62px;font-weight:760;margin-top:10px;line-height:1.14;padding-bottom:4px}
+h2 em{font-style:normal;color:var(--turq)}
+.cuerpo{display:grid;grid-template-columns:720px 1fr;gap:56px;margin-top:30px;height:648px}
+.cuerpo.ancho{grid-template-columns:600px 1fr}
+.texto{display:flex;flex-direction:column;gap:20px;min-height:0}
+.idea{margin:0;font-size:31px;line-height:1.32;font-weight:560;color:#fff;padding-left:22px;border-left:5px solid var(--turq)}
+.idea b{color:var(--turq)}
+.ficha{margin:0;display:flex;flex-direction:column;gap:15px}
+.ficha>div{padding:14px 20px 15px;border-radius:16px;background:var(--panel);border:1px solid var(--borde)}
+.ficha dt{font-size:17px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--turq);margin-bottom:5px}
+.ficha dd{margin:0;font-size:24.5px;line-height:1.36;color:var(--texto)}
+.ficha.compacta{gap:10px}.ficha.compacta>div{padding:10px 18px 11px}.ficha.compacta dd{font-size:22px;line-height:1.32}
+.ficha dd b,.ficha dd strong{color:#fff}
+.ficha dd code,.app code,.idea code{font-family:var(--mono);font-size:.86em;color:#99f6e4;background:rgba(45,212,191,.1);padding:1px 7px;border-radius:6px}
+.visual{position:relative;margin:0;border-radius:24px;background:linear-gradient(180deg,rgba(16,40,36,.72),rgba(8,24,21,.8));border:1px solid var(--borde);
+  box-shadow:0 30px 80px -30px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden;min-height:0}
+.visual>svg,.visual>.lienzo{position:absolute;inset:0;width:100%;height:100%}
+.visual figcaption{position:absolute;left:22px;bottom:16px;font-size:17px;color:var(--tenue);letter-spacing:.3px;z-index:2}
+.ilustrativo{position:absolute;right:18px;top:16px;z-index:2;font-size:16px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--amarillo);background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);padding:5px 12px;border-radius:999px}
+.real{color:var(--verde);background:rgba(74,222,128,.08);border-color:rgba(74,222,128,.35)}
+.app{position:absolute;left:100px;right:100px;bottom:50px;margin:0;display:flex;gap:22px;align-items:center;padding:18px 28px;border-radius:20px;
+  background:linear-gradient(90deg,rgba(15,118,110,.35),rgba(15,118,110,.12));border:1px solid var(--borde2);font-size:24.5px;line-height:1.35}
+.app>b:first-child{flex:none;display:inline-flex;align-items:center;gap:10px;font-size:19px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--turq);padding-right:22px;border-right:1px solid var(--borde2)}
+.app>b:first-child svg{width:28px;height:28px}
+.app strong{color:#fff}
+.notas{display:none}
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chip{padding:9px 18px;border-radius:999px;border:1px solid var(--borde2);background:rgba(45,212,191,.08);font-size:22px;font-weight:600}
+.chip b{color:var(--turq)}
+.formula{font-family:"Cambria Math","Cambria","Times New Roman",serif;font-size:31px;line-height:1.5;color:#fff;text-align:center;padding:14px 18px;border-radius:16px;background:rgba(0,0,0,.25);border:1px dashed var(--borde2)}
+.formula .v{color:var(--turq);font-style:italic}
+.formula .o{color:var(--naranja);font-style:italic}
+.formula small{display:block;font-family:var(--fuente);font-size:18px;color:var(--texto2);margin-top:4px}
+
+/* ---------- elementos SVG ---------- */
+.t{fill:var(--texto);font-family:var(--fuente);font-size:22px;font-weight:600}
+.t2{fill:var(--texto2);font-family:var(--fuente);font-size:19px;font-weight:500}
+.t3{fill:var(--tenue);font-family:var(--fuente);font-size:16px;font-weight:600;letter-spacing:1px}
+.tm{fill:#99f6e4;font-family:var(--mono);font-size:19px}
+.tb{fill:#fff;font-family:var(--fuente);font-size:26px;font-weight:800}
+.tc{text-anchor:middle}
+.te{text-anchor:end}
+.via{stroke:#173631;stroke-width:16;stroke-linecap:round;fill:none}
+.via-l{stroke:#2b5a52;stroke-width:2;stroke-dasharray:10 12;fill:none}
+.via-f{stroke:#1f433d;stroke-width:3;fill:none;stroke-linecap:round}
+.manzana{fill:#0c211e;stroke:#12302b;stroke-width:1.5}
+.parque{fill:#0f2e22;stroke:#17452f}
+.ruta{fill:none;stroke:var(--turq);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.ruta-n{fill:none;stroke:var(--naranja);stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.recta{fill:none;stroke:#c7dbd6;stroke-width:3;stroke-dasharray:9 9}
+.arista{stroke:#3a6159;stroke-width:3.5;fill:none}
+.nodo{fill:#0b2420;stroke:var(--turq);stroke-width:3}
+.caja{fill:rgba(16,40,36,.95);stroke:var(--borde2);stroke-width:1.5}
+.brillo{filter:drop-shadow(0 0 8px rgba(45,212,191,.75))}
+.brillo-n{filter:drop-shadow(0 0 9px rgba(242,107,58,.8))}
+.pulso{animation:pulso 1.8s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulso{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.6);opacity:0}}
+.flota{animation:latido 2.6s ease-in-out infinite}
+@keyframes latido{50%{opacity:.35}}
+.html-svg{font-family:var(--fuente)}
+
+/* ---------- portada ---------- */
+.s-portada{padding:0}
+.s-portada .fondo{position:absolute;inset:0;width:100%;height:100%}
+.s-portada .velo{position:absolute;inset:0;background:linear-gradient(90deg,rgba(5,16,14,.97) 0%,rgba(5,16,14,.9) 45%,rgba(5,16,14,.2) 66%,transparent);pointer-events:none}
+.s-portada .contenido{position:absolute;left:120px;top:120px;width:1150px}
+.logo-grande{display:flex;align-items:center;gap:22px;margin-bottom:28px}
+.logo-grande svg{width:96px;height:96px;filter:drop-shadow(0 10px 30px rgba(45,212,191,.35))}
+.logo-grande span{font-size:30px;font-weight:700;color:var(--texto2);letter-spacing:.5px}
+.s-portada h1{font-size:150px;font-weight:800;letter-spacing:-4px;line-height:1;white-space:nowrap}
+.s-portada h1 b{background:linear-gradient(90deg,var(--turq),#99f6e4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.s-portada .sub{font-size:44px;font-weight:600;margin:18px 0 0;color:#dff7f2;white-space:nowrap}
+.s-portada .frase{font-size:30px;line-height:1.4;color:var(--texto2);margin:30px 0 34px;max-width:900px}
+.s-portada .chips{flex-wrap:nowrap}
+.s-portada .frase b{color:#fff}
+.s-portada .pie{position:absolute;left:120px;bottom:70px;font-size:21px;color:var(--tenue);letter-spacing:.5px}
+
+/* ---------- teléfono (diapositiva 17) ---------- */
+.telefono{position:absolute;left:31%;top:50%;width:330px;height:600px;margin:-300px 0 0 -165px;border-radius:44px;background:#030a09;border:3px solid #2b4943;
+  box-shadow:0 30px 60px -20px #000,inset 0 0 0 7px #0b1715;padding:22px 16px 18px;font-size:16px;color:#14201e}
+.telefono .pantalla{position:relative;height:100%;border-radius:28px;overflow:hidden;background:#f3f7f6}
+.telefono .barra-app{height:46px;display:flex;align-items:center;gap:8px;padding:0 14px;background:#fff;border-bottom:1px solid #dfe8e6;font-weight:700;color:#0f766e}
+.telefono .barra-app svg{width:22px;height:22px}
+.tel-mapa{position:absolute;left:0;right:0;top:46px;height:250px;background:#e4ece9}
+.tel-panel{position:absolute;left:0;right:0;bottom:0;top:286px;background:#fff;border-radius:18px 18px 0 0;padding:14px;box-shadow:0 -6px 18px rgba(0,0,0,.08)}
+.tel-fila{display:flex;align-items:center;gap:8px;padding:9px 10px;border:1px solid #dfe8e6;border-radius:12px;margin-bottom:8px;font-size:15px;background:#fff}
+.tel-fila .p{width:10px;height:10px;border-radius:50%;flex:none}
+.tel-sug{border:1px solid #dfe8e6;border-radius:12px;overflow:hidden;font-size:14px;margin-top:-4px}
+.tel-sug div{padding:7px 10px;border-bottom:1px solid #eef3f2}
+.tel-sug div.sel{background:#d7efec;font-weight:700}
+.tel-precio{font-size:30px;font-weight:800;color:#0f1f1c}
+.tel-boton{margin-top:10px;text-align:center;padding:11px;border-radius:12px;background:#0f766e;color:#fff;font-weight:700;transition:transform .2s}
+.tel-boton.pulsado{transform:scale(.94);background:#0b5d57}
+.tel-des{font-size:13px;color:#4b5f5b;display:flex;justify-content:space-between;padding:2px 0}
+.tel-paso{display:none}
+.tel-paso.ver{display:block}
+.cursor-txt{display:inline-block;width:2px;height:16px;background:#0f766e;vertical-align:-3px;animation:latido 1s steps(2) infinite}
+.pasos-flujo{display:flex;flex-direction:column;gap:12px}
+.pasos-flujo li{list-style:none;display:flex;align-items:center;gap:16px;font-size:24px;padding:11px 18px;border-radius:14px;border:1px solid var(--borde);background:var(--panel);color:var(--texto2);transition:all .4s}
+.pasos-flujo li span{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:19px;background:rgba(45,212,191,.12);color:var(--turq);flex:none}
+.pasos-flujo li.act{color:#fff;border-color:var(--turq);background:rgba(15,118,110,.4);transform:translateX(8px)}
+.pasos-flujo li.act span{background:var(--turq);color:#032b26}
+.pasos-flujo li.hecho span{background:var(--marca);color:#fff}
+
+/* ---------- tabla comparativa ---------- */
+.tabla{width:100%;border-collapse:separate;border-spacing:0;font-size:21px;border-radius:16px;overflow:hidden;border:1px solid var(--borde)}
+.tabla th,.tabla td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--borde)}
+.tabla th{background:rgba(15,118,110,.35);font-size:18px;letter-spacing:1px;text-transform:uppercase;color:#cffaf3}
+.tabla td{background:rgba(10,28,25,.7)}
+.tabla tr:last-child td{border-bottom:0}
+.si{color:var(--verde);font-weight:800}.no{color:var(--rojo);font-weight:800}
+
+/* ---------- cierre ---------- */
+.aportes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-content:start}
+.aporte{padding:18px 20px;border-radius:18px;background:var(--panel);border:1px solid var(--borde);font-size:23px;line-height:1.3;display:flex;gap:14px;align-items:flex-start}
+.aporte b{display:block;color:#fff;font-size:24px;margin-bottom:3px}
+.aporte .n{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(45,212,191,.14);color:var(--turq);font-weight:800}
+
+/* ---------- controles ---------- */
+#barra-total{position:fixed;left:0;top:0;height:4px;width:100%;z-index:30;background:rgba(255,255,255,.05)}
+#barra-total i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--marca),var(--turq));box-shadow:0 0 12px var(--turq)}
+#controles{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:18px;
+  background:rgba(4,16,14,.86);border:1px solid rgba(94,234,212,.22);backdrop-filter:blur(14px);box-shadow:0 18px 50px -12px rgba(0,0,0,.8);transition:opacity .45s,transform .45s;font-size:14px}
+#controles.oculto{opacity:0;transform:translate(-50%,24px);pointer-events:none}
+#controles button{display:inline-grid;place-items:center;width:40px;height:40px;border-radius:11px;border:0;background:transparent;cursor:pointer;color:#cfe9e4}
+#controles button:hover,#controles button:focus-visible{background:rgba(45,212,191,.16);color:#fff;outline:none}
+#controles button svg{width:21px;height:21px}
+#controles button.on{color:var(--turq);background:rgba(45,212,191,.12)}
+#controles .sep{width:1px;height:26px;background:rgba(94,234,212,.2);margin:0 4px}
+#controles .info{display:flex;flex-direction:column;gap:5px;min-width:150px;padding:0 6px}
+#controles .info .fila{display:flex;justify-content:space-between;gap:10px;font-variant-numeric:tabular-nums;color:#cfe9e4;font-weight:600}
+#controles .info .fila span:last-child{color:var(--tenue)}
+#prog-diapo{height:4px;border-radius:2px;background:rgba(255,255,255,.08);overflow:hidden}
+#prog-diapo i{display:block;height:100%;width:0;background:var(--turq)}
+#b-modo{width:auto!important;padding:0 12px;font-weight:700;font-size:13px;letter-spacing:.5px;gap:6px;display:inline-flex!important;align-items:center}
+#sel-vel{height:34px;border-radius:9px;border:1px solid rgba(94,234,212,.25);background:#0a1f1c;padding:0 6px;cursor:pointer;color:#cfe9e4}
+#estado-pausa{position:fixed;left:50%;top:26px;transform:translateX(-50%);z-index:35;padding:8px 18px;border-radius:999px;background:rgba(242,107,58,.15);border:1px solid rgba(242,107,58,.5);color:#ffd6c7;font-weight:700;font-size:15px;letter-spacing:1px;display:none}
+body.pausado #estado-pausa{display:block}
+body.pausado .slide *{animation-play-state:paused!important}
+
+/* paneles */
+.panel-lateral{position:fixed;top:0;bottom:0;right:0;width:min(520px,92vw);z-index:50;background:rgba(5,18,16,.97);border-left:1px solid rgba(94,234,212,.25);
+  transform:translateX(105%);transition:transform .4s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;box-shadow:-30px 0 60px -20px #000}
+.panel-lateral.abierto{transform:none}
+.panel-lateral header{display:flex;justify-content:space-between;align-items:center;padding:18px 22px;border-bottom:1px solid rgba(94,234,212,.15)}
+.panel-lateral header h3{margin:0;font-size:19px}
+.panel-lateral header button{border:0;background:transparent;color:#cfe9e4;font-size:26px;cursor:pointer;width:40px;height:40px;border-radius:10px}
+.panel-lateral header button:hover{background:rgba(45,212,191,.15)}
+.panel-lateral .contenido-panel{overflow:auto;padding:18px 22px 26px;font-size:17px;line-height:1.55;color:#d8ece8}
+#lista-diapos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;counter-reset:d}
+#lista-diapos li{display:flex;align-items:center;gap:8px}
+#lista-diapos button{flex:1;text-align:left;border:1px solid transparent;background:rgba(255,255,255,.03);border-radius:10px;padding:9px 12px;cursor:pointer;font-size:15.5px;color:#d8ece8}
+#lista-diapos button:hover{border-color:rgba(94,234,212,.3)}
+#lista-diapos li.act button{border-color:var(--turq);background:rgba(15,118,110,.35);color:#fff}
+#lista-diapos input{width:62px;height:34px;border-radius:8px;border:1px solid rgba(94,234,212,.25);background:#0a1f1c;text-align:right;padding:0 6px}
+.panel-lateral .nota-diapo{font-size:19px;line-height:1.6;color:#eaf6f3}
+.panel-lateral .atajos{margin-top:22px;font-size:14.5px;color:#9fbab4;border-top:1px solid rgba(94,234,212,.12);padding-top:14px}
+.panel-lateral kbd{display:inline-block;min-width:26px;padding:1px 7px;border-radius:6px;border:1px solid rgba(94,234,212,.3);background:#0a1f1c;font-family:var(--mono);font-size:13px;color:#cffaf3;text-align:center}
+.boton-txt{border:1px solid rgba(94,234,212,.3);background:rgba(45,212,191,.08);color:#d8ece8;border-radius:10px;padding:8px 14px;cursor:pointer}
+
+/* tarjeta de inicio */
+#inicio{position:fixed;right:40px;bottom:96px;z-index:45;width:400px;padding:24px 26px;border-radius:22px;background:rgba(4,16,14,.9);border:1px solid rgba(94,234,212,.3);
+  backdrop-filter:blur(14px);box-shadow:0 30px 70px -20px #000;transition:opacity .4s,transform .4s}
+#inicio.oculto{opacity:0;transform:translateY(20px);pointer-events:none}
+#inicio h3{margin:0 0 6px;font-size:21px}
+#inicio p{margin:0 0 16px;color:#a9c7c0;font-size:15px;line-height:1.5}
+#b-iniciar{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;border:0;border-radius:14px;padding:15px;font-size:18px;font-weight:800;cursor:pointer;color:#03221e;
+  background:linear-gradient(90deg,var(--turq),#99f6e4);box-shadow:0 10px 30px -8px rgba(45,212,191,.7)}
+#b-iniciar svg{width:20px;height:20px}
+#b-manual{width:100%;margin-top:10px;border:1px solid rgba(94,234,212,.3);background:transparent;border-radius:14px;padding:11px;cursor:pointer;color:#d8ece8;font-weight:600}
+#inicio small{display:block;margin-top:12px;color:#7fa19a;font-size:13px}
+
+@media (prefers-reduced-motion:reduce){
+  .slide,.slide [data-t]{transition:opacity .25s linear!important;transform:none!important}
+  .pulso,.flota,.cursor-txt{animation:none!important}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-logo" viewBox="0 0 32 32"><path fill="#0f766e" d="M16 2c-6.1 0-11 4.8-11 10.8C5 21 16 30 16 30s11-9 11-17.2C27 6.8 22.1 2 16 2z"/><path fill="#f26b3a" d="M11 13.2l9.6-4.4-4.4 9.6-1.3-3.9z"/><circle cx="16" cy="12.8" r="1.4" fill="#fff"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5" fill="currentColor"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M7 4.8v14.4a1 1 0 0 0 1.5.86l11.6-7.2a1 1 0 0 0 0-1.72L8.5 3.94A1 1 0 0 0 7 4.8z"/></symbol>
+    <symbol id="i-pausa" viewBox="0 0 24 24"><rect x="6" y="4" width="4.2" height="16" rx="1.2" fill="currentColor"/><rect x="13.8" y="4" width="4.2" height="16" rx="1.2" fill="currentColor"/></symbol>
+    <symbol id="i-ant" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-sig" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-reiniciar" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M5 5v5h5M5.6 15a7 7 0 1 0 1.2-7.6L5 10"/></symbol>
+    <symbol id="i-repetir" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 13.7-5.6L20 9M20 4v5h-5M20 12a8 8 0 0 1-13.7 5.6L4 15M4 20v-5h5"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-notas" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M6 3h9l4 4v14H6z"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M9 11h7M9 15h7M9 7h3"/></symbol>
+    <symbol id="i-voz" viewBox="0 0 24 24"><path fill="currentColor" d="M4 9h4l5-4v14l-5-4H4z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></symbol>
+    <symbol id="i-pantalla" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+    <marker id="flecha" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5eead4"/></marker>
+    <marker id="flecha-g" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4b7a71"/></marker>
+    <marker id="flecha-n" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f26b3a"/></marker>
+    <radialGradient id="g-halo"><stop offset="0" stop-color="#2dd4bf" stop-opacity=".55"/><stop offset="1" stop-color="#2dd4bf" stop-opacity="0"/></radialGradient>
+    <radialGradient id="g-halo-n"><stop offset="0" stop-color="#f26b3a" stop-opacity=".6"/><stop offset="1" stop-color="#f26b3a" stop-opacity="0"/></radialGradient>
+  </defs>
+</svg>
+
+<div id="barra-total"><i></i></div>
+<div id="estado-pausa">EN PAUSA · ESPACIO PARA CONTINUAR</div>
+
+<main id="escenario" aria-live="polite">
+<div class="marca-agua" id="marca-agua"><svg><use href="#i-logo"/></svg>Lima<b>Go</b>&nbsp;V3.0</div>
+
+<!-- 01 · PORTADA -->
+<section class="slide s-portada" data-dur="26" data-anim="portada" data-titulo="Portada">
+  <svg class="fondo" data-visual data-t="0" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice"></svg>
+  <div class="velo"></div>
+  <div class="contenido">
+    <div class="logo-grande" data-t=".3"><svg><use href="#i-logo"/></svg><span>Proyecto Integrador N.° 2 · Algoritmos y Estructura de Datos II</span></div>
+    <h1 data-t=".8">Lima<b>Go</b> V3.0</h1>
+    <p class="sub" data-t="1.6">Plataforma Inteligente de Movilidad Urbana</p>
+    <p class="frase" data-t="3">Asignamos a cada pasajero el conductor que <b>llega primero por las calles reales de Lima</b>, no el que solo parece más cercano en el mapa.</p>
+    <div class="chips" data-t="5">
+      <span class="chip"><b>50</b> distritos</span>
+      <span class="chip"><b>152&nbsp;441</b> intersecciones</span>
+      <span class="chip"><b>33&nbsp;084</b> km de vías</span>
+      <span class="chip"><b>86</b> pruebas automatizadas</span>
+    </div>
+  </div>
+  <p class="pie" data-t="6">Lima Metropolitana · Miraflores como escenario académico · Datos viales © colaboradores de OpenStreetMap</p>
+  <aside class="notas">Presentamos LimaGo versión tres. Es una plataforma de movilidad urbana que asigna conductores por el tiempo real de llegada sobre la red vial de Lima Metropolitana. La red tiene ciento cincuenta y dos mil intersecciones y treinta y tres mil kilómetros de vías. Miraflores se conserva como escenario académico, donde se miden los benchmarks exigidos por el curso.</aside>
+</section>
+
+<!-- 02 · PROBLEMÁTICA -->
+<section class="slide" data-dur="34" data-anim="problema" data-titulo="Problemática">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>02 · Problemática</span><h2 data-t=".2">El más cercano <em>no siempre</em> llega primero</h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">La <b>distancia en línea recta</b> y el <b>tiempo de llegada</b> son magnitudes distintas.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Qué ocurre</dt><dd>Un conductor puede estar a pocos metros del pasajero, pero separado por una calle de <b>sentido único</b>, una manzana o un parque que obliga a rodear.</dd></div>
+        <div data-t="4.6"><dt>Por qué importa</dt><dd>Asignar por cercanía geométrica produce esperas mayores. El criterio correcto es el <b>ETA</b>: tiempo estimado de llegada por la red vial.</dd></div>
+        <div data-t="6.2"><dt>Cómo se resuelve</dt><dd>Primero se filtran candidatos cercanos en línea recta (rápido) y después se mide su <b>camino real por calles</b> (preciso).</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Ejemplo ilustrativo</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="21"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>En Miraflores <strong>1&nbsp;833 de 2&nbsp;670</strong> tramos son de sentido único; en Lima Metropolitana, <strong>52&nbsp;067 de 401&nbsp;998</strong>. Por eso el ETA se calcula por calles.</span></p>
+  <aside class="notas">El conductor A está más cerca en línea recta, pero la calle en la que se encuentra es de sentido único hacia el norte y debe rodear el parque. El conductor B está más lejos en línea recta, pero tiene un camino directo y llega antes. Ese es el problema que resuelve el proyecto: separar la cercanía geométrica del tiempo real de llegada. En Miraflores, más de dos tercios de los tramos son de sentido único.</aside>
+</section>
+
+<!-- 03 · OBJETIVOS -->
+<section class="slide" data-dur="32" data-anim="objetivos" data-titulo="Objetivos">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>03 · Objetivos</span><h2 data-t=".2">Del Quadtree a la <em>experiencia del pasajero</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4"><b>Objetivo general:</b> asignar el conductor disponible con menor tiempo de llegada por la red vial real, con estructuras y algoritmos propios.</p>
+      <dl class="ficha">
+        <div data-t="3.2"><dt>Específicos</dt><dd>1. Indexar la flota con un <b>Quadtree</b> propio.<br>2. Calcular rutas con <b>Dijkstra</b> propio.<br>3. Elegir por <b>menor ETA</b> entre k candidatos.</dd></div>
+        <div data-t="4.8"><dt>Además</dt><dd>4. Simular la ciudad <b>por turnos</b>, de forma reproducible.<br>5. Ofrecerlo como un <b>servicio web</b> verificable y medido.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5.5"><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="20"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Cubre los requisitos <strong>RF-01 a RF-09</strong> del documento del curso y los <strong>cuatro retos opcionales</strong>: A*, hora punta, varios pasajeros y H3.</span></p>
+  <aside class="notas">El objetivo general es asignar el conductor con menor tiempo de llegada usando estructuras propias. Los objetivos específicos forman una cadena: indexar la flota con el Quadtree, calcular rutas con Dijkstra, elegir por menor ETA, simular la ciudad por turnos y ofrecer todo como un servicio web. La animación muestra cómo una solicitud recorre esa cadena.</aside>
+</section>
+
+<!-- 04 · ARQUITECTURA -->
+<section class="slide" data-dur="38" data-anim="arquitectura" data-titulo="Arquitectura general">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>04 · Arquitectura</span><h2 data-t=".2">El recorrido de una <em>solicitud</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Cada componente tiene <b>una sola responsabilidad</b> y la flota tiene <b>un solo dueño</b>.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Frontend · API</dt><dd><b>Nginx</b> sirve el sitio; <b>FastAPI</b> valida, cotiza y deja <b>comandos</b> en la base de datos.</dd></div>
+        <div data-t="4.4"><dt>Worker</dt><dd>Proceso que <b>posee la flota</b>: ejecuta los turnos, el Quadtree y Dijkstra, y aplica los comandos en orden.</dd></div>
+        <div data-t="5.8"><dt>PostgreSQL</dt><dd>Guarda solicitudes, cola de comandos e <b>instantánea versionada</b> de la simulación.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="6"><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="27"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Como solo el worker modifica la flota, <strong>no existen dos versiones</strong> de ella ni asignaciones duplicadas; tras un reinicio se restaura desde la instantánea.</span></p>
+  <aside class="notas">La solicitud sale del navegador, pasa por Nginx y llega a la API. La API no toca la flota: deja un comando en la base de datos. El worker, que es el único dueño de la flota, toma el comando, consulta el Quadtree y ejecuta Dijkstra, y guarda el resultado y una instantánea versionada. La API lee ese resultado y responde al navegador. Esta separación evita condiciones de carrera y permite recuperar el estado tras un reinicio.</aside>
+</section>
+
+<!-- 05 · OSM Y OSMNX -->
+<section class="slide" data-dur="36" data-anim="osm" data-titulo="OpenStreetMap y OSMnx">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>05 · Datos</span><h2 data-t=".2">De <em>OpenStreetMap</em> a un grafo de Lima</h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">La ciudad se convierte en un <b>grafo dirigido</b>: intersecciones y tramos con longitud real.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Qué es</dt><dd><b>OpenStreetMap</b>: mapa colaborativo y libre (licencia ODbL). <b>OSMnx</b>: librería Python que descarga calles y las modela como grafo.</dd></div>
+        <div data-t="4.6"><dt>Cómo se obtiene</dt><dd>Polígono del área → vías transitables en auto (<code>drive</code>) → grafo dirigido limpio y simplificado → <b>GrafoVial propio</b>.</dd></div>
+        <div data-t="6.2"><dt>Qué representa</dt><dd><b>Nodo</b> = intersección. <b>Arista</b> = tramo con sentido y longitud en metros.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo real">Datos reales del proyecto</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="24"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Límite oficial (relación OSM 12933390) y extracto BBBike + API de OSM. Se guarda en un <code>.npz</code> propio de 15,3 MB que carga en <strong>2,3 s</strong>.</span></p>
+  <aside class="notas">OpenStreetMap es un mapa libre construido por voluntarios. OSMnx descarga las calles transitables por autos dentro de un polígono y las convierte en un grafo dirigido. En la versión tres usamos el límite oficial de Lima Metropolitana: ciento cincuenta y dos mil cuatrocientas cuarenta y una intersecciones y cuatrocientos dos mil tramos dirigidos. Miraflores, con mil trescientas sesenta y ocho intersecciones, sigue siendo el escenario académico.</aside>
+</section>
+
+<!-- 06 · GRAFOS -->
+<section class="slide" data-dur="34" data-anim="grafo" data-titulo="Teoría de grafos">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>06 · Teoría de grafos</span><h2 data-t=".2">Vértices, aristas, pesos y <em>dirección</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Un grafo dirigido y ponderado modela <b>por dónde</b> y <b>a qué costo</b> se puede circular.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Definición</dt><dd>G = (V, E). <b>V</b>: vértices (intersecciones). <b>E</b>: aristas dirigidas u→v (tramos). <b>w(u,v)</b>: peso no negativo.</dd></div>
+        <div data-t="4.6"><dt>Direccionalidad</dt><dd>Si existe u→v pero no v→u, la calle es de <b>sentido único</b>: el camino más corto puede obligar a rodear.</dd></div>
+        <div data-t="6.2"><dt>Representación</dt><dd>Listas de adyacencia: <code>adyacencia[u] = [(v, metros)]</code> y su versión <b>invertida</b> para buscar hacia el pasajero.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Ejemplo ilustrativo</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="22"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span><code>GrafoVial</code> guarda coordenadas, adyacencia directa e inversa, longitud, tipo de vía y geometría de cada tramo. El peso es metros, o segundos cuando hay congestión.</span></p>
+  <aside class="notas">Un grafo dirigido tiene vértices y aristas con dirección. En nuestro caso, los vértices son intersecciones y las aristas son tramos de calle con su longitud en metros. Si un tramo es de sentido único, solo existe la arista en un sentido. En el ejemplo, el camino más corto ignorando el sentido pasaría de E a B, pero esa calle solo permite ir de B a E, por eso la ruta válida rodea por F.</aside>
+</section>
+
+<!-- 07 · QUADTREE -->
+<section class="slide" data-dur="40" data-anim="quadtree" data-titulo="Quadtree">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>07 · Estructura de datos · RF-03</span><h2 data-t=".2">Quadtree: dividir el espacio para <em>descartar</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">No se mide la distancia a todos los conductores: se <b>descartan regiones completas</b>.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Qué es</dt><dd>Árbol en el que cada nodo cubre un rectángulo; si supera su <b>capacidad</b>, se divide en <b>cuatro cuadrantes</b> (NO, NE, SO, SE).</dd></div>
+        <div data-t="4.6"><dt>Cómo busca</dt><dd>Búsqueda <b>best-first</b>: visita primero el cuadrante más prometedor y poda los que tienen una distancia mínima mayor que el k-ésimo mejor.</dd></div>
+        <div data-t="6.2"><dt>Por qué</dt><dd>Se adapta a la densidad: zonas con muchos conductores se subdividen más. La respuesta es <b>exacta</b>, igual que la búsqueda lineal.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Ejemplo ilustrativo · capacidad 3</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="30"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Capacidad 8 y profundidad máxima 18. Con 30&nbsp;000 conductores calcula <strong>~173 distancias</strong> por consulta en lugar de 30&nbsp;000, con <strong>400/400</strong> resultados idénticos a la búsqueda lineal.</span></p>
+  <aside class="notas">El Quadtree divide el espacio en cuatro cuadrantes cuando un nodo supera su capacidad. En el ejemplo la capacidad es tres para que se vea la subdivisión; en LimaGo es ocho. Para buscar los k más cercanos, la búsqueda visita primero el cuadrante más prometedor y descarta todos los cuadrantes cuya distancia mínima posible ya es mayor que el k-ésimo mejor encontrado. El resultado es exacto: lo verificamos contra la búsqueda lineal.</aside>
+</section>
+
+<!-- 08 · HAVERSINE Y HEAP -->
+<section class="slide" data-dur="40" data-anim="haversine" data-titulo="Haversine y heap">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>08 · Haversine y heap · RF-04</span><h2 data-t=".2">Haversine mide, el heap <em>selecciona</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4"><b>Haversine</b> da la distancia real sobre la Tierra; el <b>heap</b> conserva solo los k candidatos más cercanos.</p>
+      <div class="formula" data-t="3">a = sin²(<span class="v">Δφ</span>/2) + cos <span class="v">φ₁</span> · cos <span class="v">φ₂</span> · sin²(<span class="v">Δλ</span>/2)<br>d = 2<span class="o">R</span> · arcsin(√a)<small>φ: latitud · λ: longitud · R = 6&nbsp;371&nbsp;009 m (radio medio terrestre)</small></div>
+      <dl class="ficha">
+        <div data-t="5"><dt>Heap de máximos de tamaño k</dt><dd>La raíz es el <b>peor de los mejores</b>. Un candidato entra solo si es menor que la raíz: se reemplaza y se reordena en <b>O(log k)</b>.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="6.5"><span class="ilustrativo">Distancias ilustrativas · k = 5</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="31"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Haversine propia en <code>estructuras/geografia.py</code>; el Quadtree usa un heap para su cola best-first y otro para los k resultados (k = 5 en Miraflores, 8 en Lima).</span></p>
+  <aside class="notas">La fórmula de Haversine calcula la distancia del círculo máximo entre dos puntos usando latitudes y longitudes. A escala de una ciudad la diferencia con una fórmula plana es pequeña, pero Haversine es correcta en cualquier latitud. El heap de máximos de tamaño k mantiene los k mejores candidatos: su raíz es el peor de ellos, así que un nuevo candidato solo entra si es mejor que la raíz. Cada inserción cuesta logaritmo de k.</aside>
+</section>
+
+<!-- 09 · DIJKSTRA -->
+<section class="slide" data-dur="42" data-anim="dijkstra" data-titulo="Dijkstra">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>09 · Caminos mínimos · RF-05</span><h2 data-t=".2">Dijkstra: expandir siempre <em>lo más barato</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Con pesos <b>no negativos</b>, el nodo con menor distancia en la cola ya tiene su distancia <b>definitiva</b>.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Cómo funciona</dt><dd>Extrae del heap el nodo de menor distancia, lo <b>asienta</b> y <b>relaja</b> sus aristas: si d(u) + w(u,v) &lt; d(v), actualiza d(v).</dd></div>
+        <div data-t="4.6"><dt>Pesos no negativos</dt><dd>Una arista negativa podría mejorar un nodo ya asentado y romper la garantía. El código <b>rechaza</b> pesos negativos.</dd></div>
+        <div data-t="6.2"><dt>Complejidad</dt><dd>O((V + E) log V) con heap binario y borrado perezoso de entradas obsoletas.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Ejemplo ilustrativo</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="32"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Un solo Dijkstra sobre el <strong>grafo invertido</strong> desde el pasajero da el ETA de los k candidatos. En Miraflores: <strong>300/300</strong> distancias idénticas a NetworkX (diferencia 0 m).</span></p>
+  <aside class="notas">Dijkstra mantiene una cola de prioridad con distancias tentativas. Extrae el nodo más barato, lo asienta y relaja sus vecinos. En el ejemplo, A se descubre primero con costo cuatro, pero luego se mejora a tres pasando por B. El camino final de S a T cuesta diecisiete. En LimaGo ejecutamos Dijkstra una sola vez sobre el grafo invertido, partiendo del pasajero, y así obtenemos el tiempo de llegada de todos los candidatos a la vez.</aside>
+</section>
+
+<!-- 10 · ETA -->
+<section class="slide" data-dur="38" data-anim="eta" data-titulo="ETA y asignación">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>10 · Asignación · RF-06</span><h2 data-t=".2">Elegir el <em>menor ETA</em> entre k candidatos</h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4"><b>ETA</b> (<i>Estimated Time of Arrival</i>): tiempo estimado que tarda el conductor en llegar por calles.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Dos etapas</dt><dd>① Quadtree + Haversine: k candidatos <b>en línea recta</b>. ② Dijkstra: distancia <b>por calles</b> y ETA = distancia ÷ velocidad.</dd></div>
+        <div data-t="4.6"><dt>Criterio</dt><dd>Se asigna el de <b>menor ETA</b>; los empates se resuelven por distancia recta y luego por identificador: resultado determinista.</dd></div>
+        <div data-t="6.2"><dt>Límite honesto</dt><dd>Es el óptimo <b>entre los k evaluados</b>, no garantiza el óptimo global: un conductor fuera de los k podría llegar antes.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Ejemplo ilustrativo · 25 km/h</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="27"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>k = 5 a 25 km/h en Miraflores; k = 8 con tiempos horarios en Lima. Despacho completo con 2&nbsp;500 conductores: mediana <strong>1,1 ms</strong> (p95 8,8 ms).</span></p>
+  <aside class="notas">El ETA es el tiempo estimado de llegada. Primero el Quadtree entrega los k candidatos más cercanos en línea recta; después Dijkstra calcula la distancia real por calles y la convertimos en tiempo. El candidato C1 es el más cercano en línea recta, pero C2 llega antes. Es importante aclarar que el resultado es óptimo entre los k evaluados, no necesariamente entre toda la flota.</aside>
+</section>
+
+<!-- 11 · TURNOS -->
+<section class="slide" data-dur="36" data-anim="turnos" data-titulo="Simulación por turnos">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>11 · Simulación</span><h2 data-t=".2">El tiempo avanza en <em>turnos discretos</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Una <b>simulación discreta</b> actualiza todo el sistema en pasos fijos y reproducibles.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Qué es</dt><dd>El reloj avanza un intervalo fijo; en cada turno se procesan eventos en un <b>orden determinista</b> (por id) y con <b>semilla</b> fija.</dd></div>
+        <div data-t="4.6"><dt>Movimiento</dt><dd>Cada conductor recorre un presupuesto = velocidad × segundos, <b>solo por aristas</b> existentes; el avance parcial se acumula.</dd></div>
+        <div data-t="6.2"><dt>Coherencia</dt><dd>Tras moverse, <code>mover_conductor</code> actualiza la flota y el <b>Quadtree</b> en la misma operación.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Esquema ilustrativo</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="26"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Turno de 30 s simulados en Miraflores y de 10 s en Lima (cada 1 s real). La misma semilla produce la misma flota y las mismas decisiones.</span></p>
+  <aside class="notas">La simulación avanza por turnos. En cada turno el reloj avanza, se resuelven conexiones y ofertas, cada conductor se mueve por aristas reales según su presupuesto de distancia, se actualiza el Quadtree, aparece nueva demanda y se guarda una instantánea. Como el orden es determinista y hay una semilla fija, el escenario es reproducible.</aside>
+</section>
+
+<!-- 12 · ACEPTACIÓN -->
+<section class="slide" data-dur="42" data-anim="aceptacion" data-titulo="Aceptación de viajes">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>12 · Motor de aceptación · V3</span><h2 data-t=".2">El viaje es de <em>quien lo acepta</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Las ofertas se envían <b>en orden de ETA</b>; si un conductor rechaza o no responde, pasa al siguiente.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Máquina de estados</dt><dd>Una tabla de <b>transiciones válidas</b>; cualquier otro cambio lanza <code>TransicionInvalida</code>.</dd></div>
+        <div data-t="4.6"><dt>Políticas simuladas</dt><dd>Automática 30 %, probabilística 55 %, rechazo 10 %, sin respuesta 5 %. Plazo de la oferta: 2 turnos.</dd></div>
+        <div data-t="6.2"><dt>Reproducible</dt><dd>Cada decisión depende de (semilla, solicitud, conductor): <b>mismo escenario, mismas decisiones</b>.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Secuencia ilustrativa</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="33"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>La función académica de menor ETA <strong>no cambió</strong>: el motor la usa y guarda su resultado para comparar la asignación operativa con el óptimo de referencia.</span></p>
+  <aside class="notas">En la versión tres el viaje se ofrece primero al conductor de menor ETA. Cada conductor tiene una política simulada: puede aceptar, rechazar o no responder. Si rechaza o vence el plazo de dos turnos, vuelve a disponible y la oferta pasa al siguiente candidato. Cuando alguien acepta, recorre los estados en camino, esperando recogida, en viaje y finalizado. Un conductor con oferta pendiente no recibe otra, lo que evita la doble asignación.</aside>
+</section>
+
+<!-- 13 · CONGESTIÓN -->
+<section class="slide" data-dur="38" data-anim="congestion" data-titulo="Congestión y tráfico">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>13 · Congestión · Reto B</span><h2 data-t=".2">La hora cambia el <em>peso</em> de cada vía</h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">El peso deja de ser metros y pasa a ser <b>segundos</b>, que dependen del tipo de vía y de la hora.</p>
+      <div class="formula" data-t="3" style="font-size:27px">tiempo = <span class="v">longitud</span> ÷ <span class="v">v<sub>libre</sub>(tipo)</span> × <span class="o">factor(tipo, h)</span><small>factor = 1 + intensidad(tipo) · [G(h; 8, 1) + 0,9 G(h; 18,5; 1,2) + 0,25 G(h; 13; 1,5)]</small></div>
+      <dl class="ficha">
+        <div data-t="5"><dt>Simulado, no real</dt><dd>Perfil horario <b>sintético y documentado</b>. LimaGo <b>no usa</b> datos de tráfico en tiempo real ni sensores.</dd></div>
+        <div data-t="6.4"><dt>Automático</dt><dd>El reloj sigue la <b>hora de Lima</b>; operaciones puede fijar 8:00 o 15:00 para los escenarios académicos.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5.5"><span class="ilustrativo real">Curvas del modelo del proyecto</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="27"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Reto B en Miraflores: tiempo medio <strong>514 s a las 8:00</strong> frente a <strong>267 s a las 15:00</strong>; 215 de 300 rutas cambian de trazado y 9 de 100 asignaciones eligen otro conductor.</span></p>
+  <aside class="notas">La congestión se modela como un factor que multiplica el tiempo de cada tramo según su tipo de vía y la hora. Las avenidas principales se congestionan más que las calles residenciales, por eso en hora punta puede convenir otra ruta. Es un modelo simulado: no usamos datos de tráfico en tiempo real y así lo indica la interfaz. El reloj sigue la hora de Lima automáticamente.</aside>
+</section>
+
+<!-- 14 · TARIFAS -->
+<section class="slide" data-dur="36" data-anim="tarifa" data-titulo="Tarifas estimadas">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>14 · Cotización · V3</span><h2 data-t=".2">Una tarifa <em>simple y transparente</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">La cotización suma conceptos visibles y el precio queda <b>fijado al confirmar</b>.</p>
+      <div class="formula" data-t="3" style="font-size:26px">total = máx( <span class="o">6,00</span> ; <span class="v">3,50</span> + <span class="v">1,10</span>·km + <span class="v">0,25</span>·min + recogida )<small>recogida = mín( 4,00 ; 0,60 × máx(0, km de recogida − 1,5) ) · en soles (S/)</small></div>
+      <dl class="ficha">
+        <div data-t="4.8"><dt>Sin doble conteo</dt><dd>El tráfico solo cambia los <b>minutos</b> (tiempo por calles con pesos horarios); la distancia nunca se multiplica por un factor.</dd></div>
+        <div data-t="6.2"><dt>Regla de recálculo</dt><dd>La cotización vale <b>5 minutos</b>; al confirmar se usa ese precio. Si venció, se cotiza de nuevo (respuesta 410).</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5.5"><span class="ilustrativo">Ejemplo ilustrativo</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="26"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Montos <strong>simulados y orientativos</strong>: no hay cobros ni datos de pago, y no se presentan como precios de otras empresas. Parámetros configurables con variables <code>LIMAGO_TARIFA_*</code>.</span></p>
+  <aside class="notas">La tarifa tiene cuatro componentes: un monto base, la distancia del viaje, el tiempo estimado y un cargo de recogida que solo aparece si el conductor está a más de un kilómetro y medio, con un tope de cuatro soles. Hay una tarifa mínima de seis soles. El tráfico solo afecta a los minutos, nunca a los kilómetros, para no contar la congestión dos veces. Son montos simulados: LimaGo no realiza cobros.</aside>
+</section>
+
+<!-- 15 · A* -->
+<section class="slide" data-dur="40" data-anim="aestrella" data-titulo="Reto A: A*">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>15 · Reto A</span><h2 data-t=".2">A*: buscar <em>en dirección</em> al destino</h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4">A* es Dijkstra guiado por una <b>estimación</b> de lo que falta recorrer.</p>
+      <div class="formula" data-t="3">f(n) = <span class="v">g(n)</span> + <span class="o">h(n)</span><small>g: costo real desde el origen · h: estimación hasta el destino</small></div>
+      <dl class="ficha">
+        <div data-t="4.6"><dt>Heurística admisible</dt><dd>h <b>nunca sobreestima</b>. Así A* conserva el camino óptimo. La línea recta (Haversine) nunca es mayor que la distancia por calles.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5.5"><span class="ilustrativo">Cuadrícula ilustrativa</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="29"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Miraflores, 300 pares: <strong>678 → 208</strong> nodos explorados en promedio (−69,3 %), <strong>mismo costo</strong> en todos, 0,333 ms frente a 0,467 ms por par.</span></p>
+  <aside class="notas">A star suma al costo real recorrido una estimación de lo que falta hasta el destino. Si esa estimación nunca sobreestima, el camino encontrado sigue siendo óptimo. Usamos la distancia en línea recta de Haversine, que nunca es mayor que la distancia por calles. En la cuadrícula se ve que Dijkstra explora en todas direcciones, mientras A star avanza hacia el destino. En Miraflores, A star redujo los nodos explorados en un sesenta y nueve por ciento con el mismo costo.</aside>
+</section>
+
+<!-- 16 · RETOS B C D -->
+<section class="slide" data-dur="42" data-anim="retos" data-titulo="Retos B, C y D">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>16 · Retos opcionales</span><h2 data-t=".2">Hora punta, <em>varios pasajeros</em> y H3</h2></header>
+  <div class="cuerpo" style="grid-template-columns:1fr;height:690px">
+    <figure class="visual" data-visual data-t="1.4" style="background:none;border:0;box-shadow:none"><svg class="lienzo" viewBox="0 0 1720 690"></svg></figure>
+  </div>
+  <p class="app" data-t="30"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>H3 vive aislado en <code>experimental/</code> como <strong>comparación</strong>: <strong>no sustituye</strong> al Quadtree obligatorio. El húngaro se usa en los lotes del centro de operaciones.</span></p>
+  <aside class="notas">El reto B modela la hora punta con pesos dinámicos: a las ocho de la mañana el tiempo medio casi se duplica respecto a las tres de la tarde. El reto C asigna varios pasajeros a la vez con el algoritmo húngaro, que minimiza la espera total; la estrategia codiciosa puede bloquear al mejor conductor de otro pasajero. El reto D compara con H3, una cuadrícula hexagonal de resolución fija: da los mismos resultados, pero con treinta mil conductores es más lento que el Quadtree, porque no se adapta a la densidad.</aside>
+</section>
+
+<!-- 17 · EXPERIENCIA DEL PASAJERO -->
+<section class="slide" data-dur="38" data-anim="pasajero" data-titulo="Experiencia del pasajero">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>17 · Experiencia · V3</span><h2 data-t=".2">Pedir un viaje en <em>pocos pasos</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4">El pasajero solo escribe <b>el destino</b> y confirma; el resto lo calcula el servidor.</p>
+      <ol class="pasos-flujo" data-t="3" style="margin:0;padding:0">
+        <li><span>1</span>Ubicación detectada con permiso</li>
+        <li><span>2</span>Destino con sugerencias reales</li>
+        <li><span>3</span>Cotización con desglose</li>
+        <li><span>4</span>Confirmación</li>
+        <li><span>5</span>Un conductor acepta</li>
+        <li><span>6</span>Seguimiento en vivo</li>
+      </ol>
+    </div>
+    <figure class="visual" data-visual data-t="4">
+      <span class="ilustrativo">Simulación de la interfaz</span>
+      <svg class="lienzo" viewBox="0 0 1000 620"></svg>
+      <div class="telefono">
+        <div class="pantalla">
+          <div class="barra-app"><svg><use href="#i-logo"/></svg>LimaGo</div>
+          <div class="tel-mapa"><svg class="tel-svg" viewBox="0 0 300 250" width="100%" height="100%"></svg></div>
+          <div class="tel-panel">
+            <div class="tel-paso" data-p="0"><div class="tel-fila"><span class="p" style="background:#0f766e"></span><b class="tel-origen">Detectando tu ubicación…</b></div><div style="font-size:13px;color:#4b5f5b" class="tel-origen-det">Permiso de ubicación del navegador</div></div>
+            <div class="tel-paso" data-p="1"><div class="tel-fila"><span class="p" style="background:#0f766e"></span>Jr. Sánchez Silva · Comas</div><div class="tel-fila"><span class="p" style="background:#f26b3a;border-radius:2px"></span><span class="tel-destino"></span><span class="cursor-txt"></span></div><div class="tel-sug"><div>Miraflores, Lima</div><div>Av. Larco, Miraflores</div><div>Parque Kennedy, Miraflores</div></div></div>
+            <div class="tel-paso" data-p="2"><div style="font-size:13px;color:#4b5f5b">Comas → Miraflores · 23,5 km · 42 min</div><div class="tel-precio">S/ 40,00</div><div class="tel-des"><span>Base</span><span>S/ 3,50</span></div><div class="tel-des"><span>Recorrido · 23,5 km</span><span>× S/ 1,10</span></div><div class="tel-des"><span>Tiempo · 42 min</span><span>× S/ 0,25</span></div><div class="tel-des"><span>Recogida</span><span>según distancia</span></div><div class="tel-boton">Confirmar viaje</div></div>
+            <div class="tel-paso" data-p="3"><div style="text-align:center;padding-top:16px"><b class="tel-busca">Buscando conductor…</b><div style="font-size:13px;color:#4b5f5b;margin-top:6px" class="tel-oferta">Ofrecemos el viaje al que llega antes</div></div></div>
+            <div class="tel-paso" data-p="4"><div class="tel-fila" style="justify-content:space-between"><b>LG-02178</b><span class="tel-eta">3 min</span></div><div style="font-size:13px;color:#4b5f5b">Conductor en camino · ruta por calles</div><div style="height:8px;border-radius:4px;background:#e4ece9;margin-top:12px;overflow:hidden"><div class="tel-barra" style="height:100%;width:0;background:#0f766e"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </figure>
+  </div>
+  <p class="app" data-t="26"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Viaje Comas → Miraflores de la <strong>prueba de punta a punta</strong>: S/ 40,00 · 23,5 km · 42 min. Si se niega el permiso, se escribe o marca el recojo y <strong>nada se bloquea</strong>.</span></p>
+  <aside class="notas">En la versión tres reducimos los datos que introduce el pasajero. Con su permiso, el navegador da la ubicación; se pide una sola vez y si se niega se puede escribir o marcar en el mapa. El pasajero escribe el destino con sugerencias de direcciones reales, ve la tarifa con su desglose y confirma. El sistema ofrece el viaje a los conductores y, cuando uno acepta, comienza el seguimiento. Los valores de la pantalla son los de nuestra prueba de punta a punta de Comas a Miraflores.</aside>
+</section>
+
+<!-- 18 · COBERTURA -->
+<section class="slide" data-dur="38" data-anim="cobertura" data-titulo="Cobertura y geolocalización">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>18 · Cobertura · V3</span><h2 data-t=".2">¿El punto está <em>dentro de Lima</em>?</h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">De Miraflores a los <b>50 distritos</b> de Lima Metropolitana, con su límite poligonal real.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Geocodificación</dt><dd>Texto → coordenadas con Nominatim (OSM), con caché y máximo 1 consulta/s. La ubicación del navegador ya llega como coordenadas.</dd></div>
+        <div data-t="4.6"><dt>Punto en polígono</dt><dd><b>Ray casting</b> propio: se traza un rayo y se cuentan los cruces con el borde. <b>Impar = dentro</b>, par = fuera.</dd></div>
+        <div data-t="6.2"><dt>Ajuste a la red</dt><dd>El punto se lleva a la intersección vial más cercana (máx. 250 m) y se identifica su <b>distrito</b>.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo real">Límite y distritos reales (simplificados)</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="27"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Polígono propio = shapely en <strong>400/400</strong> puntos. La flota se reparte al azar entre intersecciones: la disponibilidad <strong>varía por zona</strong>. Miraflores sigue como escenario académico.</span></p>
+  <aside class="notas">Para validar la cobertura usamos un algoritmo propio de punto en polígono por trazado de rayos: desde el punto se traza una semirrecta y se cuentan los cruces con el borde; si el número es impar, el punto está dentro. Un punto en Comas está dentro; un punto en el mar está fuera. Después ajustamos el punto a la intersección más cercana y obtenemos el distrito. Los conductores se reparten entre intersecciones, por lo que no todos los distritos tienen la misma disponibilidad.</aside>
+</section>
+
+<!-- 19 · ALERTAS -->
+<section class="slide" data-dur="36" data-anim="alerta" data-titulo="Seguridad y alertas">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>19 · Seguridad · V3</span><h2 data-t=".2">Alerta por <em>proximidad</em></h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Durante un viaje activo, el pasajero avisa al <b>centro de operaciones</b> con un toque.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Qué hace</dt><dd>Registra la ubicación, <b>deduplica</b> (un viaje, una alerta abierta) y notifica a operaciones, que la marca como atendida.</dd></div>
+        <div data-t="4.6"><dt>Proximidad</dt><dd>Las unidades de apoyo están indexadas en un <b>Quadtree propio</b>; se asigna la más cercana libre (k = 1).</dd></div>
+        <div data-t="6.2"><dt>Límite</dt><dd>Es una <b>demostración</b>: no hay conexión con Policía Nacional, SAMU, serenazgo ni servicios reales de emergencia.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5"><span class="ilustrativo">Unidades de apoyo simuladas</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="25"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>30 unidades simuladas en Lima. En la prueba de punta a punta: alerta en Comas → <strong>AP-008 a 1,3 km</strong>; el segundo toque devolvió la misma alerta.</span></p>
+  <aside class="notas">La alerta es una función de demostración inspirada en la idea del profesor de notificaciones por proximidad. Cuando el pasajero la activa, se registra su ubicación y se avisa al centro de operaciones. Las unidades de apoyo simuladas están en un Quadtree, el mismo tipo de estructura de la flota, y se asigna la más cercana. Si se vuelve a pulsar, no se crea otra alerta. No existe conexión con servicios reales de emergencia.</aside>
+</section>
+
+<!-- 20 · DOCKER -->
+<section class="slide" data-dur="38" data-anim="docker" data-titulo="Docker y servicios">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>20 · Infraestructura</span><h2 data-t=".2">Seis servicios con <em>Docker Compose</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Todo el sistema se levanta con <code>docker compose up --build -d</code>.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Imagen y contenedor</dt><dd>La <b>imagen</b> es una plantilla inmutable (código + dependencias). El <b>contenedor</b> es una instancia en ejecución de esa imagen.</dd></div>
+        <div data-t="4.6"><dt>Docker Compose</dt><dd>Declara servicios, redes, volúmenes, dependencias y <b>healthchecks</b> en un solo archivo: <code>compose.yaml</code>.</dd></div>
+        <div data-t="6.2"><dt>Redes</dt><dd>PostgreSQL y el worker están en una red <b>interna sin salida</b> a Internet; Grafana y Prometheus solo en 127.0.0.1.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5.5"><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="28"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Verificado en Linux con Docker 29.9.2: <strong>6 servicios healthy</strong>; backend ~510 MB y worker ~580 MB con la red de Lima. Prometheus lee 3 objetivos.</span></p>
+  <aside class="notas">Docker empaqueta cada componente en una imagen y lo ejecuta como contenedor. La misma imagen limago-backend se usa para dos contenedores: el backend y el worker, con distinto comando. Compose arranca los servicios en orden según sus dependencias y healthchecks: primero PostgreSQL, después el backend y el worker, luego Nginx, Prometheus y Grafana. Prometheus recoge métricas del backend y del worker, y Grafana las muestra.</aside>
+</section>
+
+<!-- 21 · CDN -->
+<section class="slide" data-dur="44" data-anim="cdn" data-titulo="¿Qué es un CDN?">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>21 · Infraestructura web</span><h2 data-t=".2">¿Qué es un <em>CDN</em>?</h2></header>
+  <div class="cuerpo">
+    <div class="texto">
+      <p class="idea" data-t="1.4"><b>Content Delivery Network</b>: servidores repartidos que entregan copias del contenido <b>cerca del usuario</b>.</p>
+      <dl class="ficha compacta">
+        <div data-t="3"><dt>Origen · borde · PoP</dt><dd>El <b>origen</b> guarda el contenido original. Un <b>servidor de borde</b> guarda copias en un <b>punto de presencia</b> (PoP) cercano.</dd></div>
+        <div data-t="4.4"><dt>Latencia · caché distribuida</dt><dd><b>Latencia</b>: tiempo de ida y vuelta de una petición. Los bordes forman una <b>caché distribuida</b> entre regiones.</dd></div>
+        <div data-t="5.8"><dt>Hit · miss</dt><dd><b>Cache hit</b>: el borde ya tiene la copia y responde. <b>Cache miss</b>: no la tiene, la pide al origen y la guarda.</dd></div>
+        <div data-t="7.2"><dt>Beneficios y límites</dt><dd>Menos latencia y carga en el origen. No sirve para respuestas dinámicas o privadas y <b>no acelera</b> cálculos como Dijkstra.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="6"><span class="ilustrativo">Latencias ilustrativas</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="30"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Un CDN podría servir Leaflet, CSS, JS y los GeoJSON de cobertura; <strong>nunca</strong> las rutas ni el seguimiento, que se calculan en el backend.</span></p>
+  <aside class="notas">CDN significa red de entrega de contenidos. El servidor de origen tiene el contenido original. Los servidores de borde, ubicados en puntos de presencia cercanos a los usuarios, guardan copias. La primera petición es un fallo de caché: el borde la pide al origen y la guarda. Las siguientes son aciertos y se responden desde cerca, con menos latencia. Un CDN no sirve para respuestas dinámicas o personalizadas y no acelera cálculos del servidor como Dijkstra.</aside>
+</section>
+
+<!-- 22 · ¿LIMAGO USA CDN? -->
+<section class="slide" data-dur="44" data-anim="cache" data-titulo="¿LimaGo usa un CDN?">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>22 · Rendimiento web</span><h2 data-t=".2">¿LimaGo usa un CDN? <em style="color:var(--naranja)">No.</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Para una demostración local en Docker bastan <b>Nginx</b> y la <b>caché del navegador</b>, bien configurados.</p>
+      <dl class="ficha compacta">
+        <div data-t="3"><dt>Lo que sí se implementó</dt><dd><b>gzip</b> · <b>Cache-Control</b> por tipo · <b>ETag</b> · versionado <code>?v=3</code> · portada que pide solo el conteo de la flota.</dd></div>
+        <div data-t="4.6"><dt>Cuándo convendría</dt><dd>Al publicar en Internet con usuarios en varias regiones o picos de tráfico: el CDN guardaría estáticos y GeoJSON, <b>nunca</b> la API de viajes.</dd></div>
+        <div data-t="6.2"><dt>Aclaración</dt><dd>Las teselas del mapa vienen de OpenStreetMap: es un servicio externo, <b>no un CDN propio</b> de LimaGo.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="5" style="display:flex;flex-direction:column">
+      <span class="ilustrativo real">Configuración real de nginx.conf</span>
+      <svg class="lienzo" viewBox="0 0 1000 400" style="position:relative;height:auto;flex:none"></svg>
+      <table class="tabla" style="margin:6px 22px 22px;width:auto">
+        <tr><th></th><th>Caché del navegador</th><th>Nginx (origen)</th><th>CDN</th></tr>
+        <tr><td>Dónde</td><td>Dispositivo del usuario</td><td>Contenedor <code style="font-family:var(--mono);font-size:.85em">frontend</code></td><td>Bordes del proveedor</td></tr>
+        <tr><td>Alcance</td><td>Un usuario</td><td>Todos (origen)</td><td>Usuarios de una región</td></tr>
+        <tr><td>En LimaGo</td><td class="si">Sí</td><td class="si">Sí</td><td class="no">No</td></tr>
+      </table>
+    </figure>
+  </div>
+  <p class="app" data-t="30"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Medido en Docker: <code>/api/cobertura</code> pasa de <strong>30&nbsp;239 B a 10&nbsp;401 B</strong> con gzip; HTML con <code>no-cache</code> + ETag; CSS/JS 7 días e imágenes 30 días.</span></p>
+  <aside class="notas">Somos transparentes: LimaGo versión tres no usa un CDN. Lo que sí implementamos es Nginx con compresión gzip, cabeceras Cache-Control distintas por tipo de recurso, ETag para revalidar el HTML y versionado de los archivos estáticos. En la primera visita el navegador descarga el JavaScript comprimido; en la segunda lo toma de su caché sin usar la red; el HTML se revalida y, si no cambió, Nginx responde 304. Un CDN convendría si el sitio se publicara en Internet con usuarios distribuidos.</aside>
+</section>
+
+<!-- 23 · BENCHMARKS -->
+<section class="slide" data-dur="44" data-anim="bench" data-titulo="Benchmarks">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>23 · Rendimiento · RF-09</span><h2 data-t=".2">Lo que <em>medimos</em></h2></header>
+  <div class="cuerpo" style="grid-template-columns:470px 1fr">
+    <div class="texto">
+      <p class="idea" data-t="1.4">Mediciones reales de <code>benchmark/resultados/</code>, con semillas fijas.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Método</dt><dd>Mediana de 5 repeticiones, recolector de basura desactivado, mismas consultas para ambos métodos.</dd></div>
+        <div data-t="4.4"><dt>Exactitud primero</dt><dd>Cada medición verifica que los resultados sean <b>idénticos</b> a la referencia.</dd></div>
+        <div data-t="5.8"><dt>Escala</dt><dd>El lineal crece ~×94 de 300 a 30&nbsp;000; el Quadtree, ~×4,7.</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="4"><span class="ilustrativo real">Datos de los archivos JSON</span><svg class="lienzo" viewBox="0 0 1100 620"></svg></figure>
+  </div>
+  <p class="app" data-t="30"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span>Lima Metropolitana (152&nbsp;441 nodos): Quadtree <strong>×232,8</strong> con 30&nbsp;000 conductores (300/300 idénticos), Dijkstra = NetworkX 20/20, despacho <strong>1,1 ms</strong>. Los tiempos dependen del equipo.</span></p>
+  <aside class="notas">Estos números vienen de los archivos JSON de resultados. En Miraflores, con cuatrocientas consultas y k igual a cinco, el Quadtree pasa de ser cuatro veces más rápido con trescientos conductores a ochenta y cuatro veces con treinta mil, y siempre da los mismos resultados que la búsqueda lineal. Nuestro Dijkstra coincide al metro con NetworkX en trescientos pares. En la red de Lima, el tiempo de Dijkstra crece con la distancia, y el despacho completo tarda alrededor de un milisegundo.</aside>
+</section>
+
+<!-- 24 · PRUEBAS -->
+<section class="slide" data-dur="38" data-anim="pruebas" data-titulo="Pruebas y validación">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>24 · Calidad</span><h2 data-t=".2">Probado, no solo <em>programado</em></h2></header>
+  <div class="cuerpo ancho">
+    <div class="texto">
+      <p class="idea" data-t="1.4"><b>pytest</b> ejecuta funciones de prueba con <code>assert</code> y reporta cada fallo con su contexto.</p>
+      <dl class="ficha">
+        <div data-t="3"><dt>Unitarias</dt><dd>Una pieza aislada: Quadtree, Haversine, Dijkstra, tarifas, transiciones de estado.</dd></div>
+        <div data-t="4.4"><dt>Integración</dt><dd>Varias piezas juntas: API + worker + base de datos, cotizar → confirmar → alerta.</dd></div>
+        <div data-t="5.8"><dt>Rendimiento</dt><dd>Benchmarks aparte; en pytest solo umbrales amplios (ruta Miraflores → Comas &lt; 3 s).</dd></div>
+      </dl>
+    </div>
+    <figure class="visual" data-visual data-t="4.5"><span class="ilustrativo real">Conteos reales por archivo</span><svg class="lienzo" viewBox="0 0 1000 620"></svg></figure>
+  </div>
+  <p class="app" data-t="26"><b><svg><use href="#i-pin"/></svg>En LimaGo</b><span><strong>86 pruebas</strong> pasan (65 de V1/V2 + 21 de V3). Además, prueba de punta a punta con navegador automatizado: <strong>30/30</strong> en local y en Docker.</span></p>
+  <aside class="notas">pytest es el marco de pruebas de Python. Las pruebas unitarias verifican piezas aisladas, como que el Quadtree devuelva exactamente los mismos k vecinos que la búsqueda lineal. Las de integración prueban la API, el worker y la base de datos juntos. El rendimiento se mide con benchmarks separados. En total tenemos ochenta y seis pruebas que pasan, y una prueba de punta a punta con navegador automatizado con treinta de treinta comprobaciones.</aside>
+</section>
+
+<!-- 25 · CIERRE -->
+<section class="slide" data-dur="40" data-anim="cierre" data-titulo="Conclusiones y cierre">
+  <header class="cab"><span class="kicker" data-t="0"><i></i>25 · Conclusiones</span><h2 data-t=".2">Lo que <em>aporta</em> LimaGo V3.0</h2></header>
+  <div style="display:grid;grid-template-columns:1150px 1fr;gap:50px;margin-top:30px;height:760px">
+    <div class="aportes">
+      <div class="aporte" data-t="1.4"><span class="n">1</span><div><b>Búsqueda espacial</b>Quadtree exacto, ×84 a ×233.</div></div>
+      <div class="aporte" data-t="2.2"><span class="n">2</span><div><b>Rutas reales</b>Dijkstra propio = NetworkX.</div></div>
+      <div class="aporte" data-t="3"><span class="n">3</span><div><b>Asignación por ETA</b>No por cercanía aparente.</div></div>
+      <div class="aporte" data-t="3.8"><span class="n">4</span><div><b>Simulación</b>Turnos reproducibles con semilla.</div></div>
+      <div class="aporte" data-t="4.6"><span class="n">5</span><div><b>Automatización</b>Ofertas, aceptación, tráfico por hora.</div></div>
+      <div class="aporte" data-t="5.4"><span class="n">6</span><div><b>Ampliación</b>De Miraflores a 50 distritos.</div></div>
+      <div class="aporte" data-t="6.2"><span class="n">7</span><div><b>Arquitectura modular</b>6 servicios, un dueño de la flota.</div></div>
+      <div class="aporte" data-t="7"><span class="n">8</span><div><b>Validación</b>86 pruebas y benchmarks reales.</div></div>
+      <div class="aporte" data-t="7.8"><span class="n">9</span><div><b>Web y CDN</b>Caché HTTP medida; CDN comprendido y evaluado.</div></div>
+      <p data-t="9.5" style="grid-column:1/-1;margin:6px 0 0;font-size:22px;color:var(--texto2);line-height:1.45">Límites: flota, demanda, tráfico y alertas son <b style="color:#fff">simulados</b>; k candidatos no garantizan el óptimo global; no hay CDN configurado.</p>
+    </div>
+    <figure class="visual" data-visual data-t="10" style="background:none;border:0;box-shadow:none"><svg class="lienzo" viewBox="0 0 560 700"></svg></figure>
+  </div>
+  <aside class="notas">En resumen: optimizamos la búsqueda espacial con un Quadtree exacto, calculamos rutas reales con Dijkstra propio, asignamos por tiempo de llegada, simulamos la ciudad de forma reproducible, automatizamos el ciclo de una solicitud, ampliamos la cobertura a cincuenta distritos y lo validamos con pruebas y mediciones. También entendimos qué es un CDN y por qué no era necesario en esta versión. Gracias por su atención.</aside>
+</section>
+
+</main>
+
+<!-- tarjeta de inicio -->
+<div id="inicio" role="dialog" aria-label="Iniciar presentación">
+  <h3>LimaGo V3.0 · Sustentación</h3>
+  <p>25 diapositivas · ~15 minutos. En modo automático la presentación avanza sola; en modo manual, usa las flechas.</p>
+  <button id="b-iniciar" type="button"><svg><use href="#i-play"/></svg>Iniciar exposición</button>
+  <button id="b-manual" type="button">Explorar en modo manual</button>
+  <small>Atajos: <b>→</b> siguiente · <b>←</b> anterior · <b>Espacio</b> pausa · <b>F</b> pantalla completa · <b>N</b> notas · <b>M</b> menú</small>
+</div>
+
+<!-- controles -->
+<nav id="controles" aria-label="Controles de la presentación">
+  <button id="b-reiniciar" type="button" title="Reiniciar presentación (Inicio)"><svg><use href="#i-reiniciar"/></svg></button>
+  <button id="b-ant" type="button" title="Anterior (←)"><svg><use href="#i-ant"/></svg></button>
+  <button id="b-play" type="button" title="Pausar / continuar (Espacio)"><svg><use href="#i-pausa"/></svg></button>
+  <button id="b-sig" type="button" title="Siguiente paso (→)"><svg><use href="#i-sig"/></svg></button>
+  <span class="sep"></span>
+  <button id="b-modo" type="button" title="Modo automático / manual (A)">MANUAL</button>
+  <select id="sel-vel" title="Velocidad de reproducción" aria-label="Velocidad">
+    <option value="0.75">0,75×</option><option value="1" selected>1×</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option><option value="2">2×</option>
+  </select>
+  <button id="b-repetir" type="button" title="Repetir la demostración de esta diapositiva (R)"><svg><use href="#i-repetir"/></svg></button>
+  <span class="sep"></span>
+  <div class="info"><div class="fila"><span id="num">01 / 25</span><span id="tiempo">00:00</span></div><div id="prog-diapo"><i></i></div></div>
+  <span class="sep"></span>
+  <button id="b-menu" type="button" title="Menú de diapositivas y duraciones (M)"><svg><use href="#i-menu"/></svg></button>
+  <button id="b-notas" type="button" title="Notas del expositor (N)"><svg><use href="#i-notas"/></svg></button>
+  <button id="b-voz" type="button" title="Narración por voz del navegador (V)"><svg><use href="#i-voz"/></svg></button>
+  <button id="b-pantalla" type="button" title="Pantalla completa (F)"><svg><use href="#i-pantalla"/></svg></button>
+</nav>
+
+<aside class="panel-lateral" id="panel-menu" aria-label="Menú de diapositivas">
+  <header><h3>Diapositivas y duración (s)</h3><button type="button" data-cerrar aria-label="Cerrar">×</button></header>
+  <div class="contenido-panel">
+    <ol id="lista-diapos"></ol>
+    <p style="margin:16px 0 8px;color:#9fbab4">Duración total: <b id="total-dur" style="color:#fff"></b>. Las duraciones se guardan en este navegador.</p>
+    <button class="boton-txt" type="button" id="b-restablecer">Restablecer duraciones</button>
+  </div>
+</aside>
+
+<aside class="panel-lateral" id="panel-notas" aria-label="Notas del expositor">
+  <header><h3 id="titulo-notas">Notas del expositor</h3><button type="button" data-cerrar aria-label="Cerrar">×</button></header>
+  <div class="contenido-panel">
+    <div class="nota-diapo" id="texto-notas"></div>
+    <div class="atajos">
+      <p><kbd>→</kbd> / <kbd>Enter</kbd> siguiente paso · <kbd>←</kbd> anterior · <kbd>AvPág</kbd> / <kbd>RePág</kbd> diapositiva</p>
+      <p><kbd>Espacio</kbd> pausa · <kbd>A</kbd> automático/manual · <kbd>R</kbd> repetir demostración · <kbd>Inicio</kbd> reiniciar</p>
+      <p><kbd>F</kbd> pantalla completa · <kbd>M</kbd> menú · <kbd>N</kbd> notas · <kbd>V</kbd> voz · <kbd>Esc</kbd> cerrar / salir del automático</p>
+      <p id="aviso-voz">La narración usa la síntesis de voz del navegador; la voz disponible depende del equipo.</p>
+    </div>
+  </div>
+</aside>
+
+<script>
+"use strict";
+/* ===================== utilidades de dibujo ===================== */
+const NS = "http://www.w3.org/2000/svg";
+const MAPA = {"W":520,"H":871.0,"limite":"M0.0,111.5L26.4,150.3L25.1,176.1L21.1,184.0L16.6,186.9L0.8,180.0L1.0,194.0L8.1,194.2L19.1,211.3L20.3,223.6L9.9,234.1L11.1,244.9L15.1,246.5L13.8,250.0L23.3,252.5L36.1,272.5L47.4,302.8L58.0,357.6L55.2,391.7L46.5,427.7L45.3,428.5L39.3,435.6L50.5,427.4L49.9,430.2L54.3,429.0L52.4,435.8L47.5,433.6L46.9,444.0L39.0,438.5L45.5,446.9L25.5,459.9L32.6,462.3L37.2,456.3L38.3,455.3L39.9,454.8L60.2,458.1L131.4,497.2L145.7,515.0L151.2,516.3L156.5,528.8L154.1,544.9L144.5,547.0L149.0,555.1L143.5,560.5L143.3,570.6L148.5,577.4L145.1,582.1L233.2,620.8L276.5,653.4L300.2,664.0L325.1,682.5L325.0,691.2L334.8,708.2L342.0,705.6L343.6,717.0L358.8,725.0L368.3,747.6L373.3,747.4L373.0,752.4L379.3,755.0L373.8,759.1L380.3,764.9L375.5,774.5L381.3,797.1L372.4,800.7L374.1,810.0L369.4,812.3L367.1,832.2L356.2,834.2L360.7,842.9L353.9,848.7L360.2,852.6L355.7,861.1L360.2,860.2L373.1,871.0L367.2,855.6L383.3,848.1L386.9,835.2L397.3,830.5L402.4,818.4L397.3,801.4L401.3,789.7L397.8,757.4L429.2,757.3L449.0,745.1L470.0,740.2L477.5,725.5L465.1,717.8L472.2,686.8L490.0,673.5L493.4,654.9L505.6,649.9L519.9,612.0L518.8,600.2L495.8,585.9L483.0,556.7L484.5,552.5L474.2,551.5L459.7,532.6L456.4,523.0L467.4,513.5L450.5,498.7L439.9,497.4L433.9,485.1L444.1,472.4L463.1,472.0L472.7,460.0L468.5,441.8L448.2,422.6L442.9,422.8L439.3,407.1L428.7,392.7L432.9,386.7L448.8,380.1L462.9,383.3L472.6,374.8L483.5,373.8L495.3,363.1L496.2,349.2L475.2,329.7L476.3,320.6L466.0,315.2L454.1,298.0L432.8,289.7L424.8,277.7L413.9,295.0L404.2,296.8L366.4,326.5L342.6,326.6L332.6,342.5L313.7,333.5L288.4,348.0L251.5,355.4L247.9,344.6L240.8,339.9L244.3,332.5L255.5,326.1L252.8,307.1L258.1,291.3L271.3,283.4L273.6,269.6L236.0,272.8L231.0,265.2L238.3,250.3L237.0,240.2L254.3,238.0L265.6,231.0L263.8,204.9L312.8,207.5L320.0,196.1L336.0,188.3L354.5,168.6L329.2,158.2L299.5,161.2L290.3,156.4L287.1,149.0L267.5,144.2L256.2,146.7L254.7,159.0L239.1,168.2L223.6,159.8L213.3,144.4L196.9,140.9L201.3,127.1L197.3,113.7L200.6,103.8L180.5,104.8L156.8,99.8L147.4,74.6L174.7,37.7L132.5,3.4L122.0,4.7L118.1,0.0L109.1,4.2L102.1,29.6L83.5,43.9L82.4,49.9L71.2,53.3L63.8,48.5L58.7,52.2L55.5,58.0L61.1,62.0L67.3,79.9L61.0,78.1L53.5,83.0L42.5,77.9L32.3,80.3L5.1,97.3L6.3,108.4L0.0,111.5ZM32.8,462.1L36.1,461.2L38.1,459.5L38.4,455.6L32.8,462.1ZM357.1,827.8L360.4,832.6L359.7,826.4L357.1,827.8Z","distritos":[{"n":"Ancón","d":"M0.0,111.5L6.3,108.4L5.1,97.3L32.3,80.3L67.3,79.9L56.9,54.8L62.5,48.7L71.2,53.3L82.4,49.9L102.1,29.6L109.1,4.2L118.1,0.0L137.1,6.2L174.7,37.7L147.4,74.6L157.0,110.9L140.9,132.1L150.6,153.6L131.4,177.1L127.8,196.2L91.9,213.9L77.1,227.9L46.8,226.9L53.9,209.3L36.8,191.8L11.6,199.6L1.0,194.0L0.9,179.9L16.6,186.9L21.9,183.0L26.8,160.0L24.2,145.6L0.0,111.5Z"},{"n":"Ate","d":"M181.1,448.9L186.8,445.2L195.4,451.1L234.9,433.3L230.6,419.1L219.2,420.1L221.9,415.8L313.8,397.7L325.5,386.2L346.9,395.3L355.9,391.9L372.8,401.6L374.3,414.4L336.7,436.7L312.2,427.7L278.8,447.6L256.7,447.8L249.6,453.8L233.6,452.8L229.2,445.2L204.7,454.5L194.7,471.0L187.2,462.0L190.8,451.9L181.1,448.9Z"},{"n":"Barranco","d":"M153.1,522.1L162.9,513.7L167.9,522.2L164.7,536.1L155.3,537.7L153.1,522.1Z"},{"n":"Bellavista","d":"M58.4,447.9L100.3,440.6L100.8,449.5L59.6,455.4L58.4,447.9Z"},{"n":"Breña","d":"M124.1,455.1L130.8,438.2L141.0,439.8L141.7,448.5L134.5,457.7L124.1,455.1Z"},{"n":"Callao","d":"M37.7,455.8L38.5,451.8L45.5,446.9L38.6,441.1L39.0,438.5L46.9,444.0L47.5,433.6L52.0,436.2L54.3,429.0L45.9,428.4L39.3,435.6L45.3,428.5L46.5,427.7L55.2,391.7L54.2,337.3L62.4,335.0L72.7,352.6L73.2,366.2L80.5,371.1L72.9,388.4L86.2,390.8L100.6,407.4L90.6,437.6L110.1,435.8L58.4,447.9L59.9,458.0L37.7,455.8Z"},{"n":"Carabayllo","d":"M229.9,265.8L187.6,301.3L151.6,310.2L142.5,296.9L138.1,299.2L130.5,291.8L121.8,257.4L99.6,241.1L96.2,212.5L127.8,196.2L131.4,177.1L150.6,153.6L140.9,132.1L155.0,117.3L156.8,99.8L200.6,103.8L196.9,140.9L213.3,144.4L223.6,159.8L238.4,168.0L254.7,159.0L256.2,146.7L267.5,144.2L287.1,149.0L299.5,161.2L329.2,158.2L354.5,168.6L312.8,207.5L263.8,204.9L265.6,231.0L237.0,240.2L238.3,250.3L229.9,265.8Z"},{"n":"Carmen de La Legua-Reynoso","d":"M104.5,426.5L105.7,436.2L90.6,437.6L89.9,429.4L104.5,426.5Z"},{"n":"Chaclacayo","d":"M435.5,386.0L411.1,395.8L399.4,408.9L374.3,414.4L368.6,396.7L340.2,393.9L325.5,386.2L420.7,357.7L435.5,386.0Z"},{"n":"Chorrillos","d":"M143.4,570.9L149.0,555.4L144.5,547.0L153.9,545.1L155.3,537.7L161.8,534.5L172.4,540.5L167.4,544.9L177.0,553.3L179.8,545.8L187.6,552.2L191.5,547.2L196.2,551.1L195.0,566.1L203.2,572.6L199.6,595.0L204.0,599.6L200.7,605.2L147.6,583.6L143.4,570.9Z"},{"n":"Cieneguilla","d":"M442.2,497.9L402.6,517.7L329.9,528.6L278.8,447.6L312.2,427.7L336.7,436.7L343.3,434.4L374.3,414.4L401.3,408.1L411.1,395.8L428.7,392.7L442.9,422.8L468.5,441.8L472.7,460.0L463.1,472.0L444.9,472.0L435.5,482.1L442.2,497.9Z"},{"n":"Comas","d":"M114.2,316.4L132.6,289.7L152.4,310.4L189.9,298.5L189.5,316.1L164.6,335.0L162.0,348.5L125.7,372.0L120.5,349.4L116.3,350.0L114.2,316.4Z"},{"n":"El Agustino","d":"M173.7,448.8L169.3,433.3L176.4,436.2L170.7,421.0L221.9,412.7L237.6,413.6L221.9,415.8L201.5,430.1L189.8,429.4L189.0,442.0L203.1,446.8L195.4,451.1L185.8,445.0L173.7,448.8Z"},{"n":"Independencia","d":"M119.7,372.3L153.7,356.9L151.5,389.7L137.6,408.7L130.7,399.8L124.0,400.9L119.7,372.3Z"},{"n":"Jesús María","d":"M138.0,453.0L145.3,452.2L146.5,466.4L131.3,478.6L122.3,472.6L138.0,453.0Z"},{"n":"La Molina","d":"M204.7,454.5L229.2,445.2L233.6,452.8L249.6,453.8L256.7,447.8L278.8,447.6L283.4,475.6L277.0,478.7L271.4,498.0L259.3,505.5L232.3,505.4L214.6,477.9L217.1,463.2L206.1,470.0L200.6,465.0L204.7,454.5Z"},{"n":"La Perla","d":"M59.6,455.4L84.1,451.1L85.6,454.5L78.4,466.6L59.6,455.4Z"},{"n":"La Punta","d":"M32.6,462.3L27.5,458.5L27.8,456.4L28.1,456.1L37.8,455.8L32.6,462.3Z"},{"n":"La Victoria","d":"M147.2,447.9L163.5,445.9L182.4,455.9L170.1,463.7L175.4,470.4L170.3,475.0L158.6,476.5L147.2,447.9Z"},{"n":"Lima","d":"M100.3,440.6L109.9,436.7L104.5,426.5L135.8,425.9L161.9,433.6L170.3,421.2L176.4,436.2L169.3,433.3L168.1,442.4L177.5,449.8L147.2,447.9L153.9,465.4L146.5,466.4L145.3,452.2L138.0,453.0L141.0,439.8L130.8,438.2L124.1,455.1L109.1,456.0L107.9,448.4L99.8,449.0L100.3,440.6Z"},{"n":"Lince","d":"M137.5,469.4L153.9,465.4L158.6,476.5L136.6,477.2L137.5,469.4Z"},{"n":"Los Olivos","d":"M102.0,377.0L103.6,334.9L112.9,317.4L116.3,350.0L120.5,349.4L125.2,371.8L119.7,372.3L124.0,400.9L107.3,404.7L103.0,390.0L108.6,377.7L102.0,377.0Z"},{"n":"Lurigancho","d":"M435.1,383.9L420.7,357.7L342.4,379.2L313.8,397.7L250.3,413.7L221.9,412.7L206.3,389.9L223.9,350.5L240.8,339.9L252.6,356.3L288.4,348.0L313.7,333.5L332.6,342.5L342.6,326.6L366.4,326.5L404.2,296.8L413.9,295.0L424.8,277.7L432.8,289.7L454.1,298.0L476.3,320.6L475.2,329.7L496.5,349.7L495.3,363.1L483.5,373.8L462.9,383.3L435.1,383.9Z"},{"n":"Lurín","d":"M233.4,620.9L255.0,622.4L259.2,607.7L278.6,590.3L277.1,584.1L295.2,595.9L298.7,612.5L309.3,607.3L314.7,613.3L320.3,609.9L318.5,595.1L333.4,590.3L345.9,575.5L368.6,579.6L418.3,544.2L457.6,560.2L469.4,554.5L483.0,556.7L455.8,581.3L450.7,592.9L435.8,599.7L428.0,617.3L412.8,626.2L395.7,623.0L387.7,632.7L365.8,637.0L341.6,653.1L320.1,679.7L233.4,620.9Z"},{"n":"Magdalena del Mar","d":"M125.4,491.5L108.1,483.0L114.3,469.9L129.7,477.5L125.4,491.5Z"},{"n":"Mi Perú","d":"M62.5,258.3L75.6,247.6L77.2,248.7L74.6,253.9L79.6,258.8L70.3,269.1L68.2,263.6L63.0,266.0L62.5,258.3Z"},{"n":"Miraflores","d":"M128.7,495.4L146.2,494.2L154.6,487.6L155.9,502.6L170.0,499.4L177.8,512.0L161.6,513.1L159.2,516.7L156.2,518.3L154.0,521.2L152.5,521.9L128.7,495.4Z"},{"n":"Pachacámac","d":"M481.9,556.8L469.4,554.5L457.6,560.2L418.3,544.2L368.6,579.6L345.9,575.5L333.4,590.3L318.5,595.1L320.0,610.3L314.2,613.2L309.3,607.3L298.7,612.5L295.2,595.9L277.0,583.6L285.9,547.4L283.9,535.7L257.7,510.5L283.4,475.6L278.8,447.6L329.9,528.6L402.8,517.6L444.6,497.4L467.4,513.5L456.4,523.9L474.1,551.4L484.5,552.5L481.9,556.8Z"},{"n":"Pucusana","d":"M353.9,848.7L360.7,842.9L356.2,834.2L367.1,832.2L372.4,800.7L381.3,797.1L376.0,777.0L382.9,784.4L392.5,778.5L401.3,789.7L398.3,829.3L386.9,835.2L383.3,848.1L367.2,855.6L373.1,871.0L355.7,861.1L360.2,852.6L353.9,848.7ZM360.4,832.6L357.1,827.8L359.7,826.4L360.4,832.6Z"},{"n":"Pueblo Libre","d":"M106.4,463.9L109.1,456.0L134.5,457.7L122.2,472.7L106.4,463.9Z"},{"n":"Puente Piedra","d":"M67.1,226.7L78.9,227.1L96.2,212.5L101.1,244.4L121.8,257.4L129.4,278.3L129.8,293.7L92.9,347.0L86.4,333.4L98.3,302.8L96.0,285.5L74.6,253.9L75.9,241.2L67.1,226.7Z"},{"n":"Punta Hermosa","d":"M319.7,681.0L341.6,653.1L365.8,637.0L387.7,632.7L395.7,623.0L412.8,626.2L428.0,617.3L435.8,599.7L450.7,592.9L455.8,581.3L483.0,556.7L497.5,588.3L490.3,591.8L473.7,624.4L424.3,664.3L410.0,665.3L399.7,677.5L392.6,674.9L381.8,688.4L366.1,693.3L344.9,710.0L338.9,704.2L334.8,708.2L326.0,683.7L319.7,681.0Z"},{"n":"Punta Negra","d":"M342.4,714.7L366.1,693.3L381.8,688.4L392.6,674.9L399.7,677.5L410.0,665.3L424.3,664.3L454.6,641.1L479.7,617.2L492.4,589.7L500.0,588.1L519.8,601.6L506.8,647.8L493.4,654.9L490.0,673.5L472.2,686.8L468.2,699.6L419.9,708.9L369.5,746.1L358.8,725.0L342.4,714.7Z"},{"n":"Rímac","d":"M133.8,402.8L137.6,408.7L152.1,390.1L166.7,431.0L140.0,428.8L133.8,402.8Z"},{"n":"San Bartolo","d":"M368.1,747.3L426.0,706.8L452.0,706.2L468.2,699.6L465.3,718.8L477.6,724.2L467.1,742.5L449.0,745.1L429.2,757.3L401.4,755.2L397.7,762.1L385.2,749.1L376.8,760.5L378.7,753.9L368.1,747.3Z"},{"n":"San Borja","d":"M170.5,496.4L170.2,471.2L190.5,466.5L198.7,494.4L170.5,496.4Z"},{"n":"San Isidro","d":"M126.5,493.8L124.4,485.9L135.4,471.2L137.3,477.3L172.3,474.7L169.7,492.0L162.1,486.8L146.2,494.2L126.5,493.8Z"},{"n":"San Juan de Lurigancho","d":"M255.5,326.1L223.9,350.5L206.6,388.4L221.9,412.7L177.7,419.0L164.3,426.3L151.5,389.7L153.7,356.9L163.2,346.7L164.6,335.0L189.5,316.1L189.9,298.5L226.4,266.3L241.4,274.1L272.5,268.2L271.3,283.4L258.1,291.3L252.8,307.1L255.5,326.1Z"},{"n":"San Juan de Miraflores","d":"M192.6,546.1L196.4,520.6L202.0,523.7L201.9,517.1L218.3,500.0L231.7,504.3L213.5,535.3L222.6,564.6L199.7,571.9L192.6,546.1Z"},{"n":"San Luis","d":"M170.1,463.7L182.4,455.9L176.5,449.7L190.8,451.9L188.5,468.2L175.4,470.4L170.1,463.7Z"},{"n":"San Martín de Porres","d":"M63.8,335.9L91.9,347.1L103.6,334.9L100.2,369.2L102.0,377.0L108.6,377.7L103.0,389.7L105.5,401.1L107.3,404.7L130.7,399.8L140.0,428.8L93.5,426.7L100.4,406.6L86.2,390.8L72.9,388.4L80.5,371.1L73.2,366.2L63.8,335.9Z"},{"n":"San Miguel","d":"M108.1,483.0L78.4,466.6L85.1,451.3L107.9,448.4L106.3,465.0L114.9,468.1L108.1,483.0Z"},{"n":"Santa Anita","d":"M191.5,444.4L189.8,429.4L201.5,430.1L229.5,418.3L234.9,433.3L203.1,446.8L201.3,442.6L191.5,444.4Z"},{"n":"Santa María del Mar","d":"M375.5,774.5L380.5,768.0L377.0,760.3L385.2,749.1L397.4,761.0L400.9,787.4L392.5,778.5L381.9,784.0L375.5,774.5Z"},{"n":"Santa Rosa","d":"M9.9,234.1L20.3,223.3L11.6,199.6L36.8,191.8L53.9,209.3L45.4,228.9L9.9,234.1Z"},{"n":"Santiago de Surco","d":"M162.6,533.4L167.9,522.2L162.9,512.9L177.5,512.6L184.6,495.4L198.7,494.4L195.4,470.9L202.2,464.2L206.1,470.0L217.1,463.2L214.1,476.2L226.5,500.6L217.3,500.9L200.5,525.0L196.4,520.6L189.9,551.7L179.8,545.8L175.0,552.5L167.4,544.9L172.4,540.5L162.6,533.4Z"},{"n":"Surquillo","d":"M154.8,487.6L164.3,487.1L170.5,496.4L184.6,495.4L176.7,509.2L170.0,499.4L155.9,502.6L154.8,487.6Z"},{"n":"Ventanilla","d":"M13.7,249.9L12.9,232.8L38.0,232.9L60.7,225.6L74.4,237.9L76.2,247.0L61.9,264.1L70.3,269.1L81.1,258.6L83.0,270.8L94.0,278.1L98.3,302.8L86.4,333.4L92.9,347.0L70.7,342.6L62.4,335.0L54.2,337.3L36.1,272.5L21.9,251.0L13.7,249.9Z"},{"n":"Villa El Salvador","d":"M204.0,599.6L199.6,595.0L203.8,569.8L231.0,560.8L251.6,599.6L260.4,604.3L259.0,615.0L255.0,622.4L244.4,625.2L200.7,605.2L204.0,599.6Z"},{"n":"Villa María del Triunfo","d":"M214.4,534.3L232.3,505.4L250.9,502.4L259.3,505.5L257.7,510.5L283.6,535.1L284.2,558.1L276.2,576.3L278.6,590.3L262.7,608.2L251.6,599.6L231.0,560.8L221.5,563.0L214.4,534.3Z"}],"puntos":{"Miraflores":"151.8,505.0","Comas":"122.8,342.1","Callao":"72.9,445.1","VES":"236.0,589.3","Mar":"44.2,503.4","Centro":"152.1,435.7"}};
+function el(tag, at, padre) {
+  const e = document.createElementNS(NS, tag);
+  if (at) for (const k in at) e.setAttribute(k, at[k]);
+  if (padre) padre.appendChild(e);
+  return e;
+}
+function tx(padre, x, y, s, cls = "t", at = {}) { const e = el("text", { x, y, class: cls, ...at }, padre); e.textContent = s; return e; }
+const cl = (x, a = 0, b = 1) => (x < a ? a : x > b ? b : x);
+const fase = (t, a, b) => cl((t - a) / (b - a));
+const suave = (x) => x * x * (3 - 2 * x);
+const d = (p) => "M" + p.map((q) => q[0].toFixed(1) + "," + q[1].toFixed(1)).join("L");
+function fmt(n, dec = 0) { const [e, f] = Math.abs(n).toFixed(dec).split("."); const g = e.replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0"); return (n < 0 ? "−" : "") + g + (f ? "," + f : ""); }
+function largo(p) { let L = 0; for (let i = 1; i < p.length; i++) L += Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]); return L; }
+function punto(p, f) {
+  const total = largo(p), obj = total * cl(f); let acc = 0;
+  for (let i = 1; i < p.length; i++) {
+    const dx = p[i][0] - p[i - 1][0], dy = p[i][1] - p[i - 1][1], s = Math.hypot(dx, dy);
+    if (acc + s >= obj || i === p.length - 1) {
+      const u = s ? cl((obj - acc) / s) : 0;
+      return { x: p[i - 1][0] + dx * u, y: p[i - 1][1] + dy * u, a: Math.atan2(dy, dx) * 180 / Math.PI };
+    }
+    acc += s;
+  }
+  return { x: p[0][0], y: p[0][1], a: 0 };
+}
+function subcamino(p, f) { // polilínea desde el inicio hasta la fracción f
+  const total = largo(p), obj = total * cl(f), out = [p[0]]; let acc = 0;
+  for (let i = 1; i < p.length; i++) {
+    const s = Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]);
+    if (acc + s >= obj) { const u = s ? (obj - acc) / s : 0; out.push([p[i - 1][0] + (p[i][0] - p[i - 1][0]) * u, p[i - 1][1] + (p[i][1] - p[i - 1][1]) * u]); return out; }
+    out.push(p[i]); acc += s;
+  }
+  return out;
+}
+function trazo(e, f) {
+  if (e._L == null) { e._L = e.getTotalLength ? e.getTotalLength() || 1 : 1; e.style.strokeDasharray = e._L + " " + e._L; }
+  e.style.strokeDashoffset = e._L * (1 - cl(f));
+}
+function vis(e, o) { e.style.opacity = cl(o); }
+function auto(padre, color = "#2dd4bf", r = 17) {
+  const g = el("g", {}, padre);
+  el("circle", { r: r + 9, fill: color, opacity: .18 }, g);
+  el("circle", { r, fill: color, stroke: "#fff", "stroke-width": 3 }, g);
+  el("path", { d: `M${-r * .36},${r * .38} L0,${-r * .55} L${r * .36},${r * .38} L0,${r * .18}Z`, fill: "#fff" }, g);
+  return g;
+}
+function poner(g, x, y, a = null, s = 1) { g.setAttribute("transform", `translate(${x.toFixed(1)},${y.toFixed(1)})` + (a == null ? "" : ` rotate(${(a + 90).toFixed(1)})`) + (s !== 1 ? ` scale(${s})` : "")); }
+function pin(padre, x, y, color = "#f26b3a", s = 1.6) {
+  const g = el("g", { transform: `translate(${x - 16 * s},${y - 30 * s}) scale(${s})` }, padre);
+  el("path", { d: "M16 2c-6.1 0-11 4.8-11 10.8C5 21 16 30 16 30s11-9 11-17.2C27 6.8 22.1 2 16 2z", fill: color, stroke: "#fff", "stroke-width": 1.4 }, g);
+  el("circle", { cx: 16, cy: 12.8, r: 4.2, fill: "#fff" }, g);
+  return g;
+}
+function rng(semilla) { let a = semilla >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+function caja(padre, x, y, w, h, r = 14, cls = "caja") { return el("rect", { x, y, width: w, height: h, rx: r, class: cls }, padre); }
+function etiqueta(padre, x, y, s, color = "#2dd4bf", cls = "t") { // texto con fondo
+  const g = el("g", {}, padre);
+  const r = el("rect", { x: x - 8, y: y - 24, rx: 9, height: 34, fill: "rgba(4,16,14,.92)", stroke: color, "stroke-width": 1.5 }, g);
+  const t = tx(g, x + 4, y, s, cls);
+  g._t = t; g._r = r; ancho(g, s);
+  return g;
+}
+function ancho(g, s) { let w = 0; try { w = g._t.getComputedTextLength(); } catch (e) { w = 0; } g._r.setAttribute("width", Math.max(40, (w || s.length * 12) + 24)); }
+function fijarTexto(g, s) { if (g._t.textContent !== s) { g._t.textContent = s; ancho(g, s); } }
+function lienzo(slide) { const s = slide.querySelector("svg.lienzo, svg.fondo"); s.innerHTML = ""; return s; }
+
+const ANIM = {};
+
+/* ===================== 01 · Portada ===================== */
+ANIM.portada = (slide) => {
+  const svg = lienzo(slide), r = rng(7);
+  const xs = [], ys = [];
+  for (let i = 0; i < 9; i++) xs.push(1070 + i * 108 + (r() - .5) * 26);
+  for (let j = 0; j < 10; j++) ys.push(70 + j * 112 + (r() - .5) * 24);
+  const vias = [];
+  el("rect", { x: 0, y: 0, width: 1920, height: 1080, fill: "transparent" }, svg);
+  const gm = el("g", { opacity: .9 }, svg);
+  for (let i = 0; i < xs.length - 1; i++) for (let j = 0; j < ys.length - 1; j++) if (r() > .18)
+    el("rect", { x: xs[i] + 14, y: ys[j] + 14, width: xs[i + 1] - xs[i] - 28, height: ys[j + 1] - ys[j] - 28, rx: 8, class: r() > .9 ? "manzana parque" : "manzana" }, gm);
+  xs.forEach((x) => vias.push(el("line", { x1: x, y1: -20, x2: x, y2: 1100, class: "via-f", "stroke-width": 5 }, svg)));
+  ys.forEach((y) => vias.push(el("line", { x1: 1000, y1: y, x2: 1940, y2: y, class: "via-f", "stroke-width": 5 }, svg)));
+  vias.push(el("line", { x1: 1000, y1: 1080, x2: 1940, y2: 240, class: "via-f", "stroke-width": 9, stroke: "#245049" }, svg));
+  const puntos = [];
+  for (let i = 0; i < xs.length; i++) for (let j = 0; j < ys.length; j++) if (r() > .55) puntos.push(el("circle", { cx: xs[i], cy: ys[j], r: 4, fill: "#2dd4bf", opacity: 0 }, svg));
+  const flota = [];
+  for (let n = 0; n < 16; n++) {
+    const i = 1 + Math.floor(r() * 7), j = 1 + Math.floor(r() * 8);
+    const g = el("g", { class: "flota", style: `animation-delay:${(r() * 2).toFixed(2)}s` }, svg);
+    el("circle", { cx: xs[i] + (r() > .5 ? 40 : 0), cy: ys[j], r: 9, fill: "#2dd4bf", stroke: "#06201c", "stroke-width": 3 }, g);
+    flota.push(g);
+  }
+  const ruta = [[xs[2], ys[1]], [xs[2], ys[4]], [xs[5], ys[4]], [xs[5], ys[7]], [xs[7], ys[7]]];
+  const halo = el("path", { d: d(ruta), fill: "none", stroke: "#2dd4bf", "stroke-width": 22, opacity: .12, "stroke-linecap": "round", "stroke-linejoin": "round" }, svg);
+  const linea = el("path", { d: d(ruta), class: "ruta brillo" }, svg);
+  const destino = ruta[ruta.length - 1];
+  const halo2 = el("circle", { cx: destino[0], cy: destino[1], r: 26, fill: "#f26b3a", class: "pulso", opacity: .5 }, svg);
+  const p = pin(svg, destino[0], destino[1] - 4, "#f26b3a", 2);
+  const coche = auto(svg, "#2dd4bf", 20);
+  return (t) => {
+    vias.forEach((v, k) => trazo(v, suave(fase(t, .1 + k * .06, 1.4 + k * .06))));
+    puntos.forEach((c, k) => vis(c, fase(t, 1.6 + k * .015, 2.1 + k * .015) * .7));
+    flota.forEach((g, k) => vis(g, fase(t, 2 + k * .08, 2.4 + k * .08)));
+    trazo(linea, suave(fase(t, 2.6, 4.2))); trazo(halo, suave(fase(t, 2.6, 4.2)));
+    vis(p, fase(t, 4, 4.4)); vis(halo2, fase(t, 4, 4.4) * .5);
+    const ciclo = t < 4.4 ? 0 : ((t - 4.4) % 10) / 8;
+    const q = punto(ruta, suave(cl(ciclo)));
+    poner(coche, q.x, q.y, q.a); vis(coche, fase(t, 4.2, 4.6));
+  };
+};
+
+/* ===================== 02 · Problemática ===================== */
+ANIM.problema = (slide) => {
+  const svg = lienzo(slide);
+  const X = [110, 320, 520, 720, 900], Y = [110, 330, 540];
+  const gm = el("g", {}, svg);
+  for (let i = 0; i < X.length - 1; i++) for (let j = 0; j < Y.length - 1; j++) {
+    const parque = i === 2 && j === 0;
+    el("rect", { x: X[i] + 16, y: Y[j] + 16, width: X[i + 1] - X[i] - 32, height: Y[j + 1] - Y[j] - 32, rx: 12, class: parque ? "manzana parque" : "manzana" }, gm);
+    if (parque) tx(gm, (X[i] + X[i + 1]) / 2, 290, "Parque", "t3 tc");
+  }
+  const calles = el("g", {}, svg);
+  X.forEach((x) => el("line", { x1: x, y1: 60, x2: x, y2: 590, class: "via" }, calles));
+  Y.forEach((y) => el("line", { x1: 60, y1: y, x2: 950, y2: y, class: "via" }, calles));
+  const sentido = el("g", {}, svg);
+  [170, 280, 430, 500].forEach((y) => el("path", { d: `M${520 - 9},${y + 8} L520,${y - 8} L${520 + 9},${y + 8}`, fill: "none", stroke: "#f26b3a", "stroke-width": 4, "stroke-linecap": "round" }, sentido));
+  const lblSentido = etiqueta(svg, 536, 160, "Sentido único ↑", "#f26b3a", "t2");
+  const A = [520, 230], B = [320, 440], P = [620, 330];
+  const rA = [A, [520, 110], [720, 110], [720, 330], P], rB = [B, [320, 330], P];
+  const rectaA = el("line", { x1: A[0], y1: A[1], x2: P[0], y2: P[1], class: "recta" }, svg);
+  const rectaB = el("line", { x1: B[0], y1: B[1], x2: P[0], y2: P[1], class: "recta" }, svg);
+  const lA = etiqueta(svg, 590, 255, "566 m", "#c7dbd6", "t2"), lB = etiqueta(svg, 430, 410, "1 278 m", "#c7dbd6", "t2");
+  const pathA = el("path", { d: d(rA), class: "ruta-n", opacity: .9 }, svg);
+  const pathB = el("path", { d: d(rB), class: "ruta" }, svg);
+  const halo = el("circle", { cx: P[0], cy: P[1], r: 22, fill: "#fff", class: "pulso", opacity: .4 }, svg);
+  const pasajero = el("g", {}, svg);
+  el("circle", { cx: P[0], cy: P[1], r: 15, fill: "#fff", stroke: "#0b2420", "stroke-width": 4 }, pasajero);
+  tx(pasajero, P[0], P[1] + 44, "Pasajero", "t tc");
+  const cA = auto(svg, "#f26b3a"), cB = auto(svg, "#2dd4bf");
+  const nA = tx(svg, 0, 0, "A", "tb tc"), nB = tx(svg, 0, 0, "B", "tb tc");
+  const etaA = etiqueta(svg, 70, 55, "A · calles 2 560 m · 6,1 min", "#f26b3a", "t2");
+  const etaB = etiqueta(svg, 400, 55, "B · calles 1 640 m · 3,9 min", "#2dd4bf", "t2");
+  const gana = etiqueta(svg, 600, 425, "B llega primero ✓", "#4ade80", "t");
+  const lema = etiqueta(svg, 230, 600, "Más cerca en línea recta ≠ llega primero", "#ffffff", "t");
+  return (t) => {
+    vis(gm, fase(t, 0, .8)); vis(calles, fase(t, 0, .8));
+    vis(pasajero, fase(t, .6, 1.2)); vis(halo, fase(t, .6, 1.2) * .4);
+    trazo(rectaA, fase(t, 1.3, 2.4)); trazo(rectaB, fase(t, 1.6, 2.7)); vis(rectaA, 1 - fase(t, 12, 12.5)); vis(rectaB, 1 - fase(t, 12, 12.5));
+    vis(lA, fase(t, 2.2, 2.6) * (1 - fase(t, 12, 12.5))); vis(lB, fase(t, 2.5, 2.9) * (1 - fase(t, 12, 12.5)));
+    const pul = t > 3.2 && t < 5.5 ? .55 + .45 * Math.sin(t * 7) : 1;
+    vis(sentido, fase(t, 3, 3.4) * pul); vis(lblSentido, fase(t, 3.2, 3.6));
+    const fa = fase(t, 5.5, 13.5), fb = cl((t - 5.5) / (8 * 410 / 640));
+    trazo(pathA, fa); trazo(pathB, fb);
+    const qa = punto(rA, fa), qb = punto(rB, fb);
+    poner(cA, qa.x, qa.y, qa.a); poner(cB, qb.x, qb.y, qb.a);
+    nA.setAttribute("x", qa.x - 34); nA.setAttribute("y", qa.y + 9); nB.setAttribute("x", qb.x - 34); nB.setAttribute("y", qb.y + 9);
+    [cA, cB].forEach((e) => vis(e, fase(t, .9, 1.4))); [nA, nB].forEach((e) => vis(e, fase(t, .9, 1.4) * (1 - fase(t, 12.8, 13.3))));
+    vis(etaA, fase(t, 6, 6.5)); vis(etaB, fase(t, 6, 6.5));
+    vis(gana, fase(t, 10.6, 11.1)); vis(lema, fase(t, 14, 14.6));
+  };
+};
+
+/* ===================== 03 · Objetivos ===================== */
+ANIM.objetivos = (slide) => {
+  const svg = lienzo(slide);
+  const datos = [["Búsqueda espacial", "Quadtree · Haversine · heap", "#2dd4bf"], ["Rutas", "Dijkstra propio", "#60a5fa"], ["Asignación", "menor ETA entre k", "#f26b3a"],
+    ["Simulación", "turnos · estados", "#a78bfa"], ["Experiencia", "web · cotización", "#fbbf24"]];
+  const cx = (i) => 110 + i * 195;
+  const base = el("line", { x1: cx(0), y1: 250, x2: cx(4), y2: 250, stroke: "#1f433d", "stroke-width": 6, "stroke-linecap": "round" }, svg);
+  const prog = el("line", { x1: cx(0), y1: 250, x2: cx(4), y2: 250, stroke: "#2dd4bf", "stroke-width": 6, "stroke-linecap": "round", class: "brillo" }, svg);
+  const nodos = datos.map(([t1, t2, c], i) => {
+    const g = el("g", {}, svg);
+    const halo = el("circle", { cx: cx(i), cy: 250, r: 70, fill: "url(#g-halo)", opacity: 0 }, g);
+    const ci = el("circle", { cx: cx(i), cy: 250, r: 52, fill: "#0b2420", stroke: c, "stroke-width": 4 }, g);
+    tx(g, cx(i), 262, String(i + 1), "tb tc", { style: "font-size:34px" });
+    tx(g, cx(i), 345, t1, "t tc", { style: "font-size:23px" });
+    tx(g, cx(i), 375, t2, "t2 tc", { style: "font-size:18px" });
+    return { g, halo, ci };
+  });
+  tx(svg, 110, 105, "ENTRADA", "t3"); tx(svg, 110, 140, "Origen y destino del pasajero", "t");
+  tx(svg, 890, 105, "SALIDA", "t3 te"); tx(svg, 890, 140, "Conductor, ETA, ruta y tarifa", "t te");
+  const ficha = el("circle", { r: 14, fill: "#fff", class: "brillo" }, svg);
+  const retos = el("g", {}, svg);
+  tx(retos, 500, 460, "RETOS OPCIONALES", "t3 tc");
+  [["A*", "Reto A"], ["Hora punta", "Reto B"], ["Varios pasajeros", "Reto C"], ["H3", "Reto D"]].forEach(([a, b], i) => {
+    const x = 70 + i * 222; caja(retos, x, 480, 200, 80, 16);
+    tx(retos, x + 100, 515, a, "t tc"); tx(retos, x + 100, 543, b, "t2 tc");
+  });
+  return (t) => {
+    vis(base, fase(t, 0, .6));
+    const f = fase(t, .8, 10);
+    prog.setAttribute("x2", cx(0) + (cx(4) - cx(0)) * f);
+    const q = cx(0) + (cx(4) - cx(0)) * f;
+    ficha.setAttribute("cx", q); ficha.setAttribute("cy", 250); vis(ficha, fase(t, .6, 1) * (1 - fase(t, 10, 10.5)));
+    nodos.forEach((n, i) => {
+      vis(n.g, fase(t, .2 + i * .25, .6 + i * .25));
+      const act = q >= cx(i) - 4;
+      vis(n.halo, act ? 1 : 0);
+      n.ci.setAttribute("fill", act ? "#0f3d37" : "#0b2420");
+    });
+    vis(retos, fase(t, 11, 12));
+  };
+};
+
+/* ===================== 04 · Arquitectura ===================== */
+ANIM.arquitectura = (slide) => {
+  const svg = lienzo(slide);
+  const N = { pas: [110, 110, "Pasajero", "navegador"], fro: [370, 110, "Frontend", "Nginx"], api: [630, 110, "API", "FastAPI"],
+    bd: [630, 330, "PostgreSQL", "cola + instantánea"], wor: [890, 330, "Worker", "dueño de la flota"], alg: [890, 520, "Algoritmos", "Quadtree · Dijkstra"] };
+  const aristas = [["pas", "fro"], ["fro", "api"], ["api", "bd"], ["bd", "wor"], ["wor", "alg"]];
+  aristas.forEach(([a, b]) => el("line", { x1: N[a][0], y1: N[a][1], x2: N[b][0], y2: N[b][1], stroke: "#24493f", "stroke-width": 5 }, svg));
+  const cajas = {};
+  for (const k in N) {
+    const [x, y, t1, t2] = N[k], g = el("g", {}, svg);
+    const r = caja(g, x - 105, y - 48, 210, 96, 18);
+    tx(g, x, y - 4, t1, "t tc", { style: "font-size:24px" }); tx(g, x, y + 26, t2, "t2 tc", { style: "font-size:17px" });
+    cajas[k] = { g, r };
+  }
+  const saltos = [["pas", "fro", "Confirmar viaje"], ["fro", "api", "POST /api/viajes"], ["api", "bd", "Comando en cola"], ["bd", "wor", "El worker toma el comando"],
+    ["wor", "alg", "Quadtree → k candidatos · Dijkstra → ETA"], ["alg", "wor", "Conductor elegido"], ["wor", "bd", "Estado + instantánea versionada"],
+    ["bd", "api", "La API lee el resultado"], ["api", "fro", "JSON: conductor, ETA, ruta"], ["fro", "pas", "Mapa y seguimiento"]];
+  const paquete = el("circle", { r: 13, fill: "#f26b3a", class: "brillo-n" }, svg);
+  const rastro = el("circle", { r: 26, fill: "url(#g-halo-n)" }, svg);
+  const cap = etiqueta(svg, 60, 470, "", "#f26b3a", "t");
+  const pasoN = tx(svg, 60, 425, "", "t3");
+  const DUR = 1.9;
+  return (t) => {
+    for (const k in cajas) vis(cajas[k].g, fase(t, 0, .8));
+    const tt = t - 1.2, i = Math.floor(tt / DUR);
+    if (tt < 0 || i >= saltos.length) {
+      vis(paquete, 0); vis(rastro, 0);
+      if (i >= saltos.length) { fijarTexto(cap, "Respuesta entregada · ciclo completo"); pasoN.textContent = ""; vis(cap, 1); } else vis(cap, 0);
+      for (const k in cajas) cajas[k].r.setAttribute("stroke", "rgba(94,234,212,.32)");
+      return;
+    }
+    const [a, b, s] = saltos[i], f = suave(fase(tt - i * DUR, 0, DUR * .7));
+    const x = N[a][0] + (N[b][0] - N[a][0]) * f, y = N[a][1] + (N[b][1] - N[a][1]) * f;
+    paquete.setAttribute("cx", x); paquete.setAttribute("cy", y); rastro.setAttribute("cx", x); rastro.setAttribute("cy", y);
+    vis(paquete, 1); vis(rastro, 1); vis(cap, 1);
+    fijarTexto(cap, s); pasoN.textContent = `PASO ${i + 1} DE ${saltos.length}`;
+    for (const k in cajas) cajas[k].r.setAttribute("stroke", k === b && f > .95 ? "#f26b3a" : k === a ? "#2dd4bf" : "rgba(94,234,212,.32)");
+  };
+};
+
+/* ===================== 05 · OSM (mapa real) ===================== */
+function grupoMapa(svg, x, y, alto) {
+  const s = alto / MAPA.H, g = el("g", { transform: `translate(${x},${y}) scale(${s})` }, svg);
+  return { g, s };
+}
+ANIM.osm = (slide) => {
+  const svg = lienzo(slide);
+  const { g } = grupoMapa(svg, 40, 15, 590);
+  const fondo = el("path", { d: MAPA.limite, fill: "rgba(45,212,191,.05)" }, g);
+  const ds = MAPA.distritos.map((x) => el("path", { d: x.d, fill: x.n === "Miraflores" ? "#f26b3a" : "#123a34", stroke: "#2dd4bf", "stroke-width": .9, opacity: 0 }, g));
+  const borde = el("path", { d: MAPA.limite, fill: "none", stroke: "#2dd4bf", "stroke-width": 3.2, class: "brillo" }, g);
+  const [mx, my] = MAPA.puntos.Miraflores.split(",").map(Number);
+  const lm = el("g", {}, g); tx(lm, mx + 30, my + 6, "Miraflores", "t", { style: "font-size:30px;fill:#ffd6c7" }); el("line", { x1: mx + 4, y1: my, x2: mx + 24, y2: my, stroke: "#ffd6c7", "stroke-width": 2 }, lm);
+  const pasos = ["1. Polígono del área (límite oficial)", "2. Vías para autos (filtro drive)", "3. Grafo dirigido limpio y simplificado", "4. GrafoVial propio (directo e inverso)", "5. Archivo compacto .npz"];
+  const gp = pasos.map((p, i) => { const e = el("g", {}, svg); el("circle", { cx: 452, cy: 52 + i * 46, r: 7, fill: "#2dd4bf" }, e); tx(e, 470, 59 + i * 46, p, "t", { style: "font-size:21px" }); return e; });
+  const tabla = el("g", {}, svg);
+  caja(tabla, 440, 300, 530, 290, 18);
+  tx(tabla, 470, 340, "", "t3"); tx(tabla, 760, 340, "MIRAFLORES", "t3 te"); tx(tabla, 950, 340, "LIMA METROP.", "t3 te");
+  const filas = [["Intersecciones", 1368, 152441, 0], ["Tramos dirigidos", 2670, 401998, 0], ["Sentido único", 1833, 52067, 0], ["Km de tramos", 227.4, 33083.6, 1]];
+  const celdas = filas.map(([n, a, b, dec], i) => {
+    tx(tabla, 470, 392 + i * 50, n, "t", { style: "font-size:21px" });
+    return [tx(tabla, 760, 392 + i * 50, "0", "t te", { style: "fill:#ffd6c7" }), tx(tabla, 950, 392 + i * 50, "0", "tb te", { style: "font-size:24px;fill:#99f6e4" }), a, b, dec];
+  });
+  return (t) => {
+    trazo(borde, suave(fase(t, 0, 3))); vis(fondo, fase(t, 2, 3));
+    ds.forEach((e, i) => vis(e, fase(t, 3 + i * .05, 3.4 + i * .05) * (MAPA.distritos[i].n === "Miraflores" ? .95 : .85)));
+    vis(lm, fase(t, 6.2, 6.8));
+    gp.forEach((e, i) => vis(e, fase(t, .5 + i * 1.3, 1 + i * 1.3)));
+    vis(tabla, fase(t, 7.5, 8.2));
+    const f = suave(fase(t, 8, 11));
+    celdas.forEach(([ea, eb, a, b, dec]) => { ea.textContent = fmt(a * f, dec); eb.textContent = fmt(b * f, dec); });
+  };
+};
+
+/* ===================== 06 · Grafos ===================== */
+ANIM.grafo = (slide) => {
+  const svg = lienzo(slide);
+  const P = { A: [120, 150], B: [380, 110], C: [650, 160], D: [140, 420], E: [400, 360], F: [650, 430], G: [400, 560] };
+  const E = [["A", "B", 260, 2], ["B", "C", 270, 2], ["A", "D", 340, 2], ["B", "E", 230, 1], ["C", "F", 260, 2], ["D", "E", 260, 2], ["E", "F", 270, 2], ["D", "G", 300, 2], ["G", "F", 330, 2]];
+  const lineas = E.map(([u, v, w, dir]) => {
+    const [x1, y1] = P[u], [x2, y2] = P[v], k = 34 / Math.hypot(x2 - x1, y2 - y1);
+    const g = el("g", {}, svg);
+    const ln = el("line", { x1: x1 + (x2 - x1) * k, y1: y1 + (y2 - y1) * k, x2: x2 - (x2 - x1) * k, y2: y2 - (y2 - y1) * k, class: "arista", "marker-end": dir === 1 ? "url(#flecha-n)" : "", ...(dir === 1 ? { stroke: "#f26b3a", "stroke-width": 5 } : {}) }, g);
+    if (dir === 2) ln.setAttribute("marker-end", "url(#flecha-g)"), ln.setAttribute("marker-start", "url(#flecha-g)");
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    el("rect", { x: mx - 30, y: my - 17, width: 60, height: 30, rx: 8, fill: "#05100e" }, g);
+    tx(g, mx, my + 6, String(w), "t2 tc", { style: "font-size:18px" });
+    return g;
+  });
+  const nodos = Object.entries(P).map(([n, [x, y]]) => { const g = el("g", {}, svg); el("circle", { cx: x, cy: y, r: 30, class: "nodo" }, g); tx(g, x, y + 8, n, "tb tc", { style: "font-size:24px" }); return g; });
+  const leyenda = el("g", {}, svg);
+  caja(leyenda, 730, 40, 250, 200, 16);
+  tx(leyenda, 750, 78, "Vértice = intersección", "t2"); tx(leyenda, 750, 113, "Arista = tramo", "t2"); tx(leyenda, 750, 148, "Peso = metros", "t2");
+  el("line", { x1: 752, y1: 185, x2: 812, y2: 185, stroke: "#f26b3a", "stroke-width": 5, "marker-end": "url(#flecha-n)" }, leyenda); tx(leyenda, 822, 191, "solo B → E", "t2", { style: "fill:#ffd6c7" });
+  const malo = el("path", { d: d([P.D, P.E, P.B, P.C]), fill: "none", stroke: "#f05252", "stroke-width": 8, "stroke-dasharray": "14 10", "stroke-linecap": "round", opacity: .9 }, svg);
+  const cruz = el("g", {}, svg); const [ex, ey] = [(P.E[0] + P.B[0]) / 2 + 30, (P.E[1] + P.B[1]) / 2];
+  el("path", { d: `M${ex - 18},${ey - 18}L${ex + 18},${ey + 18}M${ex + 18},${ey - 18}L${ex - 18},${ey + 18}`, stroke: "#f05252", "stroke-width": 7, "stroke-linecap": "round" }, cruz);
+  const lMalo = etiqueta(svg, 175, 262, "D→E→B→C = 760 m · ¡prohibido!", "#f05252", "t2");
+  const bueno = el("path", { d: d([P.D, P.E, P.F, P.C]), class: "ruta brillo" }, svg);
+  const lBueno = etiqueta(svg, 455, 520, "Ruta válida D→E→F→C = 790 m", "#2dd4bf", "t2");
+  const lista = el("g", {}, svg); caja(lista, 730, 265, 250, 160, 16);
+  tx(lista, 748, 300, "adyacencia[E] =", "tm"); tx(lista, 748, 333, "[(D,260),(F,270)]", "tm"); tx(lista, 748, 372, "inversa[E] =", "tm"); tx(lista, 748, 405, "[(B,230),(D,260),(F,270)]", "tm", { style: "font-size:15.5px" });
+  return (t) => {
+    nodos.forEach((n, i) => vis(n, fase(t, i * .15, i * .15 + .4)));
+    lineas.forEach((l, i) => vis(l, fase(t, 1.2 + i * .15, 1.6 + i * .15)));
+    vis(leyenda, fase(t, 3, 3.6));
+    trazo(malo, fase(t, 5, 7)); vis(malo, 1 - fase(t, 10.5, 11.5) * .75);
+    vis(cruz, fase(t, 7.4, 7.8)); vis(lMalo, fase(t, 7.4, 7.9));
+    trazo(bueno, fase(t, 9, 11)); vis(lBueno, fase(t, 11, 11.5));
+    vis(lista, fase(t, 12.5, 13.2));
+  };
+};
+
+/* ===================== 07 · Quadtree (algoritmo real, en miniatura) ===================== */
+ANIM.quadtree = (slide) => {
+  const svg = lienzo(slide);
+  const X0 = 40, Y0 = 30, L = 560, CAP = 3, r = rng(21);
+  const pts = [];
+  const centros = [[.25, .3], [.7, .65], [.3, .78]];
+  for (let i = 0; i < 34; i++) {
+    const c = centros[i % 3], dsp = i % 3 === 1 ? .12 : .16;
+    pts.push([cl(c[0] + (r() - .5) * 2 * dsp, .03, .97), cl(c[1] + (r() - .5) * 2 * dsp, .03, .97)]);
+  }
+  for (let i = 0; i < 6; i++) pts.push([r() * .94 + .03, r() * .94 + .03]);
+  // construcción con registro de divisiones
+  const divisiones = [];
+  const raiz = { x: 0, y: 0, w: 1, p: [], h: null, prof: 0 };
+  function insertar(n, i, paso) {
+    if (n.h) { insertar(hijo(n, pts[i]), i, paso); return; }
+    n.p.push(i);
+    if (n.p.length > CAP && n.prof < 5) {
+      const w = n.w / 2;
+      n.h = [0, 1, 2, 3].map((k) => ({ x: n.x + (k % 2) * w, y: n.y + Math.floor(k / 2) * w, w, p: [], h: null, prof: n.prof + 1 }));
+      divisiones.push({ n, paso });
+      const viejos = n.p; n.p = [];
+      viejos.forEach((j) => insertar(hijo(n, pts[j]), j, paso));
+    }
+  }
+  const hijo = (n, q) => n.h[(q[0] >= n.x + n.w / 2 ? 1 : 0) + (q[1] >= n.y + n.w / 2 ? 2 : 0)];
+  pts.forEach((_, i) => insertar(raiz, i, i));
+  const px = (u) => X0 + u * L, py = (v) => Y0 + v * L;
+  el("rect", { x: X0, y: Y0, width: L, height: L, fill: "rgba(0,0,0,.18)", stroke: "#2dd4bf", "stroke-width": 2.5 }, svg);
+  const capaPoda = el("g", {}, svg), capaVisita = el("g", {}, svg);
+  const lineas = divisiones.map(({ n, paso }) => {
+    const g = el("g", {}, svg), m = n.w / 2;
+    const a = el("line", { x1: px(n.x + m), y1: py(n.y), x2: px(n.x + m), y2: py(n.y + n.w), stroke: "#2dd4bf", "stroke-width": 2, opacity: .75 }, g);
+    const b = el("line", { x1: px(n.x), y1: py(n.y + m), x2: px(n.x + n.w), y2: py(n.y + m), stroke: "#2dd4bf", "stroke-width": 2, opacity: .75 }, g);
+    return { a, b, paso };
+  });
+  const puntos = pts.map(([u, v]) => el("circle", { cx: px(u), cy: py(v), r: 7, fill: "#99f6e4", stroke: "#05100e", "stroke-width": 2 }, svg));
+  // búsqueda best-first de los k = 3 más cercanos a Q
+  const Q = [.56, .44], K = 3;
+  const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+  const minDist = (n) => { const dx = Math.max(n.x - Q[0], 0, Q[0] - (n.x + n.w)), dy = Math.max(n.y - Q[1], 0, Q[1] - (n.y + n.w)); return Math.hypot(dx, dy); };
+  const eventos = []; let mejores = [], calculadas = 0;
+  let frontera = [[minDist(raiz), raiz]];
+  while (frontera.length) {
+    frontera.sort((a, b) => a[0] - b[0]);
+    const [md, n] = frontera.shift();
+    if (mejores.length === K && md >= mejores[K - 1][0]) { eventos.push({ tipo: "poda", nodos: [n, ...frontera.map((f) => f[1])], mejores: mejores.slice(), calculadas }); frontera = []; break; }
+    if (n.h) { n.h.forEach((h) => { if (h.p.length || h.h) frontera.push([minDist(h), h]); }); eventos.push({ tipo: "visita", n, mejores: mejores.slice(), calculadas }); continue; }
+    n.p.forEach((i) => { calculadas++; mejores.push([dist(pts[i], Q), i]); mejores.sort((a, b) => a[0] - b[0]); mejores = mejores.slice(0, K); });
+    eventos.push({ tipo: "hoja", n, mejores: mejores.slice(), calculadas });
+  }
+  const qg = el("g", {}, svg);
+  el("circle", { cx: px(Q[0]), cy: py(Q[1]), r: 24, fill: "#f26b3a", class: "pulso", opacity: .5 }, qg);
+  el("circle", { cx: px(Q[0]), cy: py(Q[1]), r: 11, fill: "#f26b3a", stroke: "#fff", "stroke-width": 3 }, qg);
+  const radio = el("circle", { cx: px(Q[0]), cy: py(Q[1]), r: 0, fill: "rgba(242,107,58,.08)", stroke: "#f26b3a", "stroke-width": 2, "stroke-dasharray": "6 6" }, svg);
+  const anillos = [0, 1, 2].map(() => el("circle", { r: 14, fill: "none", stroke: "#fbbf24", "stroke-width": 4 }, svg));
+  // panel lateral
+  const pan = el("g", {}, svg); caja(pan, 640, 30, 330, 560, 18);
+  tx(pan, 665, 72, "FASE", "t3"); const tFase = tx(pan, 665, 104, "", "t", { style: "font-size:21px" });
+  tx(pan, 665, 160, "CONDUCTORES", "t3"); const tN = tx(pan, 665, 196, "", "tb");
+  tx(pan, 665, 250, "CUADRANTES", "t3"); const tC = tx(pan, 665, 286, "", "tb");
+  tx(pan, 665, 340, "DISTANCIAS CALCULADAS", "t3"); const tD = tx(pan, 665, 376, "", "tb", { style: "fill:#fbbf24" });
+  tx(pan, 665, 430, "REGIONES DESCARTADAS", "t3"); const tP = tx(pan, 665, 466, "", "tb", { style: "fill:#f26b3a" });
+  const tFin = tx(pan, 665, 530, "", "t2", { style: "font-size:18px" }); const tFin2 = tx(pan, 665, 556, "", "t2", { style: "font-size:18px" });
+  const INS = .16, T_BUS = pts.length * INS + 2.2, PASO = 1.1;
+  function rect(n, cls, padre, at) { return el("rect", { x: px(n.x), y: py(n.y), width: n.w * L, height: n.w * L, ...at, class: cls }, padre); }
+  let ultimo = -2;
+  return (t) => {
+    const nIns = Math.min(pts.length, Math.floor(t / INS) + 1);
+    puntos.forEach((c, i) => vis(c, t < 0 ? 0 : i < nIns ? 1 : 0));
+    lineas.forEach((l) => { const f = fase(t, (l.paso + 1) * INS, (l.paso + 1) * INS + .4); trazo(l.a, f); trazo(l.b, f); });
+    tN.textContent = String(t < 0 ? 0 : nIns);
+    tC.textContent = String(1 + 3 * lineas.filter((l) => t >= (l.paso + 1) * INS).length);
+    const tb = t - T_BUS;
+    vis(qg, fase(tb, -1, -.5));
+    tFase.textContent = tb < -1 ? "Inserción y subdivisión" : "Búsqueda de k = 3 vecinos";
+    const idx = tb < 0 ? -1 : Math.min(eventos.length - 1, Math.floor(tb / PASO));
+    if (idx !== ultimo) {
+      ultimo = idx; capaVisita.innerHTML = ""; capaPoda.innerHTML = "";
+      for (let k = 0; k <= idx; k++) {
+        const e = eventos[k];
+        if (e.tipo === "hoja") rect(e.n, "", capaVisita, { fill: "rgba(251,191,36,.12)", stroke: "#fbbf24", "stroke-width": 2 });
+        if (e.tipo === "visita" && k === idx) rect(e.n, "", capaVisita, { fill: "none", stroke: "#fbbf24", "stroke-width": 3, "stroke-dasharray": "8 6" });
+        if (e.tipo === "poda") e.nodos.forEach((n) => rect(n, "", capaPoda, { fill: "rgba(240,82,82,.16)", stroke: "#f05252", "stroke-width": 1.5 }));
+      }
+    }
+    const ev = idx >= 0 ? eventos[idx] : null;
+    const mej = ev ? ev.mejores : [];
+    anillos.forEach((a, i) => { if (mej[i]) { a.setAttribute("cx", px(pts[mej[i][1]][0])); a.setAttribute("cy", py(pts[mej[i][1]][1])); vis(a, 1); } else vis(a, 0); });
+    radio.setAttribute("r", mej.length === K ? mej[K - 1][0] * L : 0);
+    tD.textContent = ev ? `${ev.calculadas} de ${pts.length}` : "—";
+    const poda = eventos.find((e, k) => e.tipo === "poda" && k <= idx);
+    tP.textContent = poda ? String(poda.nodos.length) : "—";
+    tFin.textContent = poda ? "Ninguna región descartada puede" : ""; tFin2.textContent = poda ? "contener un vecino más cercano." : "";
+  };
+};
+
+/* ===================== 08 · Haversine + heap ===================== */
+ANIM.haversine = (slide) => {
+  const svg = lienzo(slide);
+  // globo
+  const G = el("g", {}, svg), cx = 200, cy = 250, R = 160;
+  el("circle", { cx, cy, r: R, fill: "#0b2420", stroke: "#2dd4bf", "stroke-width": 2.5 }, G);
+  [-60, -30, 0, 30, 60].forEach((la) => { const y = cy - R * Math.sin(la * Math.PI / 180), rx = R * Math.cos(la * Math.PI / 180); el("ellipse", { cx, cy: y, rx, ry: rx * .18, fill: "none", stroke: "#1f4a43", "stroke-width": 1.5 }, G); });
+  [-60, -20, 20, 60].forEach((lo) => el("ellipse", { cx, cy, rx: Math.abs(R * Math.sin(lo * Math.PI / 180)), ry: R, fill: "none", stroke: "#1f4a43", "stroke-width": 1.5 }, G));
+  const p1 = [125, 170], p2 = [285, 300];
+  const arco = el("path", { d: `M${p1[0]},${p1[1]} Q${250},${150} ${p2[0]},${p2[1]}`, fill: "none", stroke: "#fbbf24", "stroke-width": 5, "stroke-linecap": "round" }, svg);
+  const cuerda = el("line", { x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1], stroke: "#99f6e4", "stroke-width": 2, "stroke-dasharray": "6 6" }, svg);
+  const m1 = el("g", {}, svg); el("circle", { cx: p1[0], cy: p1[1], r: 9, fill: "#fff" }, m1); tx(m1, p1[0] - 14, p1[1] - 14, "(φ₁, λ₁)", "t2 te");
+  const m2 = el("g", {}, svg); el("circle", { cx: p2[0], cy: p2[1], r: 9, fill: "#f26b3a" }, m2); tx(m2, p2[0] + 14, p2[1] + 30, "(φ₂, λ₂)", "t2");
+  const lblD = etiqueta(svg, 120, 470, "d = arco del círculo máximo", "#fbbf24", "t2");
+  const nota = tx(svg, 200, 540, "No es la cuerda: la Tierra es curva", "t2 tc", { style: "font-size:17px" });
+  // heap de máximos, k = 5
+  const valores = [820, 410, 1290, 260, 640, 980, 150, 700, 330, 1100, 90];
+  const K = 5, estados = [];
+  let h = [];
+  const subir = (a, i) => { while (i > 0) { const p = (i - 1) >> 1; if (a[p] >= a[i]) break; [a[p], a[i]] = [a[i], a[p]]; i = p; } };
+  const bajar = (a, i) => { for (;;) { const l = 2 * i + 1, r2 = l + 1; let m = i; if (l < a.length && a[l] > a[m]) m = l; if (r2 < a.length && a[r2] > a[m]) m = r2; if (m === i) break; [a[m], a[i]] = [a[i], a[m]]; i = m; } };
+  valores.forEach((v) => {
+    let accion;
+    if (h.length < K) { h = h.slice(); h.push(v); subir(h, h.length - 1); accion = "inserta"; }
+    else if (v < h[0]) { const sale = h[0]; h = h.slice(); h[0] = v; bajar(h, 0); accion = `reemplaza la raíz (${fmt(sale)} m sale)`; }
+    else accion = "descartado: no mejora la raíz";
+    estados.push({ v, h: h.slice(), accion });
+  });
+  const pos = [[720, 120], [600, 250], [840, 250], [540, 380], [660, 380]];
+  const conex = el("g", {}, svg);
+  [[0, 1], [0, 2], [1, 3], [1, 4]].forEach(([a, b]) => el("line", { x1: pos[a][0], y1: pos[a][1], x2: pos[b][0], y2: pos[b][1], stroke: "#2b5a52", "stroke-width": 3 }, conex));
+  const nodos = pos.map(([x, y], i) => { const g = el("g", {}, svg); const c = el("circle", { cx: x, cy: y, r: 44, class: "nodo" }, g); const tt = tx(g, x, y + 8, "", "t tc", { style: "font-size:21px" }); return { g, c, tt }; });
+  tx(svg, 720, 52, "HEAP DE MÁXIMOS · k = 5", "t3 tc");
+  const raizL = tx(svg, 662, 128, "raíz = peor de los mejores", "t2 te", { style: "font-size:16px;fill:#fbbf24" });
+  const llega = el("g", {}, svg); const cLl = el("circle", { r: 40, fill: "#f26b3a", opacity: .95 }, llega); const tLl = tx(llega, 0, 7, "", "t tc", { style: "font-size:20px;fill:#fff" });
+  const acc = etiqueta(svg, 470, 500, "", "#2dd4bf", "t2");
+  const cola = tx(svg, 470, 575, "", "tm", { style: "font-size:17px" });
+  const T0 = 6, PASO = 1.7;
+  return (t) => {
+    vis(G, fase(t, 0, .6)); vis(m1, fase(t, .5, .9)); vis(m2, fase(t, .7, 1.1));
+    trazo(arco, fase(t, 1.2, 2.8)); vis(cuerda, fase(t, 2.8, 3.2) * .8); vis(lblD, fase(t, 3, 3.5)); vis(nota, fase(t, 3.6, 4));
+    vis(conex, fase(t, T0 - 1, T0 - .4)); vis(raizL, fase(t, T0 - .5, T0));
+    const i = Math.floor((t - T0) / PASO), f = ((t - T0) % PASO) / PASO;
+    if (t < T0) { nodos.forEach((n) => { vis(n.g, fase(t, T0 - 1, T0 - .4) * .5); n.tt.textContent = ""; }); vis(llega, 0); vis(acc, 0); cola.textContent = ""; return; }
+    const k = Math.min(i, estados.length - 1), e = estados[k], prev = k > 0 ? estados[k - 1].h : [];
+    const enCurso = i < estados.length && f < .45;
+    const muestra = enCurso ? prev : e.h;
+    nodos.forEach((n, j) => {
+      const v = muestra[j];
+      n.tt.textContent = v == null ? "" : fmt(v) + " m";
+      vis(n.g, v == null ? .35 : 1);
+      n.c.setAttribute("stroke", j === 0 && v != null ? "#fbbf24" : "#2dd4bf");
+      n.c.setAttribute("fill", !enCurso && e.h[j] === e.v && i < estados.length ? "#0f4a42" : "#0b2420");
+    });
+    if (i < estados.length) {
+      const x = 470 + (720 - 470) * suave(cl(f / .45)), y = 300 + (120 - 300) * suave(cl(f / .45));
+      llega.setAttribute("transform", `translate(${x},${y})`); tLl.textContent = fmt(e.v);
+      vis(llega, f < .5 ? 1 : 1 - fase(f, .5, .6)); cLl.setAttribute("fill", e.accion.startsWith("desc") ? "#64748b" : "#f26b3a");
+      fijarTexto(acc, `${fmt(e.v)} m → ${e.accion}`); vis(acc, f > .3 ? 1 : 0);
+    } else { vis(llega, 0); fijarTexto(acc, "Resultado: los 5 conductores más cercanos"); vis(acc, 1); }
+    cola.textContent = "entrada: " + valores.map((v, j) => (j < i ? "·" : fmt(v))).join("  ");
+  };
+};
+
+/* ===================== 09 · Dijkstra ===================== */
+ANIM.dijkstra = (slide) => {
+  const svg = lienzo(slide);
+  const P = { S: [80, 250], A: [260, 95], B: [260, 405], C: [470, 250], D: [490, 70], E: [490, 430], F: [700, 160], T: [880, 300] };
+  const E = [["S", "A", 4], ["S", "B", 2], ["B", "A", 1], ["A", "D", 5], ["A", "C", 8], ["B", "C", 8], ["B", "E", 10], ["C", "D", 2], ["C", "E", 2], ["D", "F", 6], ["E", "T", 9], ["F", "T", 3], ["C", "T", 8]];
+  const ady = {}; Object.keys(P).forEach((n) => (ady[n] = [])); E.forEach(([u, v, w]) => ady[u].push([v, w]));
+  // ejecución real con registro de pasos
+  const dist = { S: 0 }, pred = {}, asent = new Set(), pasos = []; let cola = [[0, "S"]];
+  pasos.push({ tipo: "inicio", dist: { ...dist }, asent: [], cola: cola.slice(), msg: "d(S) = 0; el resto = ∞" });
+  while (cola.length) {
+    cola.sort((a, b) => a[0] - b[0] || a[1].localeCompare(b[1]));
+    const [du, u] = cola.shift();
+    if (asent.has(u)) continue;
+    asent.add(u);
+    pasos.push({ tipo: "extrae", u, dist: { ...dist }, asent: [...asent], cola: cola.slice(), msg: `Extrae ${u} (d = ${du}): distancia definitiva` });
+    for (const [v, w] of ady[u]) {
+      if (asent.has(v)) continue;
+      const nd = du + w;
+      if (nd < (dist[v] ?? Infinity)) {
+        const antes = dist[v]; dist[v] = nd; pred[v] = u; cola.push([nd, v]);
+        pasos.push({ tipo: "relaja", u, v, dist: { ...dist }, asent: [...asent], cola: cola.slice(), msg: antes == null ? `Relaja ${u}→${v}: d(${v}) = ${du} + ${w} = ${nd}` : `Mejora ${v}: ${antes} → ${nd} pasando por ${u}` });
+      }
+    }
+    if (u === "T") break;
+  }
+  const camino = []; for (let n = "T"; n; n = pred[n]) camino.unshift(n);
+  pasos.push({ tipo: "fin", dist: { ...dist }, asent: [...asent], cola: [], msg: `Camino mínimo ${camino.join("→")} = ${dist.T}` });
+  const aristas = {};
+  const ruta = el("path", { d: d(camino.map((n) => P[n])), class: "ruta brillo", opacity: 0, "stroke-width": 12 }, svg);
+  E.forEach(([u, v, w]) => {
+    const [x1, y1] = P[u], [x2, y2] = P[v], k = 36 / Math.hypot(x2 - x1, y2 - y1);
+    const g = el("g", {}, svg);
+    const ln = el("line", { x1: x1 + (x2 - x1) * k, y1: y1 + (y2 - y1) * k, x2: x2 - (x2 - x1) * k, y2: y2 - (y2 - y1) * k, class: "arista", "marker-end": "url(#flecha-g)" }, g);
+    const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+    el("circle", { cx: mx, cy: my, r: 16, fill: "#05100e" }, g); tx(g, mx, my + 6, String(w), "t2 tc", { style: "font-size:18px" });
+    aristas[u + v] = ln;
+  });
+  const nodos = {};
+  Object.entries(P).forEach(([n, [x, y]]) => {
+    const g = el("g", {}, svg); const c = el("circle", { cx: x, cy: y, r: 32, class: "nodo" }, g);
+    tx(g, x, y + 8, n, "tb tc", { style: "font-size:24px" });
+    const etq = el("g", {}, g); el("rect", { x: x - 30, y: y - 70, width: 60, height: 30, rx: 9, fill: "#05100e", stroke: "#2b5a52" }, etq);
+    const dt = tx(etq, x, y - 48, "∞", "t tc", { style: "font-size:19px" });
+    nodos[n] = { g, c, dt };
+  });
+  const pan = el("g", {}, svg); caja(pan, 30, 515, 940, 90, 16);
+  tx(pan, 52, 543, "COLA DE PRIORIDAD (heap)", "t3"); const tCola = tx(pan, 52, 580, "", "tm", { style: "font-size:21px" });
+  const msg = etiqueta(svg, 40, 30, "", "#fbbf24", "t2");
+  const PASO = 1.15;
+  return (t) => {
+    Object.values(nodos).forEach((n, i) => vis(n.g, fase(t, i * .1, i * .1 + .4)));
+    const k = t < 1.2 ? -1 : Math.min(pasos.length - 1, Math.floor((t - 1.2) / PASO));
+    const p = k >= 0 ? pasos[k] : null;
+    Object.entries(nodos).forEach(([n, o]) => {
+      const dv = p ? p.dist[n] : undefined;
+      o.dt.textContent = dv == null ? "∞" : String(dv);
+      const as = p && p.asent.includes(n), act = p && (p.u === n);
+      o.c.setAttribute("fill", as ? "#0f766e" : "#0b2420");
+      o.c.setAttribute("stroke", act ? "#f26b3a" : p && p.tipo === "relaja" && p.v === n ? "#fbbf24" : "#2dd4bf");
+      o.c.setAttribute("stroke-width", act ? 6 : 3);
+    });
+    Object.entries(aristas).forEach(([uv, ln]) => {
+      const rel = p && p.tipo === "relaja" && p.u + p.v === uv;
+      ln.setAttribute("stroke", rel ? "#fbbf24" : "#3a6159"); ln.setAttribute("stroke-width", rel ? 6 : 3.5);
+    });
+    vis(pan, fase(t, .8, 1.2));
+    tCola.textContent = p ? (p.cola.length ? p.cola.slice().sort((a, b) => a[0] - b[0]).map(([dd, n]) => `(${dd}, ${n})`).join("  ") : "vacía / destino asentado") : "";
+    if (p) { fijarTexto(msg, p.msg); vis(msg, 1); } else vis(msg, 0);
+    const fin = p && p.tipo === "fin"; vis(ruta, fin ? 1 : 0); if (fin) trazo(ruta, fase(t, 1.2 + k * PASO, 1.2 + k * PASO + 1.2));
+  };
+};
+
+/* ===================== 10 · ETA ===================== */
+ANIM.eta = (slide) => {
+  const svg = lienzo(slide);
+  const P = [250, 320];
+  const C = [["C1", 420, 1650, [180, 200]], ["C2", 510, 980, [380, 230]], ["C3", 640, 1120, [110, 450]], ["C4", 700, 2300, [400, 480]], ["C5", 880, 1300, [60, 160]]];
+  const V = 25 / 3.6;
+  const mapa = el("g", {}, svg);
+  for (let x = 40; x <= 460; x += 70) el("line", { x1: x, y1: 40, x2: x, y2: 580, class: "via-f" }, mapa);
+  for (let y = 60; y <= 580; y += 65) el("line", { x1: 30, y1: y, x2: 470, y2: y, class: "via-f" }, mapa);
+  const onda = el("circle", { cx: P[0], cy: P[1], r: 0, fill: "rgba(45,212,191,.08)", stroke: "#2dd4bf", "stroke-width": 2 }, svg);
+  const rectas = C.map(([, , , [x, y]]) => el("line", { x1: x, y1: y, x2: P[0], y2: P[1], class: "recta" }, svg));
+  el("circle", { cx: P[0], cy: P[1], r: 13, fill: "#fff", stroke: "#0b2420", "stroke-width": 4 }, svg);
+  tx(svg, P[0], P[1] + 40, "Pasajero", "t2 tc");
+  const coches = C.map(([n, , , [x, y]]) => { const g = el("g", {}, svg); const a = auto(g, "#60a5fa", 15); poner(a, x, y); tx(g, x, y - 26, n, "t tc", { style: "font-size:19px" }); return { g, a }; });
+  const onda2 = tx(svg, 250, 600, "", "t2 tc", { style: "font-size:17px" });
+  // ranking
+  const tabla = el("g", {}, svg);
+  tx(tabla, 520, 60, "CANDIDATO", "t3"); tx(tabla, 655, 60, "RECTA", "t3"); tx(tabla, 760, 60, "CALLES", "t3"); tx(tabla, 875, 60, "ETA", "t3");
+  const filas = C.map(([n, recta, calles], i) => {
+    const g = el("g", {}, tabla); const fondo = el("rect", { x: 505, y: -32, width: 470, height: 52, rx: 12, fill: "rgba(16,40,36,.9)", stroke: "rgba(94,234,212,.2)" }, g);
+    tx(g, 525, 2, n, "t"); tx(g, 655, 2, fmt(recta) + " m", "t2");
+    const tc = tx(g, 760, 2, fmt(calles) + " m", "t2"); const te = tx(g, 875, 2, `${Math.round(calles / V)} s`, "t");
+    const barra = el("rect", { x: 525, y: 12, height: 5, rx: 2, width: 0, fill: "#2dd4bf" }, g);
+    return { g, fondo, tc, te, barra, recta, calles, eta: calles / V, n };
+  });
+  const porRecta = filas.slice().sort((a, b) => a.recta - b.recta), porEta = filas.slice().sort((a, b) => a.eta - b.eta);
+  const corona = etiqueta(svg, 520, 470, "", "#4ade80", "t");
+  const aviso = etiqueta(svg, 520, 545, "Óptimo entre los k = 5 evaluados", "#fbbf24", "t2");
+  return (t) => {
+    vis(mapa, fase(t, 0, .6));
+    coches.forEach((c, i) => vis(c.g, fase(t, .4 + i * .2, .8 + i * .2)));
+    rectas.forEach((r, i) => trazo(r, fase(t, 1.6 + i * .25, 2.4 + i * .25)));
+    vis(tabla, fase(t, 2.5, 3));
+    const fOrden = suave(fase(t, 9, 10.5));
+    filas.forEach((f) => {
+      const y0 = 110 + porRecta.indexOf(f) * 66, y1 = 110 + porEta.indexOf(f) * 66;
+      f.g.setAttribute("transform", `translate(0,${(y0 + (y1 - y0) * fOrden).toFixed(1)})`);
+      const mostrar = fase(t, 6, 7); vis(f.tc, mostrar); vis(f.te, fase(t, 7, 8));
+      f.barra.setAttribute("width", (430 * f.eta / 340 * fase(t, 7, 8.5)).toFixed(1));
+      const gana = f === porEta[0] && t > 10.5;
+      f.fondo.setAttribute("stroke", gana ? "#4ade80" : "rgba(94,234,212,.2)"); f.fondo.setAttribute("stroke-width", gana ? 3 : 1);
+    });
+    const r = fase(t, 3.5, 6.5) * 260; onda.setAttribute("r", r); vis(onda, fase(t, 3.5, 3.8) * (1 - fase(t, 6.5, 7.5)));
+    onda2.textContent = t > 3.5 && t < 7.5 ? "Un Dijkstra desde el pasajero (grafo invertido)" : t >= 9 ? "Orden por ETA, no por línea recta" : "Orden por distancia en línea recta";
+    vis(onda2, fase(t, 2.2, 2.6));
+    coches.forEach((c, i) => c.a.querySelector("circle:nth-child(2)").setAttribute("fill", t > 10.5 && filas[i] === porEta[0] ? "#4ade80" : "#60a5fa"));
+    fijarTexto(corona, `Asignado: ${porEta[0].n} · ${Math.round(porEta[0].eta)} s (no el más cercano)`); vis(corona, fase(t, 10.6, 11.1));
+    vis(aviso, fase(t, 12, 12.5));
+  };
+};
+
+/* ===================== 11 · Turnos ===================== */
+ANIM.turnos = (slide) => {
+  const svg = lienzo(slide);
+  const XS = [50, 150, 250, 350, 450, 550], YS = [60, 160, 260, 360, 460, 560];
+  const mapa = el("g", {}, svg);
+  XS.forEach((x) => el("line", { x1: x, y1: 40, x2: x, y2: 580, class: "via", "stroke-width": 10 }, mapa));
+  YS.forEach((y) => el("line", { x1: 30, y1: y, x2: 570, y2: y, class: "via", "stroke-width": 10 }, mapa));
+  const celdas = el("g", {}, svg);
+  const rutas = [
+    [[50, 60], [250, 60], [250, 260], [450, 260], [450, 560], [50, 560], [50, 60]],
+    [[550, 60], [550, 360], [150, 360], [150, 160], [550, 160]],
+    [[350, 560], [350, 160], [50, 160], [50, 460], [350, 460]],
+    [[150, 560], [550, 560], [550, 460], [250, 460], [250, 60]]];
+  const colores = ["#2dd4bf", "#f26b3a", "#a78bfa", "#fbbf24"];
+  const coches = rutas.map((_, i) => auto(svg, colores[i], 14));
+  const hud = el("g", {}, svg); caja(hud, 610, 30, 360, 120, 16);
+  tx(hud, 632, 66, "TURNO", "t3"); const tT = tx(hud, 632, 112, "", "tb", { style: "font-size:40px" });
+  tx(hud, 790, 66, "RELOJ SIMULADO", "t3"); const tR = tx(hud, 790, 112, "", "tb", { style: "font-size:34px;fill:#99f6e4" });
+  const pasos = ["Avanza el reloj", "Conexiones y desconexiones", "Se resuelven las ofertas", "Movimiento por aristas", "Actualizar Quadtree", "Nueva demanda", "Guardar instantánea"];
+  const lista = el("g", {}, svg);
+  const items = pasos.map((p, i) => { const g = el("g", {}, lista); const r = el("rect", { x: 610, y: 170 + i * 60, width: 360, height: 50, rx: 12, fill: "rgba(16,40,36,.85)", stroke: "rgba(94,234,212,.2)" }, g); tx(g, 632, 202 + i * 60, `${i + 1}. ${p}`, "t", { style: "font-size:20px" }); return r; });
+  const T = 3.2, MOV = [3 / 7, 4 / 7];
+  const celda = (x, y) => [Math.min(3, Math.floor((x - 30) / 135)), Math.min(3, Math.floor((y - 40) / 135))];
+  let ultimo = "";
+  const pos = (i, n) => punto(rutas[i], ((n * 0.09 + i * .21) % 1));
+  return (t) => {
+    vis(mapa, fase(t, 0, .6)); vis(hud, fase(t, .3, .8)); vis(lista, fase(t, .6, 1.1));
+    const tt = Math.max(0, t - 1.2), turno = Math.floor(tt / T), f = (tt % T) / T;
+    const paso = Math.min(6, Math.floor(f * 7));
+    items.forEach((r, i) => { r.setAttribute("stroke", i === paso && t > 1.2 ? "#2dd4bf" : "rgba(94,234,212,.2)"); r.setAttribute("fill", i === paso && t > 1.2 ? "rgba(15,118,110,.5)" : "rgba(16,40,36,.85)"); });
+    tT.textContent = String(12 + turno);
+    const seg = (12 + turno) * 30 + 8 * 3600; tR.textContent = `${String(Math.floor(seg / 3600)).padStart(2, "0")}:${String(Math.floor(seg / 60) % 60).padStart(2, "0")}:${String(seg % 60).padStart(2, "0")}`;
+    const m = suave(fase(f, MOV[0], MOV[1]));
+    const actuales = coches.map((c, i) => {
+      const a = pos(i, turno), b = pos(i, turno + 1);
+      const q = punto(rutas[i], (((turno + m) * 0.09 + i * .21) % 1));
+      poner(c, q.x, q.y, q.a); vis(c, fase(t, .8, 1.2));
+      return f >= 4 / 7 ? celda(b.x, b.y) : celda(a.x, a.y);
+    });
+    const clave = actuales.map((c) => c.join(",")).join("|") + (paso === 4);
+    if (clave !== ultimo) {
+      ultimo = clave; celdas.innerHTML = "";
+      actuales.forEach(([cx, cy], i) => el("rect", { x: 30 + cx * 135, y: 40 + cy * 135, width: 135, height: 135, fill: colores[i], opacity: paso === 4 ? .22 : .08, stroke: colores[i], "stroke-width": paso === 4 ? 3 : 1 }, celdas));
+    }
+  };
+};
+
+/* ===================== 12 · Aceptación ===================== */
+ANIM.aceptacion = (slide) => {
+  const svg = lienzo(slide);
+  const S = { desconectado: [130, 60, "Desconectado"], disponible: [130, 230, "Disponible"], oferta_pendiente: [400, 230, "Oferta pendiente"], aceptado: [670, 230, "Aceptado"],
+    en_camino: [670, 380, "En camino"], esperando_recogida: [400, 380, "Esperando recogida"], en_viaje: [130, 380, "En viaje"], finalizado: [130, 520, "Finalizado"] };
+  const flechas = [["desconectado", "disponible"], ["disponible", "oferta_pendiente"], ["oferta_pendiente", "aceptado"], ["aceptado", "en_camino"], ["en_camino", "esperando_recogida"],
+    ["esperando_recogida", "en_viaje"], ["en_viaje", "finalizado"]];
+  const g0 = el("g", {}, svg);
+  flechas.forEach(([a, b]) => { const [x1, y1] = S[a], [x2, y2] = S[b]; const k1 = Math.abs(x2 - x1) > 10 ? 118 : 30, ux = Math.sign(x2 - x1), uy = Math.sign(y2 - y1); el("line", { x1: x1 + ux * k1, y1: y1 + uy * 30, x2: x2 - ux * k1, y2: y2 - uy * 30, stroke: "#4b7a71", "stroke-width": 3, "marker-end": "url(#flecha-g)" }, g0); });
+  const regreso = el("path", { d: "M400,200 C400,140 160,140 140,196", fill: "none", stroke: "#f05252", "stroke-width": 3, "stroke-dasharray": "8 6", "marker-end": "url(#flecha-n)" }, g0);
+  tx(g0, 270, 132, "rechazo o plazo vencido", "t2 tc", { style: "fill:#fca5a5;font-size:17px" });
+  el("path", { d: "M18,520 C0,380 0,330 22,250", fill: "none", stroke: "#4b7a71", "stroke-width": 3, "marker-end": "url(#flecha-g)" }, g0);
+  const cajas = {};
+  for (const k in S) { const [x, y, n] = S[k]; const g = el("g", {}, svg); const r = el("rect", { x: x - 115, y: y - 28, width: 230, height: 56, rx: 28, fill: "#0b2420", stroke: "#2b5a52", "stroke-width": 2.5 }, g); tx(g, x, y + 7, n, "t tc", { style: "font-size:19px" }); cajas[k] = r; }
+  const secuencia = [ // [conductor, estado, mensaje, color]
+    ["LG-0214", "oferta_pendiente", "Oferta a LG-0214 (menor ETA)", "#fbbf24"], ["LG-0214", "disponible", "LG-0214 rechaza", "#f05252"],
+    ["LG-0877", "oferta_pendiente", "Oferta a LG-0877 (2.º ETA)", "#fbbf24"], ["LG-0877", "oferta_pendiente", "Sin respuesta…", "#fbbf24"], ["LG-0877", "disponible", "Plazo de 2 turnos vencido", "#f05252"],
+    ["LG-1532", "oferta_pendiente", "Oferta a LG-1532 (3.er ETA)", "#fbbf24"], ["LG-1532", "aceptado", "LG-1532 acepta ✓", "#4ade80"], ["LG-1532", "en_camino", "Va hacia el pasajero", "#2dd4bf"],
+    ["LG-1532", "esperando_recogida", "Llegó: espera al pasajero", "#2dd4bf"], ["LG-1532", "en_viaje", "Pasajero a bordo", "#2dd4bf"], ["LG-1532", "finalizado", "Viaje completado", "#2dd4bf"], ["LG-1532", "disponible", "Vuelve a estar disponible", "#2dd4bf"]];
+  const ficha = el("g", {}, svg); el("rect", { x: -48, y: -17, width: 96, height: 34, rx: 17, fill: "#f26b3a", stroke: "#fff", "stroke-width": 2 }, ficha); const tf = tx(ficha, 0, 7, "", "t tc", { style: "font-size:16px;fill:#fff" });
+  const logBox = el("g", {}, svg); caja(logBox, 470, 450, 500, 150, 14);
+  tx(logBox, 490, 478, "REGISTRO DE LA SOLICITUD", "t3");
+  const lt = [0, 1, 2, 3].map((i) => tx(logBox, 490, 510 + i * 27, "", "t2", { style: "font-size:18px" }));
+  const T0 = 1.6, PASO = 1.6;
+  let anterior = null;
+  return (t) => {
+    vis(g0, fase(t, 0, .8)); Object.values(cajas).forEach((r) => vis(r.parentNode, fase(t, 0, .8))); vis(logBox, fase(t, .8, 1.2));
+    vis(regreso, 1);
+    const k = Math.floor((t - T0) / PASO);
+    if (k < 0) { vis(ficha, 0); lt.forEach((e) => (e.textContent = "")); Object.values(cajas).forEach((r) => r.setAttribute("stroke", "#2b5a52")); return; }
+    const kk = Math.min(k, secuencia.length - 1), [c, est] = secuencia[kk];
+    const prev = kk > 0 && secuencia[kk - 1][0] === c ? secuencia[kk - 1][1] : "disponible";
+    const f = suave(fase((t - T0) % PASO, 0, .7));
+    const a = S[prev], b = S[est];
+    const x = k >= secuencia.length ? b[0] : a[0] + (b[0] - a[0]) * f, y = k >= secuencia.length ? b[1] : a[1] + (b[1] - a[1]) * f;
+    ficha.setAttribute("transform", `translate(${x},${y - 46})`); tf.textContent = c; vis(ficha, 1);
+    Object.entries(cajas).forEach(([n, r]) => { r.setAttribute("stroke", n === est ? secuencia[kk][3] : "#2b5a52"); r.setAttribute("stroke-width", n === est ? 4.5 : 2.5); r.setAttribute("fill", n === est ? "#0f3d37" : "#0b2420"); });
+    const desde = Math.max(0, kk - 3);
+    lt.forEach((e, i) => { const s = secuencia[desde + i]; e.textContent = s && desde + i <= kk ? "• " + s[2] : ""; e.style.fill = s ? s[3] : ""; });
+  };
+};
+
+/* ===================== 13 · Congestión ===================== */
+const G = (h, m, s) => Math.exp(-((h - m) ** 2) / (2 * s * s));
+const factor = (int, h) => 1 + int * (G(h, 8, 1) + .9 * G(h, 18.5, 1.2) + .25 * G(h, 13, 1.5));
+ANIM.congestion = (slide) => {
+  const svg = lienzo(slide);
+  const X0 = 80, X1 = 620, Y0 = 520, Y1 = 90, FMAX = 3.2;
+  const sx = (h) => X0 + (X1 - X0) * h / 24, sy = (f) => Y0 - (Y0 - Y1) * (f - 1) / (FMAX - 1);
+  const ejes = el("g", {}, svg);
+  [1, 1.5, 2, 2.5, 3].forEach((f) => { el("line", { x1: X0, y1: sy(f), x2: X1, y2: sy(f), stroke: "#173631", "stroke-width": 1.5 }, ejes); tx(ejes, X0 - 12, sy(f) + 6, fmt(f, 1) + "×", "t2 te", { style: "font-size:16px" }); });
+  [0, 6, 8, 12, 15, 18, 24].forEach((h) => tx(ejes, sx(h), Y0 + 30, `${h}:00`, "t2 tc", { style: "font-size:15px" }));
+  tx(ejes, X0, 60, "FACTOR DE CONGESTIÓN SEGÚN LA HORA", "t3");
+  const curva = (int) => { const p = []; for (let h = 0; h <= 24; h += .1) p.push([sx(h), sy(factor(int, h))]); return p; };
+  const cP = el("path", { d: d(curva(2.0)), fill: "none", stroke: "#f26b3a", "stroke-width": 5 }, svg);
+  const cR = el("path", { d: d(curva(0.45)), fill: "none", stroke: "#2dd4bf", "stroke-width": 5 }, svg);
+  const leg = el("g", {}, svg); el("rect", { x: 380, y: 92, width: 22, height: 6, fill: "#f26b3a" }, leg); tx(leg, 410, 101, "Principal (intensidad 2,0)", "t2", { style: "font-size:17px" });
+  el("rect", { x: 380, y: 122, width: 22, height: 6, fill: "#2dd4bf" }, leg); tx(leg, 410, 131, "Residencial (0,45)", "t2", { style: "font-size:17px" });
+  const cursor = el("g", {}, svg); const lc = el("line", { y1: Y1 - 10, y2: Y0, stroke: "#fff", "stroke-width": 2, "stroke-dasharray": "5 5" }, cursor);
+  const dP = el("circle", { r: 8, fill: "#f26b3a", stroke: "#fff", "stroke-width": 2 }, cursor), dR = el("circle", { r: 8, fill: "#2dd4bf", stroke: "#fff", "stroke-width": 2 }, cursor);
+  const hora = etiqueta(svg, 0, 0, "", "#ffffff", "t");
+  // panel de vía
+  const pan = el("g", {}, svg); caja(pan, 660, 60, 315, 520, 18);
+  tx(pan, 680, 98, "AV. PRINCIPAL · 500 m", "t3");
+  const via = el("line", { x1: 690, y1: 130, x2: 945, y2: 130, "stroke-width": 16, "stroke-linecap": "round" }, pan);
+  tx(pan, 680, 180, "500 m ÷ 45 km/h = 40 s", "t2", { style: "font-size:18px" });
+  const tP = tx(pan, 680, 222, "", "tb", { style: "font-size:30px;fill:#ffd6c7" });
+  tx(pan, 680, 290, "CALLE RESIDENCIAL · 300 m", "t3");
+  const via2 = el("line", { x1: 690, y1: 322, x2: 945, y2: 322, "stroke-width": 10, "stroke-linecap": "round" }, pan);
+  tx(pan, 680, 372, "300 m ÷ 25 km/h = 43 s", "t2", { style: "font-size:18px" });
+  const tR = tx(pan, 680, 414, "", "tb", { style: "font-size:30px;fill:#99f6e4" });
+  const nivel = etiqueta(pan, 690, 500, "", "#fbbf24", "t");
+  tx(pan, 680, 560, "Etiqueta pública de /api/trafico", "t2", { style: "font-size:15px" });
+  const col = (f) => (f >= 2.2 ? "#f05252" : f >= 1.4 ? "#fbbf24" : "#4ade80");
+  return (t) => {
+    vis(ejes, fase(t, 0, .6)); trazo(cP, fase(t, .5, 2.5)); trazo(cR, fase(t, .8, 2.8)); vis(leg, fase(t, 2.5, 3));
+    vis(pan, fase(t, 3, 3.5)); vis(cursor, fase(t, 3.5, 4)); vis(hora, fase(t, 3.5, 4));
+    const h = 4 + ((Math.max(0, t - 4) * 1.15) % 18);
+    const fp = factor(2.0, h), fr = factor(.45, h);
+    lc.setAttribute("x1", sx(h)); lc.setAttribute("x2", sx(h));
+    dP.setAttribute("cx", sx(h)); dP.setAttribute("cy", sy(fp)); dR.setAttribute("cx", sx(h)); dR.setAttribute("cy", sy(fr));
+    const hh = Math.floor(h), mm = Math.floor((h - hh) * 60);
+    fijarTexto(hora, `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`);
+    hora.setAttribute("transform", `translate(${sx(h) - 30},${Y1 - 22})`);
+    tP.textContent = `${fmt(fp, 2)}× → ${Math.round(40 * fp)} s`; tR.textContent = `${fmt(fr, 2)}× → ${Math.round(43.2 * fr)} s`;
+    via.setAttribute("stroke", col(fp)); via2.setAttribute("stroke", col(fr * 1.4));
+    fijarTexto(nivel, fp >= 2.2 ? "Tráfico alto (simulado)" : fp >= 1.4 ? "Tráfico moderado (simulado)" : "Tráfico fluido (simulado)");
+  };
+};
+
+/* ===================== 14 · Tarifa ===================== */
+ANIM.tarifa = (slide) => {
+  const svg = lienzo(slide);
+  const recibo = el("g", {}, svg); caja(recibo, 40, 30, 440, 560, 22);
+  tx(recibo, 70, 80, "COTIZACIÓN", "t3"); tx(recibo, 70, 115, "8,0 km · 22 min · recogida 2,5 km", "t2", { style: "font-size:18px" });
+  const filas = [["Tarifa base", "", 3.5], ["Recorrido", "8,0 km × 1,10", 8.8], ["Tiempo", "22 min × 0,25", 5.5], ["Recogida", "(2,5 − 1,5) × 0,60", 0.6]];
+  const fe = filas.map(([a, b], i) => { const g = el("g", {}, recibo); tx(g, 70, 185 + i * 78, a, "t"); tx(g, 70, 212 + i * 78, b, "t2", { style: "font-size:17px" }); const v = tx(g, 450, 195 + i * 78, "", "t te", { style: "font-size:24px" }); el("line", { x1: 70, y1: 232 + i * 78, x2: 450, y2: 232 + i * 78, stroke: "#173631" }, g); return { g, v }; });
+  const tot = el("g", {}, recibo); tx(tot, 70, 530, "Total estimado", "t", { style: "font-size:24px" }); const tv = tx(tot, 450, 535, "", "tb te", { style: "font-size:44px;fill:#2dd4bf" });
+  tx(recibo, 70, 572, "Sin cobro · monto orientativo", "t2", { style: "font-size:16px" });
+  // gráfico de recogida con tope
+  const X0 = 560, X1 = 960, Y0 = 470, Y1 = 150, sx = (k) => X0 + (X1 - X0) * k / 10, sy = (s) => Y0 - (Y0 - Y1) * s / 5;
+  const graf = el("g", {}, svg);
+  tx(graf, X0, 100, "CARGO DE RECOGIDA (S/)", "t3");
+  [0, 1, 2, 3, 4, 5].forEach((s) => { el("line", { x1: X0, y1: sy(s), x2: X1, y2: sy(s), stroke: "#173631" }, graf); tx(graf, X0 - 10, sy(s) + 6, String(s), "t2 te", { style: "font-size:15px" }); });
+  [0, 1.5, 4, 8.17, 10].forEach((k) => tx(graf, sx(k), Y0 + 28, k === 8.17 ? "8,2" : fmt(k, k % 1 ? 1 : 0), "t2 tc", { style: "font-size:15px" }));
+  tx(graf, (X0 + X1) / 2, Y0 + 58, "km entre el conductor y el pasajero", "t2 tc", { style: "font-size:16px" });
+  const c = []; for (let k = 0; k <= 10; k += .05) c.push([sx(k), sy(Math.min(4, .6 * Math.max(0, k - 1.5)))]);
+  const curva = el("path", { d: d(c), fill: "none", stroke: "#f26b3a", "stroke-width": 5 }, svg);
+  const tope = etiqueta(svg, sx(6.3), sy(4) - 18, "tope S/ 4,00", "#f26b3a", "t2");
+  const gratis = etiqueta(svg, sx(.1), sy(.5) - 8, "gratis ≤ 1,5 km", "#4ade80", "t2");
+  const marca = el("circle", { cx: sx(2.5), cy: sy(.6), r: 9, fill: "#fbbf24", stroke: "#fff", "stroke-width": 2 }, svg);
+  return (t) => {
+    vis(recibo, fase(t, 0, .6));
+    let suma = 0;
+    fe.forEach((f, i) => { const p = fase(t, 1 + i * 1.3, 1.9 + i * 1.3); vis(f.g, fase(t, .8 + i * 1.3, 1.2 + i * 1.3)); f.v.textContent = "S/ " + fmt(filas[i][2] * p, 2); suma += filas[i][2] * p; });
+    vis(tot, fase(t, 6.2, 6.6)); tv.textContent = "S/ " + fmt(suma, 2);
+    vis(graf, fase(t, 7.5, 8)); trazo(curva, fase(t, 8, 10)); vis(gratis, fase(t, 8.6, 9)); vis(tope, fase(t, 10, 10.4)); vis(marca, fase(t, 10.8, 11.2));
+  };
+};
+
+/* ===================== 15 · A* frente a Dijkstra ===================== */
+ANIM.aestrella = (slide) => {
+  const svg = lienzo(slide);
+  const W = 21, H = 15, C = 21;
+  const muro = new Set();
+  for (let y = 2; y <= 12; y++) if (y !== 7) muro.add(`11,${y}`);
+  for (let x = 5; x <= 8; x++) muro.add(`${x},11`);
+  const S = [3, 11], T = [18, 3];
+  function buscar(conH) {
+    const g = { [S]: 0 }, abierto = [[0, 0, S]], cerr = new Set(), orden = [], pred = {}; let cont = 0;
+    while (abierto.length) {
+      abierto.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+      const [, , u] = abierto.shift(), ku = u.join(",");
+      if (cerr.has(ku)) continue;
+      cerr.add(ku); orden.push(u);
+      if (u[0] === T[0] && u[1] === T[1]) break;
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const v = [u[0] + dx, u[1] + dy], kv = v.join(",");
+        if (v[0] < 0 || v[1] < 0 || v[0] >= W || v[1] >= H || muro.has(kv) || cerr.has(kv)) continue;
+        const ng = g[ku] + 1;
+        if (ng < (g[kv] ?? Infinity)) { g[kv] = ng; pred[kv] = u; const h = conH ? Math.abs(v[0] - T[0]) + Math.abs(v[1] - T[1]) : 0; abierto.push([ng + h, h, v, cont++]); }
+      }
+    }
+    const camino = []; for (let n = T; n; n = pred[n.join(",")]) { camino.unshift(n); if (n === S) break; if (n[0] === S[0] && n[1] === S[1]) break; }
+    return { orden, camino, coste: g[T.join(",")] };
+  }
+  const dj = buscar(false), as = buscar(true);
+  function panel(ox, titulo, res, color) {
+    const g = el("g", {}, svg);
+    tx(g, ox, 96, titulo, "t", { style: "font-size:24px" });
+    const cont = tx(g, ox + 440, 96, "", "t te", { style: `font-size:22px;fill:${color}` });
+    const celdas = [];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const m = muro.has(`${x},${y}`);
+      const r = el("rect", { x: ox + x * C, y: 112 + y * C, width: C - 2, height: C - 2, rx: 3, fill: m ? "#3d4f4b" : "#0b2420" }, g);
+      celdas.push(r);
+    }
+    const idx = (p) => p[1] * W + p[0];
+    celdas[idx(S)].setAttribute("fill", "#fff"); celdas[idx(T)].setAttribute("fill", "#f26b3a");
+    const ruta = el("path", { d: d(res.camino.map(([x, y]) => [ox + x * C + C / 2 - 1, 112 + y * C + C / 2 - 1])), fill: "none", stroke: "#fbbf24", "stroke-width": 5, "stroke-linecap": "round", "stroke-linejoin": "round" }, g);
+    return { g, celdas, idx, cont, ruta, res, color };
+  }
+  const A = panel(30, "Dijkstra", dj, "#60a5fa"), B = panel(520, "A* · h = Manhattan", as, "#2dd4bf");
+  const resumen = etiqueta(svg, 300, 490, "", "#fbbf24", "t");
+  const f2 = tx(svg, 500, 570, "", "t2 tc", { style: "font-size:20px" });
+  const pintar = (P, n) => {
+    P.res.orden.forEach((p, i) => { const k = P.idx(p); if ((p[0] === S[0] && p[1] === S[1]) || (p[0] === T[0] && p[1] === T[1])) return; P.celdas[k].setAttribute("fill", i < n ? (P.color === "#60a5fa" ? "#1e3a5f" : "#0f5d55") : "#0b2420"); });
+    P.cont.textContent = `${Math.min(n, P.res.orden.length)} nodos`;
+  };
+  return (t) => {
+    vis(A.g, fase(t, 0, .6)); vis(B.g, fase(t, .2, .8));
+    const n = Math.floor(Math.max(0, t - 1.2) * 28);
+    pintar(A, n); pintar(B, n);
+    trazo(A.ruta, fase(t, 1.2 + dj.orden.length / 28, 2.4 + dj.orden.length / 28));
+    trazo(B.ruta, fase(t, 1.2 + as.orden.length / 28, 2.4 + as.orden.length / 28));
+    const fin = 2.6 + dj.orden.length / 28;
+    fijarTexto(resumen, `Mismo costo: ${dj.coste} pasos · A* expandió ${as.orden.length} nodos frente a ${dj.orden.length}`);
+    vis(resumen, fase(t, fin, fin + .5)); resumen.setAttribute("transform", "translate(-210,0)");
+    f2.textContent = "La heurística orienta la búsqueda hacia el destino sin perder el óptimo"; vis(f2, fase(t, fin + 1, fin + 1.5));
+  };
+};
+
+/* ===================== 16 · Retos B, C, D ===================== */
+ANIM.retos = (slide) => {
+  const svg = lienzo(slide);
+  const cols = [[0, "B · Hora punta", "Pesos dinámicos por hora"], [585, "C · Varios pasajeros", "Algoritmo húngaro"], [1170, "D · H3 experimental", "Índice hexagonal de resolución fija"]];
+  const g = cols.map(([x, a, b]) => { const e = el("g", {}, svg); el("rect", { x, y: 0, width: 550, height: 690, rx: 24, class: "caja" }, e); tx(e, x + 28, 52, a, "t", { style: "font-size:30px;font-weight:800" }); tx(e, x + 28, 86, b, "t2"); return e; });
+  // B
+  const bB = el("g", {}, svg);
+  const barra = (x, h, col, v, lbl) => { const r = el("rect", { x, y: 470, width: 120, height: 0, rx: 10, fill: col }, bB); const tv = tx(bB, x + 60, 0, v, "tb tc"); tx(bB, x + 60, 510, lbl, "t tc"); return { r, tv, h }; };
+  const b8 = barra(110, 514 * .52, "#f26b3a", "514 s", "8:00"), b15 = barra(320, 267 * .52, "#2dd4bf", "267 s", "15:00");
+  tx(bB, 275, 140, "Tiempo medio de viaje · 300 pares", "t2 tc");
+  const nB = [tx(bB, 28, 570, "+90 % en hora punta", "t", { style: "font-size:24px;fill:#ffd6c7" }), tx(bB, 28, 612, "215/300 rutas cambian de trazado", "t2"), tx(bB, 28, 645, "9/100 asignaciones eligen otro conductor", "t2")];
+  // C
+  const cC = el("g", {}, svg);
+  const Pp = [[700, 300], [700, 390], [700, 480]], Dd = [[1010, 300], [1010, 390], [1010, 480]];
+  const M = [[2, 3, 9], [3, 8, 9], [4, 5, 6]];
+  const lineas = [];
+  Pp.forEach((p, i) => Dd.forEach((q, j) => { lineas.push(el("line", { x1: p[0] + 26, y1: p[1], x2: q[0] - 26, y2: q[1], stroke: "#24493f", "stroke-width": 2 }, cC)); }));
+  ["C1", "C2", "C3"].forEach((c, j) => tx(cC, 810 + j * 70, 150, c, "t2 tc", { style: "fill:#93c5fd" }));
+  M.forEach((fila, i) => { tx(cC, 760, 185 + i * 32, `P${i + 1}`, "t2 te"); fila.forEach((v, j) => tx(cC, 810 + j * 70, 185 + i * 32, String(v), "t tc", { style: "font-size:20px" })); });
+  Pp.forEach((p, i) => { el("circle", { cx: p[0], cy: p[1], r: 26, fill: "#fff" }, cC); tx(cC, p[0], p[1] + 7, `P${i + 1}`, "t tc", { style: "fill:#05100e;font-size:19px" }); });
+  Dd.forEach((p, i) => { el("circle", { cx: p[0], cy: p[1], r: 26, fill: "#60a5fa" }, cC); tx(cC, p[0], p[1] + 7, `C${i + 1}`, "t tc", { style: "fill:#05100e;font-size:19px" }); });
+  tx(cC, 613, 125, "ETA (min, ilustrativo)", "t3");
+  const cod = [[0, 0], [1, 1], [2, 2]], opt = [[0, 1], [1, 0], [2, 2]];
+  const lc = cod.map(([i, j]) => el("line", { x1: Pp[i][0] + 26, y1: Pp[i][1], x2: Dd[j][0] - 26, y2: Dd[j][1], stroke: "#f26b3a", "stroke-width": 7, "stroke-linecap": "round" }, cC));
+  const lo = opt.map(([i, j]) => el("line", { x1: Pp[i][0] + 26, y1: Pp[i][1], x2: Dd[j][0] - 26, y2: Dd[j][1], stroke: "#2dd4bf", "stroke-width": 7, "stroke-linecap": "round" }, cC));
+  const tC1 = tx(cC, 613, 545, "Codiciosa (en orden): 2 + 8 + 6 = 16", "t", { style: "fill:#ffd6c7" }), tC2 = tx(cC, 613, 583, "Húngaro (óptimo): 3 + 3 + 6 = 12", "t", { style: "fill:#99f6e4" });
+  const tC3 = tx(cC, 613, 640, "Real · 20 pasajeros: 992 s → 917 s (−8,3 %)", "t2");
+  // D
+  const dD = el("g", {}, svg);
+  const hex = (cx, cy, r) => { const p = []; for (let k = 0; k < 6; k++) { const a = Math.PI / 3 * k + Math.PI / 6; p.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); } return d(p) + "Z"; };
+  const centro = [1445, 320], R = 32, hexes = [];
+  for (let q = -3; q <= 3; q++) for (let r = -3; r <= 3; r++) {
+    const s = -q - r; if (Math.abs(s) > 3) continue;
+    const x = centro[0] + R * Math.sqrt(3) * (q + r / 2), y = centro[1] + R * 1.5 * r;
+    const anillo = Math.max(Math.abs(q), Math.abs(r), Math.abs(s));
+    hexes.push({ e: el("path", { d: hex(x, y, R - 2), fill: "#0b2420", stroke: "#2b5a52", "stroke-width": 1.5 }, dD), anillo });
+  }
+  const rr = rng(5); for (let i = 0; i < 26; i++) el("circle", { cx: centro[0] + (rr() - .5) * 360, cy: centro[1] + (rr() - .5) * 300, r: 5, fill: "#99f6e4" }, dD);
+  el("circle", { cx: centro[0], cy: centro[1], r: 10, fill: "#f26b3a", stroke: "#fff", "stroke-width": 2 }, dD);
+  const tD = [tx(dD, 1198, 565, "Con 30 000 conductores:", "t2"), tx(dD, 1198, 600, "H3 2,76 ms · Quadtree 0,15 ms", "t", { style: "font-size:24px;fill:#99f6e4" }), tx(dD, 1198, 638, "Mismos resultados: 400/400", "t2"), tx(dD, 1198, 668, "Celdas fijas: no se adapta a la densidad", "t2")];
+  return (t) => {
+    g.forEach((e, i) => vis(e, fase(t, i * .4, i * .4 + .6)));
+    [b8, b15].forEach((b, i) => { const h = b.h * suave(fase(t, 1.5 + i * .4, 3 + i * .4)); b.r.setAttribute("y", 470 - h); b.r.setAttribute("height", h); b.tv.setAttribute("y", 455 - h); vis(b.tv, fase(t, 2.8, 3.2)); });
+    nB.forEach((e, i) => vis(e, fase(t, 3.5 + i * .5, 4 + i * .5)));
+    vis(cC, fase(t, 5, 5.6));
+    lc.forEach((l, i) => { trazo(l, fase(t, 6.5 + i * .8, 7.2 + i * .8)); vis(l, 1 - fase(t, 11, 11.5) * .8); });
+    vis(tC1, fase(t, 9, 9.4));
+    lo.forEach((l, i) => trazo(l, fase(t, 11.5 + i * .6, 12.1 + i * .6)));
+    vis(tC2, fase(t, 13.5, 13.9)); vis(tC3, fase(t, 14.5, 15));
+    vis(dD, fase(t, 16, 16.6));
+    const anillo = Math.floor(fase(t, 17, 20) * 3.99);
+    hexes.forEach((h) => { h.e.setAttribute("fill", t > 17 && h.anillo <= anillo ? "rgba(45,212,191,.22)" : "#0b2420"); h.e.setAttribute("stroke", t > 17 && h.anillo === anillo ? "#2dd4bf" : "#2b5a52"); });
+    tD.forEach((e, i) => vis(e, fase(t, 20.5 + i * .5, 21 + i * .5)));
+  };
+};
+
+/* ===================== 17 · Experiencia del pasajero ===================== */
+ANIM.pasajero = (slide) => {
+  const svg = lienzo(slide), tel = slide.querySelector(".tel-svg"); tel.innerHTML = "";
+  const pasos = [...slide.querySelectorAll(".pasos-flujo li")], pantallas = [...slide.querySelectorAll(".tel-paso")];
+  for (let x = 20; x < 300; x += 55) el("line", { x1: x, y1: 0, x2: x + 20, y2: 250, stroke: "#fff", "stroke-width": 7 }, tel);
+  for (let y = 25; y < 250; y += 50) el("line", { x1: 0, y1: y, x2: 300, y2: y - 12, stroke: "#fff", "stroke-width": 7 }, tel);
+  const ruta = [[60, 52], [80, 120], [150, 105], [175, 180], [245, 200]];
+  const linea = el("path", { d: d(ruta), fill: "none", stroke: "#0f766e", "stroke-width": 6, "stroke-linecap": "round", "stroke-linejoin": "round" }, tel);
+  const gps = el("g", {}, tel); el("circle", { cx: 60, cy: 52, r: 18, fill: "#0f766e", opacity: .2, class: "pulso" }, gps); el("circle", { cx: 60, cy: 52, r: 8, fill: "#0f766e", stroke: "#fff", "stroke-width": 3 }, gps);
+  const dest = el("g", {}, tel); el("circle", { cx: 245, cy: 200, r: 8, fill: "#f26b3a", stroke: "#fff", "stroke-width": 3 }, dest);
+  const coche = auto(tel, "#0f766e", 10);
+  const cocheR = [[200, 20], [130, 30], [60, 52]];
+  // anotaciones fuera del teléfono
+  const notas = [["Permiso de ubicación", "se pide una sola vez"], ["Solo se escribe el destino", "sugerencias de Nominatim"], ["Ruta, tiempo y tarifa", "calculados en el servidor"], ["Un toque para confirmar", "el precio queda fijado"], ["Ofertas en orden de ETA", "hasta que alguien acepta"], ["Seguimiento en vivo", "solo se ve a tu conductor"]];
+  const nt = el("g", {}, svg); const n1 = tx(nt, 560, 280, "", "t", { style: "font-size:30px" }), n2 = tx(nt, 560, 320, "", "t2", { style: "font-size:22px" }), nn = tx(nt, 560, 240, "", "t3");
+  const contador = tx(svg, 560, 520, "", "t2", { style: "font-size:21px;fill:#99f6e4" }), contador2 = tx(svg, 560, 552, "", "t2", { style: "font-size:21px;fill:#99f6e4" });
+  const lineaNota = el("line", { x1: 520, y1: 290, x2: 545, y2: 290, stroke: "#2dd4bf", "stroke-width": 3 }, svg);
+  const tiempos = [0, 3.5, 8, 12, 14.5, 18.5, 30];
+  const destino = "Miraflores, Lima";
+  return (t) => {
+    let k = 0; while (k < 5 && t >= tiempos[k + 1]) k++;
+    const pantalla = k <= 1 ? k : k === 2 || k === 3 ? 2 : k === 4 ? 3 : 4;
+    pantallas.forEach((p) => p.classList.toggle("ver", +p.dataset.p === pantalla));
+    pasos.forEach((li, i) => { li.classList.toggle("act", i === k && t >= 0); li.classList.toggle("hecho", i < k); });
+    const o = slide.querySelector(".tel-origen"); o.textContent = t < 1.6 ? "Detectando tu ubicación…" : "Jr. Sánchez Silva · Comas";
+    slide.querySelector(".tel-origen-det").textContent = t < 1.6 ? "Permiso de ubicación del navegador" : "Ajustado a la vía más cercana";
+    const n = Math.floor(fase(t, 4, 6.5) * destino.length); slide.querySelector(".tel-destino").textContent = destino.slice(0, n);
+    slide.querySelectorAll(".tel-sug div").forEach((e, i) => { e.classList.toggle("sel", i === 0 && t > 7); e.style.display = n > 3 ? "" : "none"; });
+    slide.querySelector(".tel-boton").classList.toggle("pulsado", t > 13 && t < 13.6);
+    slide.querySelector(".tel-busca").textContent = t < 17.3 ? "Buscando conductor…" : "¡LG-02178 aceptó!";
+    slide.querySelector(".tel-oferta").textContent = t < 15.8 ? "Oferta al conductor que llega antes" : t < 17.3 ? "No respondió: oferta al siguiente" : "Ahora viene hacia ti";
+    const fv = fase(t, 18.5, 28); slide.querySelector(".tel-barra").style.width = (fv * 100).toFixed(1) + "%";
+    slide.querySelector(".tel-eta").textContent = `${Math.max(0, Math.ceil(3 * (1 - fv)))} min`;
+    vis(gps, fase(t, .4, 1)); vis(dest, fase(t, 7, 7.4)); trazo(linea, fase(t, 8, 9.5));
+    const q = punto(cocheR, fase(t, 18.5, 28)); poner(coche, q.x, q.y, q.a); vis(coche, t > 18.5 ? 1 : 0);
+    nn.textContent = `PASO ${k + 1} DE 6`; n1.textContent = notas[k][0]; n2.textContent = notas[k][1];
+    vis(nt, fase(t, .2, .6)); vis(lineaNota, fase(t, .2, .6));
+    contador.textContent = t > 12 ? "Datos escritos por el pasajero:" : ""; contador2.textContent = t > 12 ? "1 campo (destino) + 1 toque" : "";
+  };
+};
+
+/* ===================== 18 · Cobertura (ray casting real) ===================== */
+ANIM.cobertura = (slide) => {
+  const svg = lienzo(slide);
+  const alto = 590, { g, s } = grupoMapa(svg, 300, 15, alto);
+  MAPA.distritos.forEach((x) => el("path", { d: x.d, fill: x.n === "Miraflores" ? "rgba(242,107,58,.55)" : "#0f2e29", stroke: "#2b5a52", "stroke-width": 1 }, g));
+  const borde = el("path", { d: MAPA.limite, fill: "none", stroke: "#2dd4bf", "stroke-width": 3 }, g);
+  const anillos = MAPA.limite.split("M").filter(Boolean).map((r) => r.replace("Z", "").split("L").map((q) => q.split(",").map(Number)));
+  const cruces = (px, py) => { const out = []; anillos.forEach((a) => { for (let i = 0, j = a.length - 1; i < a.length; j = i++) { const [xi, yi] = a[i], [xj, yj] = a[j]; if ((yi > py) !== (yj > py)) { const x = xi + (py - yi) * (xj - xi) / (yj - yi); if (x > px) out.push(x); } } }); return out; };
+  const X = (x) => 300 + x * s, Y = (y) => 15 + y * s;
+  const casos = [["Comas", ...MAPA.puntos.Comas.split(",").map(Number)], ["Mar", ...MAPA.puntos.Mar.split(",").map(Number)]];
+  const capas = casos.map(([n, x, y]) => {
+    const c = el("g", {}, svg), cs = cruces(x, y);
+    const rayo = el("line", { x1: X(x), y1: Y(y), x2: X(x) + 700, y2: Y(y), stroke: "#fbbf24", "stroke-width": 2.5, "stroke-dasharray": "8 6" }, c);
+    const marcas = cs.map((cx) => el("circle", { cx: X(cx), cy: Y(y), r: 8, fill: "none", stroke: "#fbbf24", "stroke-width": 3 }, c));
+    const punto_ = el("g", {}, c); el("circle", { cx: X(x), cy: Y(y), r: 20, fill: n === "Mar" ? "#f05252" : "#2dd4bf", opacity: .25, class: "pulso" }, punto_); el("circle", { cx: X(x), cy: Y(y), r: 9, fill: n === "Mar" ? "#f05252" : "#2dd4bf", stroke: "#fff", "stroke-width": 3 }, punto_);
+    const dentro = cs.length % 2 === 1;
+    const lbl = etiqueta(c, 20, n === "Mar" ? 395 : 175, `${cs.length} cruce${cs.length === 1 ? "" : "s"} → ${dentro ? "DENTRO" : "FUERA"}`, dentro ? "#4ade80" : "#f05252", "t");
+    const lbl2 = tx(c, 20, n === "Mar" ? 435 : 215, n === "Mar" ? "Punto en el mar: se avisa antes de cotizar" : "Navegador: punto en Comas", "t2", { style: "font-size:18px" });
+    return { c, rayo, marcas, punto_, lbl, lbl2 };
+  });
+  const [cx, cy] = MAPA.puntos.Comas.split(",").map(Number);
+  const lupa = el("g", {}, svg);
+  el("circle", { cx: 140, cy: 520, r: 70, fill: "#0b2420", stroke: "#2dd4bf", "stroke-width": 3 }, lupa);
+  el("line", { x1: 80, y1: 540, x2: 200, y2: 495, stroke: "#2b5a52", "stroke-width": 10, "stroke-linecap": "round" }, lupa);
+  el("line", { x1: 130, y1: 460, x2: 150, y2: 580, stroke: "#2b5a52", "stroke-width": 10, "stroke-linecap": "round" }, lupa);
+  const pIni = el("circle", { cx: 175, cy: 545, r: 7, fill: "#fbbf24" }, lupa);
+  const ajus = el("line", { x1: 175, y1: 545, x2: 143, y2: 518, stroke: "#fbbf24", "stroke-width": 2.5, "stroke-dasharray": "4 4" }, lupa);
+  const pFin = el("circle", { cx: 143, cy: 518, r: 9, fill: "#2dd4bf", stroke: "#fff", "stroke-width": 2 }, lupa);
+  tx(lupa, 20, 615, "Ajuste a la intersección vial más cercana", "t2", { style: "font-size:16px" });
+  const distrito = etiqueta(svg, X(cx) + 26, Y(cy) - 22, "Distrito: Comas", "#2dd4bf", "t");
+  const lmir = etiqueta(svg, X(Number(MAPA.puntos.Miraflores.split(",")[0])) + 70, Y(Number(MAPA.puntos.Miraflores.split(",")[1])) + 50, "Miraflores (académico)", "#f26b3a", "t2");
+  return (t) => {
+    vis(g, fase(t, 0, .8)); trazo(borde, fase(t, .2, 2.5)); vis(lmir, fase(t, 2.5, 3));
+    capas.forEach((k, i) => {
+      const t0 = 3.5 + i * 5;
+      vis(k.punto_, fase(t, t0, t0 + .4)); trazo(k.rayo, fase(t, t0 + .8, t0 + 2.2)); vis(k.rayo, 1 - fase(t, t0 + 4.6, t0 + 5) * .7);
+      k.marcas.forEach((m, j) => vis(m, fase(t, t0 + 1.2 + j * .3, t0 + 1.5 + j * .3)));
+      vis(k.lbl, fase(t, t0 + 2.6, t0 + 3)); vis(k.lbl2, fase(t, t0 + .2, t0 + .6));
+    });
+    vis(lupa, fase(t, 14, 14.5)); vis(pIni, fase(t, 14.3, 14.6)); trazo(ajus, fase(t, 14.8, 15.6)); vis(pFin, fase(t, 15.5, 15.9));
+    vis(distrito, fase(t, 16.4, 16.9));
+  };
+};
+
+/* ===================== 19 · Alerta ===================== */
+ANIM.alerta = (slide) => {
+  const svg = lienzo(slide), r = rng(33);
+  const mapa = el("g", {}, svg);
+  for (let x = 40; x < 620; x += 80) el("line", { x1: x, y1: 30, x2: x, y2: 590, class: "via-f" }, mapa);
+  for (let y = 50; y < 600; y += 80) el("line", { x1: 30, y1: y, x2: 620, y2: y, class: "via-f" }, mapa);
+  const unidades = []; for (let i = 0; i < 12; i++) unidades.push([60 + r() * 540, 50 + r() * 520]);
+  const quad = el("g", {}, svg);
+  [[330, 30, 330, 590], [30, 310, 620, 310], [180, 310, 180, 590], [30, 450, 330, 450], [480, 30, 480, 310], [330, 170, 620, 170]].forEach(([a, b, c2, d2]) => el("line", { x1: a, y1: b, x2: c2, y2: d2, stroke: "#60a5fa", "stroke-width": 1.5, "stroke-dasharray": "6 5", opacity: .7 }, quad));
+  const ug = unidades.map(([x, y], i) => { const g = el("g", {}, svg); const rc = el("rect", { x: x - 11, y: y - 11, width: 22, height: 22, rx: 5, fill: "#60a5fa", stroke: "#fff", "stroke-width": 2 }, g); return { g, rc, x, y }; });
+  const ruta = [[60, 130], [280, 130], [280, 370], [520, 370]];
+  const coche = auto(svg, "#2dd4bf", 15);
+  const A = punto(ruta, .55);
+  const pul = el("g", {}, svg); el("circle", { cx: A.x, cy: A.y, r: 30, fill: "#f05252", class: "pulso" }, pul); el("circle", { cx: A.x, cy: A.y, r: 13, fill: "#f05252", stroke: "#fff", "stroke-width": 3 }, pul);
+  const busq = el("circle", { cx: A.x, cy: A.y, r: 0, fill: "rgba(96,165,250,.08)", stroke: "#60a5fa", "stroke-width": 2.5 }, svg);
+  let mejor = null, md = Infinity; ug.forEach((u) => { const dd = Math.hypot(u.x - A.x, u.y - A.y); if (dd < md) { md = dd; mejor = u; } });
+  const enlace = el("line", { x1: A.x, y1: A.y, x2: mejor.x, y2: mejor.y, stroke: "#60a5fa", "stroke-width": 4 }, svg);
+  const lblU = etiqueta(svg, mejor.x + 18, mejor.y - 18, "AP-008 · la más cercana", "#60a5fa", "t2");
+  // centro de operaciones
+  const op = el("g", {}, svg); caja(op, 660, 40, 310, 540, 18);
+  tx(op, 682, 80, "CENTRO DE OPERACIONES", "t3");
+  const fila = el("g", {}, op); el("rect", { x: 680, y: 110, width: 270, height: 150, rx: 14, fill: "rgba(240,82,82,.12)", stroke: "#f05252" }, fila);
+  tx(fila, 698, 145, "Alerta #2 · viaje #108", "t", { style: "font-size:20px" }); const est = tx(fila, 698, 180, "", "t", { style: "font-size:20px" }); const un = tx(fila, 698, 214, "", "t2", { style: "font-size:17px" }); const dup = tx(fila, 698, 244, "", "t2", { style: "font-size:16px;fill:#fbbf24" });
+  const boton = el("g", {}, op); const bR = el("rect", { x: 680, y: 280, width: 270, height: 52, rx: 12, fill: "#0f766e" }, boton); tx(boton, 815, 314, "Atender", "t tc");
+  const avisoN = tx(op, 682, 380, "", "t2", { style: "font-size:17px" });
+  tx(op, 682, 470, "Demostración: sin conexión con", "t2", { style: "font-size:16px;fill:#fca5a5" }); tx(op, 682, 496, "Policía, SAMU ni serenazgo.", "t2", { style: "font-size:16px;fill:#fca5a5" });
+  const msg = el("circle", { r: 10, fill: "#f05252", class: "brillo-n" }, svg);
+  return (t) => {
+    vis(mapa, fase(t, 0, .6)); ug.forEach((u, i) => vis(u.g, fase(t, .4 + i * .05, .8 + i * .05)));
+    const q = punto(ruta, Math.min(.55, fase(t, .5, 4) * .55) + fase(t, 13, 18) * .45); poner(coche, q.x, q.y, q.a); vis(coche, fase(t, .4, .8));
+    vis(pul, fase(t, 4, 4.3)); vis(op, fase(t, 1, 1.5));
+    const fm = fase(t, 4.5, 6); msg.setAttribute("cx", A.x + (815 - A.x) * suave(fm)); msg.setAttribute("cy", A.y + (180 - A.y) * suave(fm)); vis(msg, fm > 0 && fm < 1 ? 1 : 0);
+    vis(fila, fase(t, 6, 6.3)); est.textContent = t < 14 ? "Estado: abierta" : "Estado: atendida ✓"; est.style.fill = t < 14 ? "#fca5a5" : "#86efac";
+    avisoN.textContent = t > 6 && t < 14 ? "🔔 Nueva alerta notificada" : "";
+    vis(quad, fase(t, 6.5, 7) * (1 - fase(t, 11, 12) * .6));
+    busq.setAttribute("r", md * fase(t, 7.2, 9.5)); vis(busq, fase(t, 7.2, 7.4) * (1 - fase(t, 11, 12) * .7));
+    trazo(enlace, fase(t, 9.6, 10.2)); vis(lblU, fase(t, 10, 10.4));
+    mejor.rc.setAttribute("fill", t > 9.6 && t < 14 ? "#fbbf24" : "#60a5fa");
+    un.textContent = t > 10 ? "Unidad AP-008 asignada" : "Buscando unidad cercana…";
+    dup.textContent = t > 11.5 && t < 14 ? "2.º toque: misma alerta (duplicada)" : "";
+    bR.setAttribute("fill", t > 13.5 && t < 14.1 ? "#0b5d57" : "#0f766e"); vis(boton, fase(t, 6.3, 6.6));
+  };
+};
+
+/* ===================== 20 · Docker ===================== */
+ANIM.docker = (slide) => {
+  const svg = lienzo(slide);
+  const redI = el("g", {}, svg); el("rect", { x: 40, y: 330, width: 620, height: 250, rx: 22, fill: "rgba(96,165,250,.05)", stroke: "#60a5fa", "stroke-dasharray": "8 6", "stroke-width": 2 }, redI); tx(redI, 60, 565, "red interna · sin salida a Internet", "t2", { style: "font-size:16px;fill:#93c5fd" });
+  const S = { nav: [135, 70, "Navegador", ":8080", "#fff"], fro: [375, 70, "frontend", "nginx:1.27-alpine", "#2dd4bf"], bac: [340, 250, "backend", "limago-backend:3.0", "#2dd4bf"],
+    pos: [170, 430, "postgres", "postgres:16-alpine", "#60a5fa"], wor: [520, 430, "worker", "limago-backend:3.0", "#60a5fa"], pro: [820, 250, "prometheus", "127.0.0.1:9090", "#fbbf24"], gra: [820, 70, "grafana", "127.0.0.1:3000", "#f26b3a"] };
+  const enl = [["nav", "fro"], ["fro", "bac"], ["bac", "pos"], ["wor", "pos"], ["pro", "bac"], ["pro", "wor"], ["gra", "pro"]];
+  const lineas = enl.map(([a, b]) => el("line", { x1: S[a][0], y1: S[a][1], x2: S[b][0], y2: S[b][1], stroke: "#24493f", "stroke-width": 4 }, svg));
+  const orden = ["pos", "bac", "wor", "fro", "pro", "gra"];
+  const cajas = {};
+  for (const k in S) {
+    const [x, y, n, img, c] = S[k], g = el("g", {}, svg);
+    el("rect", { x: x - 110, y: y - 42, width: 220, height: 84, rx: 16, fill: "#0b2420", stroke: c, "stroke-width": 2.5 }, g);
+    tx(g, x - 92, y - 6, n, "t", { style: "font-size:22px" }); tx(g, x - 92, y + 22, img, "tm", { style: "font-size:14px" });
+    const ok = el("g", {}, g); el("circle", { cx: x + 88, cy: y - 22, r: 11, fill: "#4ade80" }, ok); el("path", { d: `M${x + 82},${y - 22} l4,4 l8,-8`, stroke: "#05100e", "stroke-width": 3, fill: "none" }, ok);
+    cajas[k] = { g, ok };
+  }
+  const img = el("g", {}, svg); caja(img, 700, 400, 270, 180, 16);
+  tx(img, 720, 435, "IMAGEN → CONTENEDORES", "t3");
+  [0, 1, 2].forEach((i) => el("rect", { x: 722 + i * 6, y: 452 + i * 6, width: 110, height: 70, rx: 8, fill: "#0f3d37", stroke: "#2dd4bf" }, img));
+  tx(img, 790, 495, "imagen", "t2 tc", { style: "font-size:16px" });
+  tx(img, 860, 480, "→ backend", "t2", { style: "font-size:17px" }); tx(img, 860, 515, "→ worker", "t2", { style: "font-size:17px" });
+  tx(img, 722, 560, "misma imagen, otro comando", "t2", { style: "font-size:15px" });
+  const flujos = [["nav", "fro", "#fff"], ["fro", "bac", "#2dd4bf"], ["bac", "pos", "#2dd4bf"], ["wor", "pos", "#60a5fa"], ["pro", "bac", "#fbbf24"], ["pro", "wor", "#fbbf24"], ["gra", "pro", "#f26b3a"]];
+  const bolas = flujos.map(([, , c]) => el("circle", { r: 8, fill: c }, svg));
+  const est = etiqueta(svg, 40, 610, "", "#4ade80", "t2");
+  return (t) => {
+    vis(redI, fase(t, 0, .5));
+    orden.forEach((k, i) => { vis(cajas[k].g, fase(t, .4 + i * .9, .8 + i * .9)); vis(cajas[k].ok, fase(t, 1 + i * .9, 1.2 + i * .9)); });
+    vis(cajas.nav.g, fase(t, 5.5, 6)); vis(cajas.nav.ok, 0);
+    lineas.forEach((l, i) => vis(l, fase(t, 5.8, 6.4)));
+    const n = Math.min(6, Math.floor(Math.max(0, t - .4) / .9));
+    fijarTexto(est, t < 6 ? `Arranque por dependencias · ${n}/6 healthy` : "6/6 healthy · tráfico entre contenedores"); vis(est, fase(t, .4, .8));
+    bolas.forEach((b, i) => { const [a, c] = flujos[i]; const f = ((t - 6.5 - i * .35) % 2.4) / 2.4; const x = S[a][0] + (S[c][0] - S[a][0]) * f, y = S[a][1] + (S[c][1] - S[a][1]) * f; b.setAttribute("cx", x); b.setAttribute("cy", y); vis(b, t > 6.5 + i * .35 && f >= 0 ? 1 : 0); });
+    vis(img, fase(t, 8, 8.6));
+  };
+};
+
+/* ===================== 21 · CDN ===================== */
+ANIM.cdn = (slide) => {
+  const svg = lienzo(slide);
+  function carril(y0, titulo, conCdn) {
+    const g = el("g", {}, svg);
+    el("rect", { x: 20, y: y0, width: 960, height: 280, rx: 20, class: "caja" }, g);
+    tx(g, 44, y0 + 40, titulo, "t", { style: `font-size:24px;fill:${conCdn ? "#99f6e4" : "#ffd6c7"}` });
+    const U = [[110, y0 + 110], [110, y0 + 175], [110, y0 + 240]];
+    U.forEach(([x, y], i) => { el("circle", { cx: x, cy: y, r: 20, fill: "#fff" }, g); tx(g, x + 30, y + 6, `Usuario ${i + 1}`, "t2", { style: "font-size:16px" }); });
+    const O = [880, y0 + 175]; el("rect", { x: O[0] - 60, y: O[1] - 50, width: 120, height: 100, rx: 14, fill: "#3a1d14", stroke: "#f26b3a", "stroke-width": 2.5 }, g);
+    tx(g, O[0], O[1] - 8, "Origen", "t tc", { style: "font-size:19px" }); tx(g, O[0], O[1] + 18, "lejano", "t2 tc", { style: "font-size:15px" });
+    let E = null, cache = null;
+    if (conCdn) {
+      E = [420, y0 + 175]; el("rect", { x: E[0] - 70, y: E[1] - 55, width: 140, height: 110, rx: 14, fill: "#0f3d37", stroke: "#2dd4bf", "stroke-width": 2.5 }, g);
+      tx(g, E[0], E[1] - 14, "Borde (PoP)", "t tc", { style: "font-size:18px" }); tx(g, E[0], E[1] + 8, "cercano", "t2 tc", { style: "font-size:15px" });
+      cache = el("rect", { x: E[0] - 50, y: E[1] + 22, width: 0, height: 14, rx: 4, fill: "#2dd4bf" }, g);
+      el("rect", { x: E[0] - 50, y: E[1] + 22, width: 100, height: 14, rx: 4, fill: "none", stroke: "#2dd4bf" }, g);
+    }
+    const cont = tx(g, 44, y0 + 72, "", "t2", { style: `font-size:18px;fill:${conCdn ? "#99f6e4" : "#ffd6c7"}` });
+    return { g, U, O, E, cache, cont, y0 };
+  }
+  const A = carril(15, "Sin CDN: todo va al origen", false), B = carril(320, "Con CDN: el borde responde", true);
+  const bolasA = [0, 1, 2].map(() => el("circle", { r: 9, fill: "#f26b3a" }, svg)), bolasB = [0, 1, 2].map(() => el("circle", { r: 9, fill: "#2dd4bf" }, svg));
+  const extra = el("circle", { r: 9, fill: "#fbbf24" }, svg);
+  const evento = etiqueta(svg, 300, 610, "", "#fbbf24", "t2");
+  const mover = (b, p, q, f) => { b.setAttribute("cx", p[0] + (q[0] - p[0]) * f); b.setAttribute("cy", p[1] + (q[1] - p[1]) * f); };
+  return (t) => {
+    vis(A.g, fase(t, 0, .6)); vis(B.g, fase(t, .5, 1.1));
+    // carril A: cada usuario tarda ~180 ms (ilustrativo), ida y vuelta lenta
+    bolasA.forEach((b, i) => { const tt = t - 1.5 - i * 1.4; const f = tt < 0 ? -1 : (tt % 4.2) / 4.2; if (f < 0) { vis(b, 0); return; } vis(b, 1); const ida = f < .5; mover(b, ida ? A.U[i] : A.O, ida ? A.O : A.U[i], ida ? f * 2 : (f - .5) * 2); });
+    A.cont.textContent = t > 1.5 ? "≈ 180 ms por petición · todas al origen" : "";
+    // carril B: primer usuario = miss (borde → origen), luego hits
+    const t0 = 1.5;
+    bolasB.forEach((b, i) => {
+      const tt = t - t0 - i * 1.4; if (tt < 0) { vis(b, 0); return; }
+      vis(b, 1);
+      if (i === 0 && tt < 2.6) { const f = tt / 2.6; if (f < .25) mover(b, B.U[0], B.E, f / .25); else if (f < .5) mover(b, B.E, B.O, (f - .25) / .25); else if (f < .75) mover(b, B.O, B.E, (f - .5) / .25); else mover(b, B.E, B.U[0], (f - .75) / .25); return; }
+      const ff = ((tt - (i === 0 ? 2.6 : 0)) % 1.6) / 1.6; const ida = ff < .5; mover(b, ida ? B.U[i] : B.E, ida ? B.E : B.U[i], ida ? ff * 2 : (ff - .5) * 2);
+    });
+    B.cache.setAttribute("width", 100 * fase(t, t0 + 1.3, t0 + 1.9));
+    const miss = t > t0 && t < t0 + 2.6, hits = t > t0 + 2.6 ? Math.floor((t - t0 - 2.6) / .55) : 0;
+    B.cont.textContent = t > t0 ? `1 miss · ${hits} hits · ≈ 20 ms por hit` : "";
+    fijarTexto(evento, t < t0 ? "" : miss ? "Cache miss: el borde pide el recurso al origen y lo guarda" : "Cache hit: el borde responde sin ir al origen");
+    vis(evento, t > t0 ? 1 : 0); vis(extra, 0);
+  };
+};
+
+/* ===================== 22 · Caché real de LimaGo ===================== */
+ANIM.cache = (slide) => {
+  const svg = lienzo(slide);
+  const Nv = [110, 200], Cc = [380, 200], Ng = [860, 200];
+  const g = el("g", {}, svg);
+  const nodo = (x, y, a, b, c) => { el("rect", { x: x - 95, y: y - 60, width: 190, height: 120, rx: 16, fill: "#0b2420", stroke: c, "stroke-width": 2.5 }, g); tx(g, x, y - 10, a, "t tc"); tx(g, x, y + 20, b, "t2 tc", { style: "font-size:16px" }); };
+  nodo(Nv[0], Nv[1], "Navegador", "pestaña", "#fff"); nodo(Cc[0], Cc[1], "Caché del", "navegador", "#2dd4bf"); nodo(Ng[0], Ng[1], "Nginx", "contenedor frontend", "#f26b3a");
+  el("line", { x1: 205, y1: 200, x2: 285, y2: 200, stroke: "#24493f", "stroke-width": 4 }, g); el("line", { x1: 475, y1: 200, x2: 765, y2: 200, stroke: "#24493f", "stroke-width": 4 }, g);
+  tx(g, 620, 185, "red", "t2 tc", { style: "font-size:15px" });
+  const pasos = [
+    { t: 0, de: Nv, a: Ng, txt: "1.ª visita · GET /js/comun.js?v=3", r: "200 · gzip · Cache-Control: max-age=604800 (7 días)", c: "#2dd4bf" },
+    { t: 4, de: Nv, a: Cc, txt: "2.ª visita · /js/comun.js?v=3", r: "Desde la caché del navegador: no usa la red", c: "#4ade80" },
+    { t: 8, de: Nv, a: Ng, txt: "GET /viaje.html + If-None-Match (ETag)", r: "304 Not Modified: HTML sin cambios (no-cache)", c: "#fbbf24" },
+    { t: 12, de: Nv, a: Ng, txt: "GET /api/cobertura (medido)", r: "30 239 B → 10 401 B con gzip · max-age=3600", c: "#a78bfa" }];
+  const bola = el("circle", { r: 11, fill: "#fff", class: "brillo" }, svg);
+  const l1 = tx(svg, 40, 330, "", "t", { style: "font-size:23px" }), l2 = tx(svg, 40, 370, "", "t2", { style: "font-size:20px" });
+  const contador = tx(svg, 40, 70, "", "t3");
+  return (t) => {
+    vis(g, fase(t, 0, .6));
+    const tt = Math.max(0, t - 1), k = Math.min(3, Math.floor(tt / 4)), p = pasos[k], f = (tt - p.t) / 4;
+    contador.textContent = `PETICIÓN ${k + 1} DE 4`;
+    const ida = f < .45, ff = ida ? f / .45 : cl((f - .45) / .4);
+    const a = ida ? p.de : p.a, b = ida ? p.a : p.de;
+    bola.setAttribute("cx", a[0] + (b[0] - a[0]) * suave(ff)); bola.setAttribute("cy", a[1] + (b[1] - a[1]) * suave(ff)); bola.setAttribute("fill", ida ? "#fff" : p.c);
+    vis(bola, t > 1 && f < .9 ? 1 : 0);
+    l1.textContent = t > 1 ? p.txt : ""; l2.textContent = t > 1 && f > .4 ? "→ " + p.r : ""; l2.style.fill = p.c;
+  };
+};
+
+/* ===================== 23 · Benchmarks (valores de los JSON) ===================== */
+ANIM.bench = (slide) => {
+  const svg = lienzo(slide);
+  const datos = [[300, .1365, .0324], [3000, 1.4175, .0488], [30000, 12.8238, .1523]];
+  const g1 = el("g", {}, svg);
+  tx(g1, 30, 40, "QUADTREE VS LINEAL · MIRAFLORES", "t3"); tx(g1, 30, 64, "ms por consulta · k = 5 · 400 consultas", "t2", { style: "font-size:15px" });
+  const X0 = 110, Y0 = 400, Y1 = 110, lg = (v) => Y0 - (Y0 - Y1) * (Math.log10(v) + 2) / 3.3; // escala log de 0,01 a ~20 ms
+  [.01, .1, 1, 10].forEach((v) => { el("line", { x1: X0 - 10, y1: lg(v), x2: 640, y2: lg(v), stroke: "#173631" }, g1); tx(g1, X0 - 18, lg(v) + 6, fmt(v, v < 1 ? 2 : 0), "t2 te", { style: "font-size:15px" }); });
+  tx(g1, 30, 440, "escala logarítmica", "t2", { style: "font-size:15px" });
+  const barras = datos.map(([n, li, qt], i) => {
+    const x = 150 + i * 165;
+    const bl = el("rect", { x, width: 56, rx: 6, fill: "#f26b3a" }, g1), bq = el("rect", { x: x + 62, width: 56, rx: 6, fill: "#2dd4bf" }, g1);
+    const tl = tx(g1, x + 28, 0, fmt(li, li < 1 ? 3 : 2), "t2 tc", { style: "font-size:16px" }), tq = tx(g1, x + 90, 0, fmt(qt, 3), "t2 tc", { style: "font-size:16px" });
+    tx(g1, x + 59, 430, fmt(n), "t tc", { style: "font-size:19px" });
+    const ac = tx(g1, x + 59, 100, "×" + fmt(li / qt, 1), "tb tc", { style: "font-size:24px;fill:#99f6e4" });
+    return { bl, bq, tl, tq, li, qt, ac };
+  });
+  const ley = el("g", {}, g1); el("rect", { x: 470, y: 452, width: 18, height: 18, fill: "#f26b3a" }, ley); tx(ley, 495, 467, "Lineal", "t2", { style: "font-size:16px" }); el("rect", { x: 560, y: 452, width: 18, height: 18, fill: "#2dd4bf" }, ley); tx(ley, 585, 467, "Quadtree", "t2", { style: "font-size:16px" });
+  // rutas Miraflores
+  const g2 = el("g", {}, svg); tx(g2, 690, 92, "RUTAS · MIRAFLORES · ms/par", "t3");
+  const rut = [["NetworkX", 1.2004, "#64748b"], ["Dijkstra propio", .4667, "#2dd4bf"], ["A* propio", .3329, "#a78bfa"]];
+  const rb = rut.map(([n, v, c], i) => { const y = 108 + i * 54; tx(g2, 690, y + 26, n, "t2", { style: "font-size:17px" }); const r = el("rect", { x: 850, y, width: 0, height: 36, rx: 6, fill: c }, g2); const tv = tx(g2, 860, y + 25, fmt(v, 3), "t", { style: "font-size:17px" }); return { r, tv, v }; });
+  tx(g2, 690, 290, "300/300 distancias idénticas (0 m)", "t2", { style: "font-size:16px;fill:#86efac" });
+  // Lima: Dijkstra por distancia
+  const g3 = el("g", {}, svg); tx(g3, 690, 345, "LIMA · DIJKSTRA, MEDIANA (ms)", "t3");
+  const lim = [["0–3 km", 3.09], ["3–8", 28.62], ["8–15", 59.51], ["15–25", 148.46], ["25–40", 287.19]];
+  const lb = lim.map(([n, v], i) => { const x = 700 + i * 78; const r = el("rect", { x, y: 560, width: 52, height: 0, rx: 5, fill: "#60a5fa" }, g3); tx(g3, x + 26, 590, n, "t2 tc", { style: "font-size:13px" }); const tv = tx(g3, x + 26, 0, fmt(v, v < 10 ? 1 : 0), "t2 tc", { style: "font-size:15px" }); return { r, tv, v }; });
+  tx(g3, 690, 614, "152 441 nodos · 12 pares por rango", "t2", { style: "font-size:15px" });
+  return (t) => {
+    vis(g1, fase(t, 0, .5));
+    barras.forEach((b, i) => {
+      const f = suave(fase(t, .8 + i * .6, 2.4 + i * .6));
+      const yl = Y0 + (lg(b.li) - Y0) * f, yq = Y0 + (lg(b.qt) - Y0) * f;
+      b.bl.setAttribute("y", yl); b.bl.setAttribute("height", Y0 - yl); b.bq.setAttribute("y", yq); b.bq.setAttribute("height", Y0 - yq);
+      b.tl.setAttribute("y", yl - 8); b.tq.setAttribute("y", yq - 8); vis(b.tl, f); vis(b.tq, f); vis(b.ac, fase(t, 4.5 + i * .3, 5 + i * .3));
+    });
+    vis(g2, fase(t, 5.5, 6));
+    rb.forEach((b, i) => { const w = 110 * b.v * suave(fase(t, 6 + i * .3, 7.5 + i * .3)); b.r.setAttribute("width", w); b.tv.setAttribute("x", 858 + w); });
+    vis(g3, fase(t, 8.5, 9));
+    lb.forEach((b, i) => { const h = 160 * b.v / 287.19 * suave(fase(t, 9 + i * .3, 10.5 + i * .3)); b.r.setAttribute("y", 560 - h); b.r.setAttribute("height", h); b.tv.setAttribute("y", 552 - h); vis(b.tv, fase(t, 10 + i * .3, 10.5 + i * .3)); });
+  };
+};
+
+/* ===================== 24 · Pruebas ===================== */
+ANIM.pruebas = (slide) => {
+  const svg = lienzo(slide);
+  const term = el("g", {}, svg); el("rect", { x: 30, y: 25, width: 940, height: 330, rx: 18, fill: "#020807", stroke: "#24493f", "stroke-width": 2 }, term);
+  [0, 1, 2].forEach((i) => el("circle", { cx: 60 + i * 24, cy: 52, r: 7, fill: ["#f05252", "#fbbf24", "#4ade80"][i] }, term));
+  tx(term, 60, 98, "$ python -m pytest -q", "tm", { style: "font-size:21px" });
+  const archivos = [["test_quadtree.py", 15], ["test_rutas.py", 9], ["test_retos.py", 9], ["test_despachador.py", 8], ["test_simulacion.py", 8], ["test_api.py", 3], ["test_v2.py", 13], ["test_v3.py", 21]];
+  const lineas = archivos.map(([n], i) => tx(term, 60, 134 + i * 25, "", "tm", { style: "font-size:17px" }));
+  const res = tx(term, 60, 340, "", "tm", { style: "font-size:22px;fill:#4ade80" });
+  const cats = [["Exactitud del Quadtree", "k vecinos = búsqueda lineal"], ["Rutas de Dijkstra", "igual a NetworkX"], ["Reproducibilidad", "misma semilla, misma flota"], ["Estados de conductores", "transiciones válidas"],
+    ["Tarifas", "componentes, unidades, tope"], ["Solicitudes simultáneas", "sin doble asignación"], ["Simulación", "ciclo completo y recuperación"], ["Cobertura", "polígono = shapely · 50 distritos"]];
+  const cg = cats.map(([a, b], i) => { const g = el("g", {}, svg); const x = 30 + (i % 2) * 475, y = 380 + Math.floor(i / 2) * 58; el("rect", { x, y, width: 465, height: 50, rx: 12, fill: "rgba(16,40,36,.9)", stroke: "rgba(94,234,212,.2)" }, g); const ok = el("circle", { cx: x + 26, cy: y + 25, r: 12, fill: "#4ade80" }, g); el("path", { d: `M${x + 20},${y + 25} l4,4 l8,-8`, stroke: "#05100e", "stroke-width": 3, fill: "none" }, g); tx(g, x + 48, y + 22, a, "t", { style: "font-size:18px" }); tx(g, x + 48, y + 42, b, "t2", { style: "font-size:14px" }); return g; });
+  let total = 0; const acum = archivos.map(([, n]) => (total += n));
+  return (t) => {
+    vis(term, fase(t, 0, .5));
+    const hechos = Math.floor(fase(t, 1, 8) * total);
+    archivos.forEach(([n, c], i) => { const ini = i ? acum[i - 1] : 0, k = Math.max(0, Math.min(c, hechos - ini)); lineas[i].textContent = hechos > ini ? `tests/${n.padEnd(20, " ")} ${".".repeat(k)}${k === c ? "  ✓ " + c : ""}` : ""; });
+    res.textContent = t > 8.2 ? `${total} passed` : "";
+    cg.forEach((g, i) => vis(g, fase(t, 8.6 + i * .4, 9 + i * .4)));
+  };
+};
+
+/* ===================== 25 · Cierre ===================== */
+ANIM.cierre = (slide) => {
+  const svg = lienzo(slide);
+  const g = el("g", { transform: "translate(130,60) scale(9.4)" }, svg);
+  const halo = el("circle", { cx: 16, cy: 14, r: 15, fill: "url(#g-halo)" }, g);
+  const pinE = el("path", { d: "M16 2c-6.1 0-11 4.8-11 10.8C5 21 16 30 16 30s11-9 11-17.2C27 6.8 22.1 2 16 2z", fill: "none", stroke: "#2dd4bf", "stroke-width": .6 }, g);
+  const pinF = el("path", { d: "M16 2c-6.1 0-11 4.8-11 10.8C5 21 16 30 16 30s11-9 11-17.2C27 6.8 22.1 2 16 2z", fill: "#0f766e" }, g);
+  const fl = el("path", { d: "M11 13.2l9.6-4.4-4.4 9.6-1.3-3.9z", fill: "#f26b3a" }, g);
+  const pt = el("circle", { cx: 16, cy: 12.8, r: 1.4, fill: "#fff" }, g);
+  const t1 = tx(svg, 280, 440, "Gracias", "tb tc", { style: "font-size:72px" });
+  const t2 = tx(svg, 280, 490, "LimaGo V3.0", "t tc", { style: "font-size:30px;fill:#2dd4bf" });
+  const t3 = tx(svg, 280, 528, "Plataforma Inteligente de Movilidad Urbana", "t2 tc", { style: "font-size:20px" });
+  const t4 = tx(svg, 280, 580, "Algoritmos y Estructura de Datos II", "t2 tc", { style: "font-size:18px" });
+  return (t) => {
+    trazo(pinE, fase(t, 0, 1.6)); vis(pinF, fase(t, 1.2, 2)); vis(halo, fase(t, 1.6, 2.4) * (.6 + .4 * Math.sin(t * 2)));
+    vis(fl, fase(t, 2, 2.5)); fl.setAttribute("transform", `rotate(${(1 - suave(fase(t, 2, 3))) * -90} 16 13)`); vis(pt, fase(t, 2.6, 3));
+    vis(t1, fase(t, 3, 3.6)); vis(t2, fase(t, 3.6, 4.1)); vis(t3, fase(t, 4.1, 4.6)); vis(t4, fase(t, 4.6, 5.1));
+  };
+};
+
+/* ===================== motor de reproducción =====================
+   Todo se dibuja como función pura del reloj virtual de la diapositiva: pausar, cambiar la velocidad,
+   saltar un paso o repetir una demostración solo cambia el reloj. No hay temporizadores sueltos. */
+(() => {
+  const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const REDUCIR = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const leer = (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } };
+  const guardar = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* sin almacenamiento */ } };
+  const esc = $("#escenario"), slides = $$(".slide"), N = slides.length;
+  const base = slides.map((s) => +s.dataset.dur);
+  const guardadas = leer("limago.pres.duraciones") || {};
+  const dur = base.map((v, i) => (guardadas[i] ? +guardadas[i] : v));
+  const E = { i: 0, reloj: 0, play: true, auto: false, vel: 1, trans: 0, iniciado: false, render: null, t0: 0, items: [], voz: false, hablando: false, panel: null, ultimoT: null };
+
+  function ajustar() { const k = Math.min(innerWidth / 1920, innerHeight / 1080); esc.style.transform = `translate(-50%,-50%) scale(${k})`; }
+  addEventListener("resize", ajustar); ajustar();
+
+  function preparar(i) {
+    const s = slides[i];
+    E.items = $$("[data-t]", s).map((e) => ({ e, t: +e.dataset.t })).sort((a, b) => a.t - b.t);
+    s.classList.add("sin-transicion"); E.items.forEach((x) => x.e.classList.remove("on")); void s.offsetWidth; s.classList.remove("sin-transicion");
+    const v = $("[data-visual]", s); E.t0 = v ? +v.dataset.t : 0;
+    E.render = null; E.ultimoT = null;
+    const f = ANIM[s.dataset.anim];
+    if (f) { try { E.render = f(s); E.render(-1); } catch (err) { console.error("Animación", s.dataset.anim, err); } }
+  }
+
+  function ir(n, desdeAuto = false) {
+    if (n < 0 || n >= N) return;
+    slides[E.i].classList.remove("activa");
+    E.i = n; E.reloj = 0;
+    slides[n].classList.add("activa");
+    preparar(n);
+    $("#marca-agua").style.opacity = n === 0 ? 0 : 1;
+    $("#num").textContent = `${String(n + 1).padStart(2, "0")} / ${N}`;
+    $$("#lista-diapos li").forEach((li, k) => li.classList.toggle("act", k === n));
+    $("#titulo-notas").textContent = `Notas · ${String(n + 1).padStart(2, "0")} ${slides[n].dataset.titulo}`;
+    $("#texto-notas").textContent = notas(n);
+    hablar();
+    if (!desdeAuto) mostrarControles();
+  }
+  const notas = (n) => (($(".notas", slides[n]) || {}).textContent || "").trim();
+
+  function siguientePaso() {
+    const ahora = E.reloj / 1000 + .05;
+    const prox = E.items.find((x) => x.t > ahora);
+    if (prox) { E.reloj = prox.t * 1000; return; }
+    if (E.i < N - 1) ir(E.i + 1);
+  }
+  function repetir() { preparar(E.i); E.reloj = 0; hablar(); }
+
+  function fijarPlay(v) {
+    E.play = v; document.body.classList.toggle("pausado", !v);
+    $("#b-play use").setAttribute("href", v ? "#i-pausa" : "#i-play");
+    if ("speechSynthesis" in window) { if (v) speechSynthesis.resume(); else speechSynthesis.pause(); }
+    mostrarControles();
+  }
+  function fijarAuto(v) {
+    E.auto = v; const b = $("#b-modo");
+    b.textContent = v ? "AUTOMÁTICO" : "MANUAL"; b.classList.toggle("on", v);
+    b.title = v ? "Modo automático: avanza solo (A para salir)" : "Modo manual: avanza con → (A para automático)";
+  }
+  function iniciar(auto) {
+    $("#inicio").classList.add("oculto"); E.iniciado = true; E.trans = 0;
+    fijarAuto(auto); fijarPlay(true); ir(0);
+    if (auto && document.documentElement.requestFullscreen && !document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+  }
+  function pantalla() { if (document.fullscreenElement) document.exitFullscreen(); else if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {}); }
+  function panel(id) {
+    const p = id ? $("#" + id) : null;
+    $$(".panel-lateral").forEach((x) => x.classList.toggle("abierto", x === p && E.panel !== id));
+    E.panel = p && E.panel !== id ? id : null;
+    $("#b-menu").classList.toggle("on", E.panel === "panel-menu"); $("#b-notas").classList.toggle("on", E.panel === "panel-notas");
+  }
+
+  /* --------- voz opcional --------- */
+  const hayVoz = "speechSynthesis" in window;
+  function hablar() {
+    if (!hayVoz) return;
+    speechSynthesis.cancel(); E.hablando = false;
+    if (!E.voz) return;
+    const texto = notas(E.i); if (!texto) return;
+    const voces = speechSynthesis.getVoices(), voz = voces.find((v) => /^es(-|_)(PE|419|MX|US)/i.test(v.lang)) || voces.find((v) => /^es/i.test(v.lang));
+    const frases = texto.match(/[^.!?]+[.!?]*/g) || [texto];
+    E.hablando = true;
+    frases.forEach((f, k) => {
+      const u = new SpeechSynthesisUtterance(f.trim()); u.lang = voz ? voz.lang : "es-ES"; if (voz) u.voice = voz;
+      u.rate = Math.min(1.5, Math.max(.8, E.vel));
+      if (k === frases.length - 1) u.onend = u.onerror = () => { E.hablando = false; };
+      speechSynthesis.speak(u);
+    });
+    if (!E.play) speechSynthesis.pause();
+  }
+  if (!hayVoz) { $("#b-voz").disabled = true; $("#b-voz").title = "Este navegador no ofrece síntesis de voz"; $("#aviso-voz").textContent = "Este navegador no ofrece síntesis de voz; la presentación funciona igual sin ella."; }
+
+  /* --------- bucle principal --------- */
+  let previo = performance.now();
+  function cuadro(ahora) {
+    const dt = Math.min(100, ahora - previo); previo = ahora;
+    if (E.play) { E.reloj += dt * E.vel; if (E.iniciado) E.trans += dt; }
+    const seg = E.reloj / 1000;
+    for (const x of E.items) x.e.classList.toggle("on", seg >= x.t);
+    if (E.render) {
+      let t = seg - E.t0; if (REDUCIR) t = Math.floor(t / .5) * .5;
+      if (t !== E.ultimoT) { E.ultimoT = t; try { E.render(t); } catch (err) { console.error(err); E.render = null; } }
+    }
+    const p = Math.min(1, E.reloj / (dur[E.i] * 1000));
+    $("#prog-diapo i").style.width = (p * 100).toFixed(2) + "%";
+    $("#barra-total i").style.width = (((E.i + p) / N) * 100).toFixed(2) + "%";
+    const s = Math.floor(E.trans / 1000); $("#tiempo").textContent = `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    if (E.auto && E.play && E.reloj >= dur[E.i] * 1000 && !(E.voz && E.hablando)) {
+      if (E.i < N - 1) ir(E.i + 1, true); else { fijarAuto(false); fijarPlay(false); }
+    }
+    requestAnimationFrame(cuadro);
+  }
+
+  /* --------- menú de diapositivas y duraciones --------- */
+  const lista = $("#lista-diapos");
+  slides.forEach((s, k) => {
+    const li = document.createElement("li");
+    li.innerHTML = `<button type="button">${String(k + 1).padStart(2, "0")} · ${s.dataset.titulo}</button><input type="number" min="8" max="240" step="1" aria-label="Duración en segundos de la diapositiva ${k + 1}">`;
+    li.querySelector("button").addEventListener("click", () => { ir(k); panel(null); });
+    const inp = li.querySelector("input"); inp.value = dur[k];
+    inp.addEventListener("change", () => { const v = Math.max(8, Math.min(240, Math.round(+inp.value || base[k]))); inp.value = v; dur[k] = v; guardadas[k] = v; guardar("limago.pres.duraciones", guardadas); total(); });
+    lista.appendChild(li);
+  });
+  function total() { const s = dur.reduce((a, b) => a + b, 0); $("#total-dur").textContent = `${Math.floor(s / 60)} min ${s % 60} s a 1×`; }
+  total();
+  $("#b-restablecer").addEventListener("click", () => { base.forEach((v, k) => { dur[k] = v; delete guardadas[k]; }); guardar("limago.pres.duraciones", {}); $$("#lista-diapos input").forEach((x, k) => (x.value = dur[k])); total(); });
+
+  /* --------- controles --------- */
+  let ocultar = null;
+  function mostrarControles() {
+    $("#controles").classList.remove("oculto"); clearTimeout(ocultar);
+    ocultar = setTimeout(() => { if (E.iniciado && !E.panel && !$("#controles").matches(":hover")) $("#controles").classList.add("oculto"); }, 3000);
+  }
+  addEventListener("mousemove", mostrarControles);
+  $("#b-iniciar").addEventListener("click", () => iniciar(true));
+  $("#b-manual").addEventListener("click", () => iniciar(false));
+  $("#b-reiniciar").addEventListener("click", () => { E.trans = 0; fijarPlay(true); ir(0); });
+  $("#b-ant").addEventListener("click", () => ir(E.i - 1));
+  $("#b-sig").addEventListener("click", siguientePaso);
+  $("#b-play").addEventListener("click", () => fijarPlay(!E.play));
+  $("#b-modo").addEventListener("click", () => { fijarAuto(!E.auto); if (E.auto) fijarPlay(true); });
+  $("#sel-vel").addEventListener("change", (e) => { E.vel = +e.target.value; });
+  $("#b-repetir").addEventListener("click", repetir);
+  $("#b-menu").addEventListener("click", () => panel("panel-menu"));
+  $("#b-notas").addEventListener("click", () => panel("panel-notas"));
+  $("#b-voz").addEventListener("click", () => { E.voz = !E.voz; $("#b-voz").classList.toggle("on", E.voz); hablar(); });
+  $("#b-pantalla").addEventListener("click", pantalla);
+  $$("[data-cerrar]").forEach((b) => b.addEventListener("click", () => panel(null)));
+  if (hayVoz) speechSynthesis.onvoiceschanged = () => {};
+
+  addEventListener("keydown", (e) => {
+    if (e.target.matches("input,select,textarea") || e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key;
+    if (!$("#inicio").classList.contains("oculto") && (k === "Enter" || k === " ")) { e.preventDefault(); iniciar(k === "Enter"); return; }
+    if (!E.iniciado) { $("#inicio").classList.add("oculto"); E.iniciado = true; }
+    const acciones = {
+      ArrowRight: siguientePaso, Enter: siguientePaso, ArrowLeft: () => ir(E.i - 1), PageDown: () => ir(E.i + 1), PageUp: () => ir(E.i - 1),
+      " ": () => fijarPlay(!E.play), Home: () => { E.trans = 0; ir(0); }, End: () => ir(N - 1),
+      f: pantalla, F: pantalla, n: () => panel("panel-notas"), N: () => panel("panel-notas"), m: () => panel("panel-menu"), M: () => panel("panel-menu"),
+      a: () => { fijarAuto(!E.auto); if (E.auto) fijarPlay(true); }, A: () => { fijarAuto(!E.auto); if (E.auto) fijarPlay(true); },
+      r: repetir, R: repetir, v: () => $("#b-voz").click(), V: () => $("#b-voz").click(),
+      Escape: () => { if (E.panel) panel(null); else if (E.auto) fijarAuto(false); },
+    };
+    if (acciones[k]) { e.preventDefault(); acciones[k](); mostrarControles(); }
+  });
+
+  fijarAuto(false); ir(0); requestAnimationFrame(cuadro);
+  window.__limago = { E, ir, dur, N, fijarPlay, fijarAuto, siguientePaso, repetir };
+})();
+
+</script>
+</body>
+</html>

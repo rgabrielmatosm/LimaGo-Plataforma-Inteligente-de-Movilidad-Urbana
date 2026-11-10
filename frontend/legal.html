@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacidad y términos · LimaGo</title>
+  <meta name="description" content="Privacidad, términos de uso e información sobre la simulación de LimaGo.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
+</head>
+<body data-pagina="legal">
+<div data-cabecera></div>
+
+<main id="contenido">
+  <header class="encabezado-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="index.html">Inicio</a> › Información legal</nav>
+      <h1>Privacidad, términos y simulación</h1>
+      <p>Qué datos usamos, en qué condiciones puedes usar LimaGo y qué partes del servicio son simuladas.</p>
+    </div>
+  </header>
+
+  <section class="seccion" style="padding-top:12px">
+    <div class="contenedor con-indice">
+      <nav class="indice" aria-label="Secciones">
+        <a href="#privacidad">Privacidad</a>
+        <a href="#terminos">Términos de uso</a>
+        <a href="#simulacion">Información de la simulación</a>
+      </nav>
+      <div class="prosa">
+        <h2 id="privacidad" style="margin-top:0">Privacidad</h2>
+        <h3>Qué datos guardamos</h3>
+        <p>Para cada solicitud registramos el punto de recojo y el destino que indicaste (texto y coordenadas), el conductor asignado, los tiempos estimados, la tarifa orientativa y el estado del viaje. Estos registros forman el historial que ves en «Mis viajes».</p>
+        <h3>Qué no pedimos</h3>
+        <p>No hay cuentas de usuario. No pedimos nombre, teléfono, correo ni datos de pago.</p>
+        <h3>Datos en tu navegador</h3>
+        <p><strong>Ubicación:</strong> solo la pedimos con tu permiso para proponer el punto de recojo. Se envía al servidor únicamente para ubicarte en la vía más cercana y calcular el viaje; no la seguimos en segundo plano. Recordamos en tu navegador si concediste o negaste el permiso, para no volver a preguntarte.</p>
+        <p>Guardamos en tu navegador el número de tu último viaje (para retomarlo en «Seguimiento»), el tema de color elegido y la vista preferida del historial. Puedes borrarlos limpiando los datos del sitio en tu navegador.</p>
+        <h3>Servicios de terceros</h3>
+        <p>Las búsquedas de direcciones se consultan al servicio de búsqueda de OpenStreetMap (Nominatim) y los mapas se cargan desde los servidores de teselas de OpenStreetMap. Esos servicios reciben el texto buscado o la zona del mapa visible, según sus propias políticas.</p>
+        <h3>Historial compartido</h3>
+        <p>Como no hay cuentas, «Mis viajes» muestra las solicitudes hechas desde la aplicación en este servicio de demostración, no solo las tuyas. No escribas datos personales en los campos de dirección.</p>
+
+        <h2 id="terminos">Términos de uso</h2>
+        <p>LimaGo es una plataforma demostrativa. Al usarla aceptas que:</p>
+        <ul>
+          <li>No contrata ni presta servicios reales de transporte: ningún vehículo acudirá a tu ubicación.</li>
+          <li>Las tarifas son estimaciones orientativas y no constituyen una oferta ni un cobro.</li>
+          <li>Los tiempos de llegada y las posiciones corresponden a la simulación y no a vehículos reales.</li>
+          <li>El servicio puede reiniciarse, pausarse o no estar disponible en cualquier momento; al reiniciarse, los viajes en curso se marcan como interrumpidos.</li>
+          <li>El botón de alerta es demostrativo: avisa al centro de operaciones de LimaGo y a unidades de apoyo simuladas. No está conectado con la Policía Nacional, el SAMU, el serenazgo ni ningún servicio de emergencia real.</li>
+          <li>No debes usar el servicio para fines distintos a conocer su funcionamiento.</li>
+        </ul>
+
+        <h2 id="simulacion">Información de la simulación</h2>
+        <p><strong>Datos reales:</strong> las calles de Lima Metropolitana, sus sentidos de circulación, longitudes, el límite metropolitano y los límites distritales provienen de OpenStreetMap (© colaboradores de OpenStreetMap, licencia ODbL). Las direcciones se buscan en ese mismo catálogo.</p>
+        <p><strong>Datos simulados:</strong> los conductores, sus códigos (LG-00001, LG-00002, …), sus movimientos, sus decisiones de aceptar o no un viaje, la demanda de otros pasajeros, las unidades de apoyo y las condiciones de tráfico son generados por la simulación. <strong>El tráfico no es información en tiempo real:</strong> se estima con un modelo según la hora de Lima. El escenario es reproducible: con los mismos parámetros se obtiene la misma flota.</p>
+        <p><strong>Reloj del escenario:</strong> la simulación avanza más rápido que el tiempo real; por eso un viaje de varios minutos estimados puede completarse en menos tiempo en tu pantalla.</p>
+        <p><strong>Cifras públicas:</strong> los indicadores de la página de inicio (conductores disponibles, viajes completados, llegada media) se calculan en vivo a partir de este escenario.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-pie></div>
+</body>
+</html>

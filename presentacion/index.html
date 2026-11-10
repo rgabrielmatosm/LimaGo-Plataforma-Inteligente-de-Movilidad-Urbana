@@ -156,7 +156,7 @@ python -m pytest -q</code></pre>
     <text x="866" y="160" class="nota">lee comandos</text>
     <text x="866" y="178" class="nota">publica estado</text>
   </svg>
-  <p><strong>Coordinación explícita:</strong> el backend nunca modifica la flota; inserta comandos y lee la instantánea. El worker los procesa en orden (un solo consumidor) ⇒ imposible asignar el mismo conductor dos veces. Al reiniciar el worker, restaura la instantánea desde PostgreSQL. Los algoritmos no dependen ni de la base de datos ni del frontend (se prueban directamente).</p>
+  <p><strong>Coordinación explícita:</strong> el backend nunca modifica la flota; inserta comandos y lee la instantánea. El worker los procesa en orden (un solo consumidor) ⇒ imposible asignar el mismo conductor dos veces. Al reiniciar el worker, restaura la instantánea desde PostgreSQL. Los algoritmos no dependen ni de la base de datos ni del frontend (se prueban directamente). <strong>V2:</strong> Prometheus y Grafana recogen métricas operativas reales (peticiones, latencia, asignaciones, turnos); no sustituyen a los benchmarks.</p>
 </section>
 
 <!-- 6 -->
@@ -356,7 +356,7 @@ mejor = min(alcanzables,
     </ul>
 <pre><code>python -m pytest -q
 .....................................
-52 passed</code></pre>
+86 passed   (65 de V1/V2 + 21 de V3)</code></pre>
   </div>
 </section>
 
@@ -397,6 +397,38 @@ mejor = min(alcanzables,
     <div class="caja"><h3>4 · Capacidad del Quadtree</h3><p><code>LIMAGO_CAPACIDAD_NODO=4</code> y volver a correr <code>python -m benchmark.benchmark_busqueda</code>: comparar profundidad y tiempos.</p></div>
     <div class="caja"><h3>5 · Evitar un tipo de vía</h3><p>Con <code>grafo.adyacencia_ponderada(lambda u, v, d: math.inf if d.tipo_via == "trunk" else d.longitud)</code> y <code>ruta_mas_corta</code>.</p></div>
     <div class="caja"><h3>6 · Contar disponibles en una zona</h3><p><code>len(quadtree.buscar_rectangulo(rect, solo_disponibles=True))</code>; o leer <code>nodo.disponibles</code> de los nodos totalmente contenidos.</p></div>
+  </div>
+</section>
+
+<!-- V3 -->
+<section class="diapo">
+  <h2><small>V3 · Feedback</small>De Miraflores a Lima Metropolitana</h2>
+  <div class="rejilla">
+    <div class="caja"><h3>Menos datos del usuario</h3><p>Ubicación del navegador con permiso (una sola vez, nunca bloquea), autocompletado de direcciones reales y solo el destino a escribir. El pasajero no configura tráfico ni algoritmos.</p></div>
+    <div class="caja"><h3>Ciudad completa</h3><p>50 distritos, 152 441 intersecciones, 33 084 km. Cobertura por polígono real (ray casting propio = shapely en 400 puntos). Formato compacto propio: carga en 2–3 s.</p></div>
+    <div class="caja"><h3>Automatización</h3><p>Reloj de Lima → nivel de tráfico (modelo horario, <strong>no tráfico real</strong>). Ofertas secuenciales por ETA con plazo; conductores que aceptan, rechazan, no responden o se desconectan; recogida y viaje automáticos.</p></div>
+    <div class="caja"><h3>Alerta por proximidad</h3><p>Alerta simulada, deduplicada; el <strong>Quadtree propio</strong> elige la unidad de apoyo más cercana. Sin conexión con Policía, SAMU ni serenazgo.</p></div>
+  </div>
+</section>
+
+<section class="diapo">
+  <h2><small>V3 · Defensa técnica</small>Qué cambió y qué no</h2>
+  <div class="dos">
+    <ul>
+      <li><strong>Intacto:</strong> Quadtree, Haversine, heap, Dijkstra, A*, húngaro, H3 aislado. Mapas folium y benchmarks académicos dan lo mismo que en la V1.</li>
+      <li><strong>Capa comercial:</strong> el motor de aceptación usa los mismos k candidatos y guarda el óptimo académico (menor ETA) para comparar: operaciones muestra coincidencia y espera extra.</li>
+      <li><strong>Estados:</strong> tabla de transiciones válidas; un conductor con oferta pendiente no recibe otra (sin doble asignación, probado con concurrencia).</li>
+      <li><strong>Tarifa:</strong> base + km + minutos + recogida con tope; el tráfico solo cambia minutos (sin doble conteo). Precio fijado al confirmar.</li>
+      <li><strong>CDN:</strong> evaluado, no configurado. Nginx con gzip y Cache-Control; HTML siempre revalidado, estáticos versionados con <code>?v=3</code>.</li>
+    </ul>
+    <div>
+<pre><code>python -m benchmark.benchmark_metropolitano
+Quadtree 30 000: x232,8 · 300/300 idénticos
+Dijkstra 25–40 km: mediana 287 ms
+Dijkstra = networkx: 20/20
+Despacho (2 500, k=8): mediana 1,1 ms</code></pre>
+      <p style="margin-top:10px">Prueba de punta a punta (Playwright, local y Docker): 30/30. Detalle en <code>docs/MEJORAS_V3.md</code>.</p>
+    </div>
   </div>
 </section>
 

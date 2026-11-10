@@ -1,0 +1,4 @@
+# V3 — solo para REGENERAR la red de Lima Metropolitana (python -m datos.red_metropolitana).
+# No hace falta para ejecutar LimaGo: datos/lima/lima_metropolitana.npz ya viene en el repositorio.
+-r requirements.txt
+osmium==4.3.2

@@ -11,7 +11,9 @@ sobre esta estructura, sin llamar a funciones de rutas de networkx/osmnx.
 """
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Callable, Iterable
 
 from estructuras.geografia import Rectangulo
@@ -19,7 +21,7 @@ from estructuras.geografia import Rectangulo
 Adyacencia = dict[int, list[tuple[int, float]]]
 
 
-@dataclass
+@dataclass(slots=True)
 class DatosArista:
     longitud: float
     tipo_via: str = "unclassified"
@@ -85,6 +87,77 @@ class GrafoVial:
             )
         return grafo
 
+    # ------------------------------------------------------ formato compacto
+    def guardar_compacto(self, ruta: Path) -> None:
+        """Guarda el grafo en un ``.npz`` comprimido (arreglos numpy).
+
+        Para Lima Metropolitana el GraphML ocupa cientos de MB y tarda en
+        cargarse; este formato guarda exactamente la misma información que usa
+        ``GrafoVial`` (nodos, aristas dirigidas, longitudes, tipo de vía, nombre,
+        sentido único y geometría) y se carga en pocos segundos.
+        """
+        import numpy as np
+
+        ids = list(self.nodos)
+        indice = {n: i for i, n in enumerate(ids)}
+        tipos = sorted({d.tipo_via for d in self.aristas.values()})
+        nombres = sorted({d.nombre for d in self.aristas.values() if d.nombre})
+        id_tipo = {t: i for i, t in enumerate(tipos)}
+        id_nombre = {n: i for i, n in enumerate(nombres)}
+        u, v, longitud, tipo, nombre, unico, desplazamientos, lat_geom, lon_geom = ([] for _ in range(9))
+        desplazamientos.append(0)
+        for (a, b), d in self.aristas.items():
+            u.append(indice[a])
+            v.append(indice[b])
+            longitud.append(d.longitud)
+            tipo.append(id_tipo[d.tipo_via])
+            nombre.append(id_nombre.get(d.nombre, -1))
+            unico.append(d.sentido_unico)
+            for la, lo in d.geometria:
+                lat_geom.append(la)
+                lon_geom.append(lo)
+            desplazamientos.append(len(lat_geom))
+        ruta = Path(ruta)
+        ruta.parent.mkdir(parents=True, exist_ok=True)
+        np.savez_compressed(
+            ruta,
+            nodo_id=np.array(ids, dtype=np.int64),
+            nodo_lat=np.array([self.nodos[n][0] for n in ids], dtype=np.float64),
+            nodo_lon=np.array([self.nodos[n][1] for n in ids], dtype=np.float64),
+            u=np.array(u, dtype=np.int32), v=np.array(v, dtype=np.int32),
+            longitud=np.array(longitud, dtype=np.float64),
+            tipo=np.array(tipo, dtype=np.int16), nombre=np.array(nombre, dtype=np.int32),
+            sentido_unico=np.array(unico, dtype=np.bool_),
+            geom_desplazamiento=np.array(desplazamientos, dtype=np.int64),
+            geom_lat=np.array(lat_geom, dtype=np.float64), geom_lon=np.array(lon_geom, dtype=np.float64),
+            catalogos=np.array([json.dumps({"tipos": tipos, "nombres": nombres}, ensure_ascii=False)]),
+        )
+
+    @classmethod
+    def cargar_compacto(cls, ruta: Path) -> "GrafoVial":
+        import numpy as np
+
+        datos = np.load(Path(ruta), allow_pickle=False)
+        catalogos = json.loads(str(datos["catalogos"][0]))
+        tipos, nombres = catalogos["tipos"], catalogos["nombres"]
+        ids = datos["nodo_id"].tolist()
+        lats, lons = datos["nodo_lat"].tolist(), datos["nodo_lon"].tolist()
+        grafo = cls()
+        grafo.nodos = {n: (la, lo) for n, la, lo in zip(ids, lats, lons)}
+        grafo.adyacencia = {n: [] for n in ids}
+        grafo.inversa = {n: [] for n in ids}
+        desp = datos["geom_desplazamiento"].tolist()
+        glat, glon = datos["geom_lat"].tolist(), datos["geom_lon"].tolist()
+        for i, (a, b, largo, t, nom, unico) in enumerate(zip(
+                datos["u"].tolist(), datos["v"].tolist(), datos["longitud"].tolist(), datos["tipo"].tolist(),
+                datos["nombre"].tolist(), datos["sentido_unico"].tolist())):
+            na, nb = ids[a], ids[b]
+            geometria = list(zip(glat[desp[i]:desp[i + 1]], glon[desp[i]:desp[i + 1]]))
+            grafo.aristas[(na, nb)] = DatosArista(largo, tipos[t], nombres[nom] if nom >= 0 else "", bool(unico), geometria)
+            grafo.adyacencia[na].append((nb, largo))
+            grafo.inversa[nb].append((na, largo))
+        return grafo
+
     # --------------------------------------------------------------- consultas
     @property
     def num_nodos(self) -> int:
@@ -119,6 +192,44 @@ class GrafoVial:
             else:
                 puntos.append(self.nodos[b])
         return puntos
+
+    def punto_en_tramo(self, u: int, v: int, metros: float) -> tuple[float, float, float]:
+        """Posición (lat, lon) y rumbo (grados, 0 = norte) a ``metros`` del inicio del tramo u→v.
+
+        Recorre la geometría real del tramo; el avance se escala porque la longitud
+        OSM y la suma de segmentos pueden diferir en centímetros.
+        """
+        from estructuras.geografia import haversine_metros, rumbo_grados
+
+        datos = self.aristas[(u, v)]
+        puntos = datos.geometria if len(datos.geometria) >= 2 else [self.nodos[u], self.nodos[v]]
+        tramos = [haversine_metros(*a, *b) for a, b in zip(puntos, puntos[1:])]
+        total = sum(tramos) or 1.0
+        objetivo = max(0.0, min(1.0, metros / max(datos.longitud, 1e-9))) * total
+        for (a, b), largo in zip(zip(puntos, puntos[1:]), tramos):
+            if objetivo <= largo or largo == tramos[-1]:
+                f = 0.0 if largo == 0 else min(1.0, objetivo / largo)
+                return a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, rumbo_grados(*a, *b)
+            objetivo -= largo
+        return (*puntos[-1], rumbo_grados(*puntos[-2], *puntos[-1]))
+
+    def geometria_desde(self, nodo: int, ruta: list[int], avance_m: float) -> list[tuple[float, float]]:
+        """Polilínea de la ruta restante empezando en la posición exacta (nodo + avance sobre el siguiente tramo)."""
+        if not ruta:
+            return [self.nodos[nodo]]
+        lat, lon, _ = self.punto_en_tramo(nodo, ruta[0], avance_m)
+        completa = self.geometria_ruta([nodo] + list(ruta))
+        primer_tramo = self.aristas[(nodo, ruta[0])].geometria or [self.nodos[nodo], self.nodos[ruta[0]]]
+        # descarta los vértices del primer tramo ya recorridos
+        from estructuras.geografia import haversine_metros
+
+        recorridos = 0
+        acumulado = 0.0
+        for a, b in zip(primer_tramo, primer_tramo[1:]):
+            acumulado += haversine_metros(*a, *b)
+            if acumulado <= avance_m:
+                recorridos += 1
+        return [(lat, lon)] + completa[1 + recorridos:]
 
     def adyacencia_ponderada(self, peso: Callable[[int, int, DatosArista], float]) -> Adyacencia:
         """Lista de adyacencia con un peso distinto a la longitud (Reto B)."""

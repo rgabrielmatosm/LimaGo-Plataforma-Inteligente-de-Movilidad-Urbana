@@ -14,5 +14,8 @@ uvicorn[standard]==0.54.0
 pydantic==2.13.5
 SQLAlchemy==2.1.8
 psycopg[binary]==3.3.8
+prometheus-client==0.26.0
+# V3: zona horaria America/Lima en contenedores sin base de zonas horarias
+tzdata==2026.1
 # Solo para el reto D (carpeta experimental/), aislado de la solución principal
 h3==4.5.0

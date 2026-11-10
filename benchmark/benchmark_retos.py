@@ -22,7 +22,7 @@ from algoritmos.congestion import PesosDinamicos, factor_congestion
 from algoritmos.dijkstra import ruta_mas_corta
 from benchmark.utilidades import (AZUL, NARANJA, TEXTO_SECUNDARIO, CARPETA_RESULTADOS, entorno, estilo_graficos,
                                   guardar_json)
-from config.ajustes import cargar_ajustes
+from config.ajustes import ajustes_academicos
 from datos.red_vial import cargar_red_vial
 from simulacion.despachador import Despachador
 from simulacion.flota import generar_flota
@@ -134,7 +134,7 @@ def reto_c(grafo, ajustes) -> dict:
 
 
 def main() -> dict:
-    ajustes = cargar_ajustes()
+    ajustes = ajustes_academicos()
     grafo = cargar_red_vial(ajustes)
     b = reto_b(grafo, ajustes)
     print(f"Reto B: {b['tiempo_medio_8_s']:.0f} s (8:00) vs {b['tiempo_medio_15_s']:.0f} s (15:00); "

@@ -15,7 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from config.ajustes import cargar_ajustes  # noqa: E402
+from config.ajustes import ajustes_academicos  # noqa: E402
 from datos.red_vial import cargar_red_vial  # noqa: E402
 from simulacion.geocodificacion import Geocodificador  # noqa: E402
 from simulacion.turnos import Simulador  # noqa: E402
@@ -30,7 +30,7 @@ SOLICITUDES = [
 
 
 def main() -> list[dict]:
-    ajustes = cargar_ajustes()
+    ajustes = ajustes_academicos()
     grafo = cargar_red_vial(ajustes)
     simulador = Simulador(grafo, ajustes)
     geocodificador = Geocodificador(ajustes, simulador.despachador.limites)

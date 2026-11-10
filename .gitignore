@@ -13,6 +13,9 @@ datos/cache_osmnx/
 datos/*.db
 datos/*.db-*
 datos/*.osm
+# V3: insumos pesados de la preparación de Lima (se regeneran con python -m datos.red_metropolitana)
+datos/lima/*.osm
+datos/fuentes/
 
 # Sistema / editores
 .DS_Store

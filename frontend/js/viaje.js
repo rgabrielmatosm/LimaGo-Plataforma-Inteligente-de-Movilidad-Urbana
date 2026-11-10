@@ -1,316 +1,239 @@
-/* LimaGo — solicitud de viaje, asignación y seguimiento en vivo. */
+/* LimaGo V3 — solicitud en pocos pasos: ubicación automática (con permiso), destino, tarifa, confirmación y búsqueda
+   de un conductor que acepte. Todo cálculo (ruta, tráfico, tarifa, ofertas) lo hace el servidor. */
 "use strict";
 
 (async () => {
   const $ = (s, r = document) => r.querySelector(s);
+  const GEO = "limago.geo";  // "concedida" | "denegada" | "preguntada": evita pedir el permiso repetidamente
+  $("#selector-origen").outerHTML = LimaGo.htmlSelector("origen", "Punto de recojo", "Ej.: Av. Arequipa 2450, Lince");
+  $("#selector-destino").outerHTML = LimaGo.htmlSelector("destino", "¿A dónde vas?", "Ej.: Jockey Plaza o Av. La Marina 2000");
+
   const mapa = LimaGo.crearMapa("mapa");
-  const flota = new LimaGo.CapaFlota(mapa);
-  const capaViaje = L.layerGroup().addTo(mapa);
-  const marcadores = { origen: null, destino: null };
-  let lugarEnEleccion = null;   // "origen" | "destino" mientras se elige en el mapa
-  let viajeActual = LimaGo.leer("limago.viaje");
-  let ultimoEstado = null;
-  let marcadorConductor = null;
-  let lineaRuta = null;
+  LimaGo.dibujarCobertura(mapa, false).catch(() => {});
+  LimaGo.SelectorLugar.conectarMapa(mapa);
+  const capaCercanos = L.layerGroup().addTo(mapa);
+  const capaRuta = L.layerGroup().addTo(mapa);
+  let origen = null;          // {lat, lon, direccion, distrito}
+  let marcadorOrigen = null, marcadorGps = null;
+  let cotizacion = null, viajeId = null, temporizador = null;
 
-  LimaGo.dibujarCobertura(mapa).catch(() => {});
-
-  // ------------------------------------------------------------ selector de lugar
-  class SelectorLugar {
-    constructor(nombre) {
-      this.nombre = nombre;
-      this.raiz = document.querySelector(`[data-lugar="${nombre}"]`);
-      this.modo = "direccion";
-      this.valor = null; // {lat, lon, direccion} confirmado o {texto}
-      this.texto = $('[data-entrada="texto"]', this.raiz);
-      this.coordenadas = $('[data-entrada="coordenadas"]', this.raiz);
-      this.lista = $(".sugerencias", this.raiz);
-      this.seleccion = $("[data-seleccion]", this.raiz);
-      this.temporizador = null;
-      this.raiz.querySelectorAll('[role="tab"]').forEach((b) => b.addEventListener("click", () => this.cambiarModo(b.dataset.modo)));
-      $('[data-accion="elegir-mapa"]', this.raiz).addEventListener("click", () => activarEleccion(this.nombre));
-      this.texto.addEventListener("input", () => { this.valor = null; this.mostrarSeleccion(""); this.programarBusqueda(); });
-      this.texto.addEventListener("keydown", (e) => { if (e.key === "Escape") this.cerrarLista(); });
-      this.texto.addEventListener("blur", () => setTimeout(() => this.cerrarLista(), 200));
-      this.coordenadas.addEventListener("input", () => { this.valor = null; this.validarCoordenadas(false); });
-      this.coordenadas.addEventListener("change", () => this.validarCoordenadas(true));
-    }
-    cambiarModo(modo) {
-      this.modo = modo;
-      this.raiz.querySelectorAll('[role="tab"]').forEach((b) => b.setAttribute("aria-selected", String(b.dataset.modo === modo)));
-      this.raiz.querySelectorAll("[data-panel]").forEach((p) => p.classList.toggle("oculto", p.dataset.panel !== modo));
-      if (modo === "mapa") activarEleccion(this.nombre);
-    }
-    programarBusqueda() {
-      clearTimeout(this.temporizador);
-      const q = this.texto.value.trim();
-      if (q.length < 4) { this.cerrarLista(); return; }
-      this.temporizador = setTimeout(async () => {
-        try {
-          const { resultados } = await LimaGo.api(`/geocodificar?q=${encodeURIComponent(q)}`);
-          this.mostrarLista(resultados);
-        } catch (e) {
-          this.mostrarLista([]);
-        }
-      }, 450);
-    }
-    mostrarLista(resultados) {
-      this.lista.innerHTML = resultados.length
-        ? resultados.map((r, i) => `<li role="option" data-i="${i}">${LimaGo.escapar(LimaGo.corto(r.direccion, 2))}<small>${LimaGo.escapar(LimaGo.corto(r.direccion.split(",").slice(2).join(","), 3))}</small></li>`).join("")
-        : '<li aria-disabled="true">Sin coincidencias en Miraflores</li>';
-      this.lista.classList.remove("oculto");
-      this.lista.querySelectorAll("li[data-i]").forEach((li) => li.addEventListener("mousedown", (e) => {
-        e.preventDefault();
-        const r = resultados[+li.dataset.i];
-        this.fijar({ lat: r.lat, lon: r.lon, direccion: r.direccion });
-        this.texto.value = LimaGo.corto(r.direccion, 2);
-        this.cerrarLista();
-      }));
-    }
-    cerrarLista() { this.lista.classList.add("oculto"); }
-    validarCoordenadas(mostrarError) {
-      const texto = this.coordenadas.value.trim();
-      const m = texto.match(/^\(?\s*(-?\d{1,3}(?:[.,]\d+)?)\s*[,;\s]\s*(-?\d{1,3}(?:[.,]\d+)?)\s*\)?$/);
-      if (!m) {
-        if (mostrarError && texto) this.mostrarSeleccion("Formato esperado: -12.1218, -77.0304", true);
-        return null;
-      }
-      const lat = parseFloat(m[1].replace(",", ".")), lon = parseFloat(m[2].replace(",", "."));
-      if (Math.abs(lat) > 90 || Math.abs(lon) > 180) {
-        this.mostrarSeleccion("Coordenadas fuera de rango", true);
-        return null;
-      }
-      this.fijar({ lat, lon, direccion: `${lat.toFixed(5)}, ${lon.toFixed(5)}` });
-      return this.valor;
-    }
-    fijar(valor) {
-      this.valor = valor;
-      this.mostrarSeleccion(`✓ ${LimaGo.corto(valor.direccion, 3)}`);
-      ponerMarcador(this.nombre, valor);
-    }
-    mostrarSeleccion(texto, error = false) {
-      this.seleccion.textContent = texto;
-      this.seleccion.style.color = error ? "var(--peligro)" : "";
-    }
-    datos() {
-      if (this.valor) return { lat: this.valor.lat, lon: this.valor.lon, direccion: this.valor.direccion };
-      if (this.modo === "direccion" && this.texto.value.trim()) return { texto: this.texto.value.trim() };
-      if (this.modo === "coordenadas" && this.coordenadas.value.trim()) {
-        const v = this.validarCoordenadas(true);
-        if (!v) throw new Error("Revisa las coordenadas ingresadas");
-        return { lat: v.lat, lon: v.lon, direccion: v.direccion };
-      }
-      return null;
-    }
-    limpiar() {
-      this.valor = null; this.texto.value = ""; this.coordenadas.value = ""; this.mostrarSeleccion("");
-      if (marcadores[this.nombre]) { mapa.removeLayer(marcadores[this.nombre]); marcadores[this.nombre] = null; }
-    }
-  }
-  const selectores = { origen: new SelectorLugar("origen"), destino: new SelectorLugar("destino") };
-
-  function ponerMarcador(nombre, valor) {
-    if (marcadores[nombre]) mapa.removeLayer(marcadores[nombre]);
-    marcadores[nombre] = L.marker([valor.lat, valor.lon], { icon: LimaGo.iconoPin(nombre) })
-      .bindTooltip(nombre === "origen" ? "Recojo" : "Destino").addTo(mapa);
-  }
-
-  function activarEleccion(nombre) {
-    lugarEnEleccion = nombre;
-    $("#modo-mapa").textContent = nombre === "origen" ? "Toca el mapa para marcar tu punto de recojo" : "Toca el mapa para marcar tu destino";
-    $("#modo-mapa").classList.remove("oculto");
-    mapa.getContainer().style.cursor = "crosshair";
-  }
-
-  mapa.on("click", async (e) => {
-    if (!lugarEnEleccion) return;
-    const selector = selectores[lugarEnEleccion];
-    lugarEnEleccion = null;
-    $("#modo-mapa").classList.add("oculto");
-    mapa.getContainer().style.cursor = "";
-    const lat = +e.latlng.lat.toFixed(6), lon = +e.latlng.lng.toFixed(6);
-    selector.fijar({ lat, lon, direccion: `${lat}, ${lon}` });
-    try {
-      const { direccion } = await LimaGo.api(`/geocodificar/inverso?lat=${lat}&lon=${lon}`);
-      selector.fijar({ lat, lon, direccion });
-    } catch (error) {
-      selector.mostrarSeleccion(error.message, true);
-    }
+  const selectorOrigen = new LimaGo.SelectorLugar($('[data-lugar="origen"]'), {
+    nombre: "Punto de recojo", mapa, tipoPin: "origen",
+    alCambiar: (s) => { if (s.valor) ajustar(s.valor.lat, s.valor.lon, s.valor.direccion, true); },
+  });
+  const selectorDestino = new LimaGo.SelectorLugar($('[data-lugar="destino"]'), {
+    nombre: "Destino", mapa, tipoPin: "destino",
+    alCambiar: (s) => { if (s.valor && origen) cotizar(); },
   });
 
-  // ------------------------------------------------------------ solicitud
-  function mostrarMensaje(destino, texto, tipo = "error") {
-    $(destino).innerHTML = texto ? `<div class="aviso ${tipo}">${LimaGo.escapar(texto)}</div>` : "";
+  const mensaje = (texto, tipo = "error") => { $("#mensaje").innerHTML = texto ? `<div class="aviso ${tipo}">${LimaGo.escapar(texto)}</div>` : ""; };
+  function vista(id) {
+    for (const p of ["paso-lugares", "paso-cotizacion", "paso-busqueda", "paso-sin-conductor"]) $(`#${p}`).classList.toggle("oculto", p !== id);
   }
-
-  function mostrarOpciones(nombre, opciones) {
-    const caja = $("#opciones");
-    const lista = $(".sugerencias", caja);
-    lista.innerHTML = opciones.map((o, i) => `<li role="option" data-i="${i}">${LimaGo.escapar(LimaGo.corto(o.direccion, 2))}<small>${LimaGo.escapar(LimaGo.corto(o.direccion.split(",").slice(2).join(","), 3))}</small></li>`).join("");
-    caja.classList.remove("oculto");
-    lista.querySelectorAll("li").forEach((li) => li.addEventListener("click", () => {
-      const o = opciones[+li.dataset.i];
-      selectores[nombre].fijar({ lat: o.lat, lon: o.lon, direccion: o.direccion });
-      caja.classList.add("oculto");
-      mostrarMensaje("#mensaje", "");
-    }));
+  function editarOrigen(abrir, motivo = "") {
+    $("#editor-origen").classList.toggle("oculto", !abrir);
+    $("#cambiar-origen").textContent = abrir ? "Listo" : "Cambiar";
+    if (motivo) { $("#origen-texto-resumen").textContent = "Indica tu punto de recojo"; $("#origen-detalle").textContent = motivo; }
+    if (abrir) setTimeout(() => $("#origen-texto").focus(), 50);
   }
+  $("#cambiar-origen").addEventListener("click", () => editarOrigen($("#editor-origen").classList.contains("oculto")));
 
-  $("#formulario").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    mostrarMensaje("#mensaje", "");
-    $("#opciones").classList.add("oculto");
-    let origen, destino;
+  // ---------------------------------------------------------------- ubicación
+  async function ajustar(lat, lon, direccion = null, manual = false) {
     try {
-      origen = selectores.origen.datos();
-      destino = selectores.destino.datos();
-    } catch (error) {
-      mostrarMensaje("#mensaje", error.message);
+      const r = await LimaGo.api(`/ubicacion/ajustar?lat=${lat}&lon=${lon}`);
+      if (!r.cubierto) {
+        editarOrigen(true, r.mensaje);
+        if (manual) selectorOrigen.mostrar(r.mensaje, "error");
+        return;
+      }
+      origen = { lat: r.lat, lon: r.lon, direccion: manual && direccion ? direccion : r.direccion, distrito: r.distrito };
+      $("#origen-texto-resumen").textContent = LimaGo.corto(origen.direccion, 2);
+      $("#origen-detalle").textContent = [r.distrito, r.distancia_a_via_m > 15 ? `ajustado a la vía más cercana (${Math.round(r.distancia_a_via_m)} m)` : ""]
+        .filter(Boolean).join(" · ");
+      if (marcadorOrigen) mapa.removeLayer(marcadorOrigen);
+      if (selectorOrigen.marcador) { mapa.removeLayer(selectorOrigen.marcador); selectorOrigen.marcador = null; }
+      marcadorOrigen = L.marker([r.lat, r.lon], { icon: LimaGo.iconoPin("origen") }).bindTooltip("Recojo").addTo(mapa);
+      mapa.setView([r.lat, r.lon], 16);
+      editarOrigen(false);
+      refrescarCercanos();
+      if (selectorDestino.valor) cotizar();
+      else setTimeout(() => $("#destino-texto").focus(), 50);
+    } catch (e) {
+      editarOrigen(true, e.message);
+    }
+  }
+
+  async function detectarUbicacion(porClic = false) {
+    if (!("geolocation" in navigator)) { editarOrigen(true, "Tu navegador no permite detectar la ubicación."); return; }
+    let permiso = null;
+    try { permiso = (await navigator.permissions.query({ name: "geolocation" })).state; } catch (e) { /* no soportado */ }
+    const previo = LimaGo.leer(GEO);
+    if (!porClic && (permiso === "denied" || previo === "denegada" || (permiso !== "granted" && previo === "preguntada"))) {
+      editarOrigen(true, permiso === "denied" || previo === "denegada"
+        ? "Sin permiso de ubicación: escribe o marca tu punto de recojo." : "Escribe o marca tu punto de recojo.");
       return;
     }
-    if (!origen) { mostrarMensaje("#mensaje", "Indica tu punto de recojo: escribe una dirección, coordenadas o márcalo en el mapa."); return; }
-    const boton = $("#pedir");
-    boton.disabled = true;
-    boton.textContent = "Buscando tu conductor…";
-    try {
-      const viaje = await LimaGo.api("/viajes", { method: "POST", body: { origen, destino } });
-      if (viaje.estado === "asignada") {
-        viajeActual = viaje.id;
-        LimaGo.guardar("limago.viaje", viajeActual);
-        mostrarViaje(viaje);
-      } else {
-        mostrarMensaje("#mensaje", viaje.mensaje || LimaGo.ESTADOS_VIAJE[viaje.estado]);
-      }
-    } catch (error) {
-      if (error.estado === 409 && error.opciones.length) {
-        const nombre = origen.texto && !selectores.origen.valor ? "origen" : "destino";
-        mostrarMensaje("#mensaje", error.message, "info");
-        mostrarOpciones(nombre, error.opciones);
-      } else {
-        mostrarMensaje("#mensaje", error.message);
-      }
-    } finally {
-      boton.disabled = false;
-      boton.textContent = "Pedir LimaGo";
-    }
-  });
+    if (permiso !== "granted") LimaGo.guardar(GEO, "preguntada");
+    $("#origen-texto-resumen").textContent = "Detectando tu ubicación…";
+    navigator.geolocation.getCurrentPosition((p) => {
+      LimaGo.guardar(GEO, "concedida");
+      const { latitude: lat, longitude: lon } = p.coords;
+      if (marcadorGps) mapa.removeLayer(marcadorGps);
+      marcadorGps = L.marker([lat, lon], { icon: L.divIcon({ className: "", html: '<div class="marcador-gps"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }) })
+        .bindTooltip("Tu ubicación").addTo(mapa);
+      ajustar(lat, lon);
+    }, (error) => {
+      if (error.code === 1) LimaGo.guardar(GEO, "denegada");
+      editarOrigen(true, error.code === 1 ? "Sin permiso de ubicación: escribe o marca tu punto de recojo."
+        : "No pudimos obtener tu ubicación. Escribe o marca tu punto de recojo.");
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
+  }
+  $("#usar-ubicacion").addEventListener("click", () => detectarUbicacion(true));
 
-  // ------------------------------------------------------------ seguimiento
-  function pasoActual(viaje) {
-    if (viaje.estado === "completada") return 4;
-    if (viaje.estado === "en_viaje") return 3;
-    if (viaje.estado === "asignada") return 2;
-    return 0;
+  async function refrescarCercanos() {
+    if (!origen || !$("#paso-busqueda").classList.contains("oculto")) return;
+    try {
+      const { conductores } = await LimaGo.api(`/conductores/cercanos?lat=${origen.lat}&lon=${origen.lon}&n=8`);
+      capaCercanos.clearLayers();
+      for (const c of conductores) L.circleMarker([c.lat, c.lon], { radius: 6, color: "#fff", weight: 2, fillColor: "#16a34a", fillOpacity: 1 })
+        .bindTooltip(`${c.codigo} · a ${LimaGo.distancia(c.distancia_m)}`).addTo(capaCercanos);
+    } catch (e) { /* reintenta luego */ }
   }
 
-  function mostrarViaje(viaje) {
-    $("#formulario").classList.add("oculto");
-    $("#viaje").classList.remove("oculto");
-    const etiqueta = $("#viaje-estado");
-    etiqueta.className = `etiqueta estado-${viaje.estado}`;
-    etiqueta.textContent = LimaGo.ESTADOS_VIAJE[viaje.estado] || viaje.estado;
-    $("#viaje-conductor").textContent = viaje.conductor_id ? `Conductor LG-${String(viaje.conductor_id).padStart(5, "0")}` : "—";
-    $("#viaje-id").textContent = `#${viaje.id}`;
-    $("#viaje-candidatos").textContent = (viaje.candidatos || []).length || "—";
-    const activo = viaje.estado === "asignada" || viaje.estado === "en_viaje";
-    const restante = viaje.segundos_restantes;
-    if (viaje.estado === "asignada") {
-      $("#viaje-eta").textContent = LimaGo.minutos(restante ?? viaje.eta_s);
-      $("#viaje-eta-texto").textContent = "para llegar a ti";
-      $("#viaje-detalle").textContent = "Va hacia tu punto de recojo";
-      $("#viaje-distancia").textContent = LimaGo.distancia(viaje.metros_restantes ?? viaje.distancia_calles_m);
-    } else if (viaje.estado === "en_viaje") {
-      $("#viaje-eta").textContent = LimaGo.minutos(restante);
-      $("#viaje-eta-texto").textContent = "a tu destino";
-      $("#viaje-detalle").textContent = "Viaje en curso";
-      $("#viaje-distancia").textContent = LimaGo.distancia(viaje.metros_restantes);
-    } else {
-      $("#viaje-eta").textContent = viaje.estado === "completada" ? "✓" : "—";
-      $("#viaje-eta-texto").textContent = LimaGo.ESTADOS_VIAJE[viaje.estado] || "";
-      $("#viaje-detalle").textContent = viaje.mensaje || "";
-    }
-    const paso = pasoActual(viaje);
-    $("#linea-tiempo").querySelectorAll("li").forEach((li, i) => {
-      li.classList.toggle("hecho", i < paso - 1 || (paso === 4 && i === 3));
-      li.classList.toggle("actual", i === paso - 1 && paso !== 4);
+  // --------------------------------------------------------------- cotización
+  function mostrarOpciones(opciones, selector = selectorDestino) {
+    const caja = $("#opciones");
+    const lista = $(".sugerencias", caja);
+    lista.innerHTML = opciones.map((o, i) => `<li role="option" tabindex="0" data-i="${i}">${LimaGo.escapar(LimaGo.corto(o.direccion, 2))}<small>${LimaGo.escapar(LimaGo.corto(o.direccion.split(",").slice(2).join(","), 3))}</small></li>`).join("");
+    caja.classList.remove("oculto");
+    lista.querySelectorAll("li").forEach((li) => {
+      const elegir = () => { const o = opciones[+li.dataset.i]; caja.classList.add("oculto"); mensaje(""); selector.fijar({ lat: o.lat, lon: o.lon, direccion: o.direccion }); };
+      li.addEventListener("click", elegir);
+      li.addEventListener("keydown", (e) => { if (e.key === "Enter") elegir(); });
     });
-    $("#viaje-direcciones").textContent = `Recojo: ${LimaGo.corto(viaje.origen_texto, 2) || "—"}` +
-      (viaje.destino_texto ? ` · Destino: ${LimaGo.corto(viaje.destino_texto, 2)}` : "");
-    $("#cancelar").classList.toggle("oculto", viaje.estado !== "asignada");
-    $("#nuevo").classList.toggle("oculto", activo);
-    if (!activo && ultimoEstado && ultimoEstado !== viaje.estado) {
-      mostrarMensaje("#viaje-mensaje", viaje.estado === "completada" ? "¡Llegaste! Gracias por viajar con LimaGo." : (viaje.mensaje || ""),
-        viaje.estado === "completada" ? "exito" : "info");
-    }
-    ultimoEstado = viaje.estado;
-    dibujarViaje(viaje, activo);
   }
 
-  function dibujarViaje(viaje, activo) {
-    if (viaje.origen_lat != null && !marcadores.origen) ponerMarcador("origen", { lat: viaje.origen_lat, lon: viaje.origen_lon });
-    if (viaje.destino_lat != null && !marcadores.destino) ponerMarcador("destino", { lat: viaje.destino_lat, lon: viaje.destino_lon });
-    const ruta = viaje.ruta_restante && viaje.ruta_restante.length ? viaje.ruta_restante : (activo ? viaje.ruta_recogida : []);
-    const color = viaje.estado === "en_viaje" ? "#f26b3a" : "#0f766e";
-    if (lineaRuta) capaViaje.removeLayer(lineaRuta);
-    lineaRuta = ruta && ruta.length > 1 ? L.polyline(ruta, { color, weight: 6, opacity: 0.85 }).addTo(capaViaje) : null;
-    if (viaje.conductor && activo) {
-      flota.ocultos = new Set([viaje.conductor.id]);
-      const pos = [viaje.conductor.lat, viaje.conductor.lon];
-      if (!marcadorConductor) {
-        marcadorConductor = L.marker(pos, { icon: LimaGo.iconoAuto(), zIndexOffset: 1000 }).addTo(capaViaje);
-        const limites = L.latLngBounds([pos, [viaje.origen_lat, viaje.origen_lon]]);
-        if (lineaRuta) limites.extend(lineaRuta.getBounds());
-        mapa.fitBounds(limites, { padding: [60, 60], maxZoom: 17 });
-      } else {
-        marcadorConductor.setLatLng(pos);
+  async function cotizar() {
+    mensaje("");
+    let destino;
+    try { destino = selectorDestino.datos(); } catch (e) { mensaje(e.message); return; }
+    if (!origen) {
+      const texto = !selectorOrigen.valor && selectorOrigen.texto.value.trim();
+      if (texto) {  // recojo escrito: se busca y, si hay varias coincidencias, se pide elegir
+        try {
+          const { resultados } = await LimaGo.api(`/geocodificar?q=${encodeURIComponent(texto)}`);
+          if (resultados.length === 1) selectorOrigen.fijar(resultados[0]);
+          else if (resultados.length > 1) { mensaje("Elige tu punto de recojo:", "info"); mostrarOpciones(resultados, selectorOrigen); }
+          else mensaje("No encontramos ese punto de recojo en la zona de cobertura.");
+        } catch (e) { mensaje(e.message); }
+        return;
       }
-      marcadorConductor.bindTooltip(viaje.conductor.codigo);
-    } else {
-      flota.ocultos = new Set();
-      if (marcadorConductor) { capaViaje.removeLayer(marcadorConductor); marcadorConductor = null; }
+      mensaje("Primero indica tu punto de recojo."); editarOrigen(true); return;
+    }
+    if (!destino) { mensaje("Escribe tu destino, pega coordenadas o márcalo en el mapa."); $("#destino-texto").focus(); return; }
+    const boton = $("#ver-tarifa");
+    boton.setAttribute("aria-busy", "true");
+    boton.innerHTML = '<span class="girador" style="width:16px;height:16px"></span> Calculando ruta y tarifa…';
+    try {
+      cotizacion = await LimaGo.api("/viajes/cotizar", { method: "POST", body: { origen, destino } });
+      pintarCotizacion();
+    } catch (e) {
+      if (e.estado === 409 && e.opciones.length) { mensaje(e.message, "info"); mostrarOpciones(e.opciones); }
+      else mensaje(e.message);
+    } finally {
+      boton.removeAttribute("aria-busy");
+      boton.textContent = "Ver tarifa";
     }
   }
+  $("#ver-tarifa").addEventListener("click", cotizar);
 
-  async function refrescarViaje() {
-    if (!viajeActual) return;
+  function pintarCotizacion() {
+    const c = cotizacion, t = c.tarifa, d = t.desglose;
+    vista("paso-cotizacion");
+    $("#cot-origen").textContent = LimaGo.corto(c.origen.direccion, 2) + (c.origen.distrito ? ` · ${c.origen.distrito}` : "");
+    $("#cot-destino").textContent = LimaGo.corto(c.destino.direccion, 2) + (c.destino.distrito ? ` · ${c.destino.distrito}` : "");
+    $("#cot-precio").textContent = LimaGo.soles(t.total);
+    $("#cot-distancia").textContent = LimaGo.distancia(c.distancia_m);
+    $("#cot-duracion").textContent = LimaGo.minutos(c.duracion_s);
+    $("#cot-recogida").textContent = c.recogida.eta_s != null ? `~${LimaGo.minutos(c.recogida.eta_s)}` : "Sin conductores";
+    const nivel = c.trafico.nivel;
+    $("#cot-trafico").className = `chip-trafico ${nivel}`;
+    $("#cot-trafico").textContent = `${LimaGo.NIVELES_TRAFICO[nivel] || nivel} · ${LimaGo.hora(c.trafico.hora)}`;
+    $("#cot-desglose").innerHTML = `
+      <li><span>Tarifa base</span><span>${LimaGo.soles(d.base)}</span></li>
+      <li><span>Recorrido (${LimaGo.distancia(c.distancia_m)})</span><span>${LimaGo.soles(d.recorrido)}</span></li>
+      <li><span>Tiempo (${LimaGo.minutos(c.duracion_s)})</span><span>${LimaGo.soles(d.tiempo)}</span></li>
+      ${d.recogida > 0 ? `<li><span>Recogida (${LimaGo.distancia(c.recogida.distancia_m)})</span><span>${LimaGo.soles(d.recogida)}</span></li>` : ""}
+      ${d.ajuste_minimo > 0 ? `<li><span>Ajuste a tarifa mínima</span><span>${LimaGo.soles(d.ajuste_minimo)}</span></li>` : ""}
+      <li class="total"><span>Total estimado</span><span>${LimaGo.soles(t.total)}</span></li>`;
+    $("#cot-nota").textContent = "Monto orientativo en soles: no es un cobro. El tráfico se estima con un modelo por horario, no en tiempo real. La tarifa se mantiene al confirmar.";
+    capaRuta.clearLayers();
+    const linea = L.polyline(c.ruta, { color: "#0f766e", weight: 6, opacity: 0.9 }).addTo(capaRuta);
+    L.marker([c.destino.lat, c.destino.lon], { icon: LimaGo.iconoPin("destino") }).bindTooltip("Destino").addTo(capaRuta);
+    mapa.fitBounds(linea.getBounds(), { padding: [50, 50] });
+    if (selectorDestino.marcador) { mapa.removeLayer(selectorDestino.marcador); selectorDestino.marcador = null; }
+    $("#confirmar").disabled = c.recogida.conductores_cerca === 0;
+    if (c.recogida.conductores_cerca === 0) $("#cot-nota").textContent = "Ahora no hay conductores disponibles cerca. Inténtalo en unos minutos.";
+  }
+  $("#volver").addEventListener("click", () => { capaRuta.clearLayers(); vista("paso-lugares"); });
+
+  // -------------------------------------------------------- confirmación
+  $("#confirmar").addEventListener("click", async () => {
+    const boton = $("#confirmar");
+    boton.setAttribute("aria-busy", "true");
     try {
-      mostrarViaje(await LimaGo.api(`/viajes/${viajeActual}`));
-    } catch (error) {
-      if (error.estado === 404) { reiniciarFormulario(); }
-    }
-  }
-
-  async function refrescarFlota() {
-    try { flota.actualizar((await LimaGo.api("/flota")).conductores); } catch (e) { /* reintenta en el siguiente ciclo */ }
-  }
-
-  function reiniciarFormulario() {
-    viajeActual = null;
-    ultimoEstado = null;
-    LimaGo.borrar("limago.viaje");
-    capaViaje.clearLayers();
-    lineaRuta = null;
-    marcadorConductor = null;
-    flota.ocultos = new Set();
-    selectores.origen.limpiar();
-    selectores.destino.limpiar();
-    mostrarMensaje("#viaje-mensaje", "");
-    $("#viaje").classList.add("oculto");
-    $("#formulario").classList.remove("oculto");
-  }
-
-  $("#cancelar").addEventListener("click", async () => {
-    if (!viajeActual) return;
-    try {
-      mostrarViaje(await LimaGo.api(`/viajes/${viajeActual}/cancelar`, { method: "POST" }));
-    } catch (error) {
-      mostrarMensaje("#viaje-mensaje", error.message);
+      const viaje = await LimaGo.api("/viajes", { method: "POST", body: { cotizacion_id: cotizacion.id } });
+      viajeId = viaje.id;
+      LimaGo.guardar("limago.viaje", viajeId);
+      vista("paso-busqueda");
+      capaCercanos.clearLayers();
+      seguirBusqueda(viaje);
+      temporizador = setInterval(async () => { try { seguirBusqueda(await LimaGo.api(`/viajes/${viajeId}`)); } catch (e) { /* reintenta */ } }, 1000);
+    } catch (e) {
+      if (e.codigo === "cotizacion_vencida") { Plantilla.notificar("La tarifa venció; la recalculamos.", "info"); await cotizar(); }
+      else Plantilla.notificar(e.message, "error");
+    } finally {
+      boton.removeAttribute("aria-busy");
     }
   });
-  $("#nuevo").addEventListener("click", reiniciarFormulario);
 
-  await refrescarFlota();
-  await refrescarViaje();
-  setInterval(refrescarFlota, 2000);
-  setInterval(refrescarViaje, 1500);
+  function seguirBusqueda(v) {
+    if (["asignada", "esperando_recogida", "en_viaje"].includes(v.estado)) {
+      clearInterval(temporizador);
+      Plantilla.notificar(`${LimaGo.codigoConductor(v.conductor_id)} aceptó tu viaje.`, "exito");
+      location.href = `seguimiento.html?id=${v.id}`;
+      return;
+    }
+    if (v.estado === "buscando") {
+      const o = v.oferta;
+      $("#busqueda-texto").textContent = o ? `Esperando respuesta de ${o.conductor} (${o.numero} de ${o.total})…` : "Enviando tu solicitud a conductores cercanos…";
+      $("#busqueda-detalle").textContent = o && o.rechazos ? `${o.rechazos} conductor${o.rechazos > 1 ? "es" : ""} no pudo tomar el viaje; seguimos buscando.` : "";
+      if (v.simulacion && v.simulacion.en_pausa) $("#busqueda-detalle").textContent = "El servicio está en pausa momentáneamente.";
+      return;
+    }
+    clearInterval(temporizador);
+    LimaGo.borrar("limago.viaje");
+    if (v.estado === "cancelada") { vista("paso-cotizacion"); return; }
+    $("#sin-conductor-texto").textContent = v.mensaje || LimaGo.ESTADOS_VIAJE[v.estado] || "No encontramos conductor.";
+    vista("paso-sin-conductor");
+  }
+
+  $("#cancelar-busqueda").addEventListener("click", async () => {
+    try {
+      await LimaGo.api(`/viajes/${viajeId}/cancelar`, { method: "POST" });
+      clearInterval(temporizador);
+      LimaGo.borrar("limago.viaje");
+      Plantilla.notificar("Solicitud cancelada.", "info");
+      vista("paso-lugares");
+    } catch (e) { Plantilla.notificar(e.message, "error"); }
+  });
+  $("#reintentar").addEventListener("click", () => { vista("paso-lugares"); cotizar(); });
+
+  // ------------------------------------------------------------- inicio
+  const destinoParam = LimaGo.parametro("destino"), origenParam = LimaGo.parametro("origen");
+  if (destinoParam) selectorDestino.fijarTexto(destinoParam);
+  if (origenParam) { editarOrigen(true); selectorOrigen.fijarTexto(origenParam); }
+  else detectarUbicacion();
+  setInterval(refrescarCercanos, 4000);
 })();

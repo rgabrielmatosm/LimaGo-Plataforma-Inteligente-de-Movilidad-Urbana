@@ -7,95 +7,146 @@
   <meta name="robots" content="noindex">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
 </head>
-<body>
-<header class="cabecera">
-  <div class="contenedor">
-    <a class="logo" href="index.html" aria-label="LimaGo, inicio"><img src="img/logo.svg" alt="" width="30" height="30"><span>Lima<b>Go</b></span> <span class="etiqueta estado-cancelada" style="margin-left:6px">Operaciones</span></a>
-    <nav class="navegacion" aria-label="Principal" style="display:flex;position:static;flex-direction:row;padding:0;border:0;background:none">
-      <a href="index.html">Volver al sitio</a>
-    </nav>
-  </div>
-</header>
+<body data-pagina="operaciones">
+<div data-cabecera></div>
 
-<main class="seccion" style="padding-top:24px">
-  <div class="contenedor">
-    <h2>Centro de operaciones</h2>
-    <p class="subtitulo">Estado de la flota de Miraflores y control del escenario de demostración.</p>
-    <div class="kpis">
-      <div class="tarjeta kpi"><span>Disponibles</span><strong id="k-disponible">—</strong></div>
-      <div class="tarjeta kpi"><span>Recogiendo</span><strong id="k-en_camino">—</strong></div>
-      <div class="tarjeta kpi"><span>En viaje</span><strong id="k-en_viaje">—</strong></div>
-      <div class="tarjeta kpi"><span>Turno</span><strong id="k-turno">—</strong></div>
-      <div class="tarjeta kpi"><span>Hora del escenario</span><strong id="k-hora">—</strong></div>
-    </div>
-    <div class="operaciones">
-      <div class="mapa-operaciones" id="mapa"></div>
-      <aside class="controles">
-        <div class="tarjeta">
-          <p style="margin:0 0 10px"><span class="etiqueta" id="estado-servicio">—</span></p>
-          <div class="fila">
-            <button class="boton secundario" data-accion="pausar">Pausar</button>
-            <button class="boton" data-accion="reanudar">Continuar</button>
+<main id="contenido">
+  <!-- Acceso -->
+  <section id="acceso" class="contenedor oculto">
+    <form class="tarjeta acceso" id="form-acceso" novalidate>
+      <div class="icono-caja" data-icono="escudo"></div>
+      <h1 style="font-size:1.5rem;margin:0 0 6px">Acceso de operadores</h1>
+      <p class="texto-2" style="margin:0 0 18px">Ingresa el código de operador configurado en el servidor.</p>
+      <div class="campo">
+        <label for="codigo">Código de operador</label>
+        <input class="entrada" id="codigo" type="password" autocomplete="current-password" required>
+        <span class="ayuda" id="acceso-mensaje" aria-live="polite"></span>
+      </div>
+      <button class="boton bloque" type="submit">Entrar</button>
+      <a class="boton fantasma bloque" href="index.html" style="margin-top:8px">Volver al sitio</a>
+    </form>
+  </section>
+
+  <!-- Panel -->
+  <section id="panel" class="seccion oculto" style="padding-top:24px">
+    <div class="contenedor">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+        <div>
+          <h1 style="font-size:1.8rem;margin:0">Centro de operaciones</h1>
+          <p class="texto-2" style="margin:4px 0 0">Flota de Lima Metropolitana y control del escenario. <span class="etiqueta" id="estado-servicio">—</span></p>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <a class="boton secundario pequeno" id="enlace-monitoreo" target="_blank" rel="noopener">Panel de monitoreo</a>
+          <button class="boton secundario pequeno" id="salir" type="button">Cerrar sesión</button>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="tarjeta plana kpi"><span>Disponibles</span><strong id="k-disponible">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Recogiendo</span><strong id="k-en_camino">—</strong></div>
+        <div class="tarjeta plana kpi"><span>En viaje</span><strong id="k-en_viaje">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Solicitudes activas</span><strong id="k-activas">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Turno · hora</span><strong id="k-turno">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Asignación exitosa</span><strong id="k-tasa">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Ofertas vigentes</span><strong id="k-ofertas">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Desconectados</span><strong id="k-desconectado">—</strong></div>
+        <div class="tarjeta plana kpi"><span>Alertas abiertas</span><strong id="k-alertas">—</strong></div>
+      </div>
+
+      <div class="aviso error oculto" id="aviso-alertas" role="alert"></div>
+
+      <div class="operaciones">
+        <div>
+          <div class="mapa-operaciones" id="mapa"></div>
+          <div class="leyenda-mapa" style="position:static;margin-top:8px;display:flex;flex-wrap:wrap;gap:14px;box-shadow:none">
+            <span><span class="punto" style="background:var(--disponible)"></span> Disponible</span>
+            <span><span class="punto" style="background:var(--en-camino)"></span> Recogiendo</span>
+            <span><span class="punto" style="background:var(--en-viaje)"></span> En viaje</span>
+            <span><span class="punto" style="background:#7c3aed"></span> Decidiendo oferta</span>
+            <span><span class="punto" style="background:#0ea5e9"></span> Esperando al pasajero</span>
+            <span><span class="punto" style="background:#94a3b8"></span> Desconectado</span>
+            <span><span class="punto" style="background:#0f1f1c"></span> Pasajero esperando</span>
+            <span><span class="punto" style="background:#2563eb;border-radius:2px"></span> Unidad de apoyo (simulada)</span>
           </div>
-          <div class="fila" style="margin-top:8px">
-            <button class="boton secundario" data-accion="avanzar" data-turnos="1">+1 turno</button>
-            <button class="boton secundario" data-accion="avanzar" data-turnos="10">+10 turnos</button>
+          <label class="interruptor" style="margin-top:8px"><input type="checkbox" id="ver-flota" checked> Mostrar toda la flota</label>
+
+          <h2 style="font-size:1.1rem;margin:22px 0 10px">Alertas de seguridad <span class="etiqueta-simulacion">Simulación: no se contacta a servicios de emergencia reales</span></h2>
+          <div class="tabla-envoltura">
+            <table>
+              <thead><tr><th scope="col">N.º</th><th scope="col">Viaje</th><th scope="col">Hora</th><th scope="col">Unidad asignada</th><th scope="col">Estado</th><th scope="col"><span class="sr">Acciones</span></th></tr></thead>
+              <tbody id="alertas"></tbody>
+            </table>
+          </div>
+
+          <h2 style="font-size:1.1rem;margin:22px 0 10px">Aceptación de ofertas</h2>
+          <div class="tarjeta plana" id="aceptacion"><p class="ayuda" style="margin:0">Sin datos todavía.</p></div>
+          <h2 style="font-size:1.1rem;margin:22px 0 10px">Solicitudes activas</h2>
+          <div class="tabla-envoltura">
+            <table>
+              <thead><tr><th scope="col">N.º</th><th scope="col">Origen</th><th scope="col">Canal</th><th scope="col">Conductor</th><th scope="col">Llegada</th><th scope="col">Estado</th></tr></thead>
+              <tbody id="activas"></tbody>
+            </table>
           </div>
         </div>
-        <form class="tarjeta" id="reinicio">
-          <h3 style="margin:0 0 10px;font-size:1rem">Reiniciar escenario</h3>
-          <div class="campo"><label for="semilla">Semilla</label><input class="entrada" id="semilla" type="number" min="0" value="42" required></div>
-          <div class="campo"><label for="conductores">Conductores</label><input class="entrada" id="conductores" type="number" min="1" max="30000" value="300" required></div>
-          <button class="boton acento bloque" type="submit">Reiniciar</button>
-        </form>
-        <div id="mensaje" role="status"></div>
-      </aside>
+
+        <aside class="controles">
+          <div class="tarjeta">
+            <h3>Simulación</h3>
+            <div class="fila">
+              <button class="boton secundario" data-accion="pausar">Pausar</button>
+              <button class="boton" data-accion="reanudar">Continuar</button>
+            </div>
+            <div class="fila" style="margin-top:8px">
+              <button class="boton secundario" data-accion="avanzar" data-turnos="1">+1 turno</button>
+              <button class="boton secundario" data-accion="avanzar" data-turnos="10">+10 turnos</button>
+            </div>
+          </div>
+
+          <form class="tarjeta" id="form-escenario">
+            <h3>Configuración del escenario</h3>
+            <label class="interruptor" style="margin-bottom:12px"><input type="checkbox" id="congestion"> Tráfico por hora punta</label>
+            <p class="ayuda" style="margin:-4px 0 10px" id="reloj-modo">Por defecto se usa la hora actual de Lima. Fijar una hora (p. ej. 08:00 o 15:00) reproduce los escenarios de prueba.</p>
+            <div class="fila-campos">
+              <div class="campo"><label for="hora-escenario">Hora</label><input class="entrada" id="hora-escenario" type="time" step="900"></div>
+              <div class="campo"><label for="k">Candidatos</label><input class="entrada" id="k" type="number" min="1" max="50"></div>
+            </div>
+            <div class="campo"><label for="demanda">Demanda (solicitudes por turno)</label><input class="entrada" id="demanda" type="number" min="0" max="50" step="0.5"></div>
+            <button class="boton bloque" type="submit">Aplicar</button>
+            <button class="boton fantasma bloque" type="button" id="usar-hora-lima" style="margin-top:6px">Usar la hora actual de Lima</button>
+          </form>
+
+          <form class="tarjeta" id="form-lote">
+            <h3>Varios pasajeros a la vez</h3>
+            <p class="ayuda" style="margin:-6px 0 10px">Genera un grupo de solicitudes simultáneas en una misma zona.</p>
+            <div class="fila-campos">
+              <div class="campo"><label for="cantidad">Pasajeros</label><input class="entrada" id="cantidad" type="number" min="2" max="30" value="8"></div>
+              <div class="campo"><label for="estrategia">Criterio</label>
+                <select class="entrada" id="estrategia"><option value="optima">Menor espera total</option><option value="codiciosa">Por orden de llegada</option></select></div>
+            </div>
+            <button class="boton bloque" type="submit">Asignar lote</button>
+            <div id="lote-resultado" aria-live="polite"></div>
+          </form>
+
+          <form class="tarjeta" id="form-reinicio">
+            <h3>Reiniciar escenario</h3>
+            <div class="fila-campos">
+              <div class="campo"><label for="semilla">Semilla</label><input class="entrada" id="semilla" type="number" min="0" value="42" required></div>
+              <div class="campo"><label for="conductores">Conductores</label><input class="entrada" id="conductores" type="number" min="1" max="30000" value="2500" required></div>
+            </div>
+            <button class="boton acento bloque" type="submit">Reiniciar</button>
+          </form>
+        </aside>
+      </div>
     </div>
-  </div>
+  </section>
 </main>
 
+<div data-pie></div>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/comun.js"></script>
-<script>
-"use strict";
-(async () => {
-  const mapa = LimaGo.crearMapa("mapa");
-  const flota = new LimaGo.CapaFlota(mapa, { radio: 4 });
-  LimaGo.dibujarCobertura(mapa).catch(() => {});
-  const mensaje = (t, tipo = "info") => { document.getElementById("mensaje").innerHTML = t ? `<div class="aviso ${tipo}">${LimaGo.escapar(t)}</div>` : ""; };
-
-  async function refrescar() {
-    try {
-      const d = await LimaGo.api("/flota");
-      flota.actualizar(d.conductores);
-      for (const k of ["disponible", "en_camino", "en_viaje"]) document.getElementById(`k-${k}`).textContent = d.conteo[k];
-      document.getElementById("k-turno").textContent = d.turno;
-      document.getElementById("k-hora").textContent = LimaGo.hora(d.hora_simulada);
-      const estado = document.getElementById("estado-servicio");
-      estado.className = `etiqueta ${!d.worker_activo ? "estado-rechazada" : d.en_pausa ? "estado-asignada" : "estado-completada"}`;
-      estado.textContent = !d.worker_activo ? "Servicio sin respuesta" : d.en_pausa ? `En pausa · semilla ${d.semilla}` : `En marcha · semilla ${d.semilla}`;
-    } catch (e) { mensaje(e.message, "error"); }
-  }
-
-  async function operar(accion, cuerpo) {
-    try {
-      const r = await LimaGo.api(`/operaciones/${accion}`, { method: "POST", body: cuerpo || {} });
-      mensaje(`Listo: turno ${r.turno}${r.en_pausa ? " (en pausa)" : ""}.`, "exito");
-      refrescar();
-    } catch (e) { mensaje(e.message, "error"); }
-  }
-
-  document.querySelectorAll("[data-accion]").forEach((b) => b.addEventListener("click", () =>
-    operar(b.dataset.accion, b.dataset.turnos ? { turnos: +b.dataset.turnos } : null)));
-  document.getElementById("reinicio").addEventListener("submit", (e) => {
-    e.preventDefault();
-    operar("reiniciar", { semilla: +document.getElementById("semilla").value, num_conductores: +document.getElementById("conductores").value });
-  });
-  await refrescar();
-  setInterval(refrescar, 1500);
-})();
-</script>
+<script src="js/comun.js?v=3"></script>
+<script src="js/operaciones.js?v=3"></script>
 </body>
 </html>

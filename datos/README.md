@@ -30,3 +30,33 @@ La red incluida en el repositorio se obtuvo el 2026-11-06 con la ruta alternativ
 - Área del distrito: 9,45 km² (≥ 3 km² exigidos).
 
 Datos © colaboradores de OpenStreetMap, licencia ODbL.
+
+## V3 — Red de Lima Metropolitana (`datos/lima/`)
+
+Archivos versionados (lo único que necesita la aplicación):
+
+| Archivo | Contenido |
+|---|---|
+| `lima_metropolitana.npz` | Grafo en formato compacto propio (`GrafoVial.guardar_compacto`): nodos, tramos dirigidos, longitudes, geometrías y catálogos de nombres. 15,3 MB; se carga en 2–3 s |
+| `limite_lima_metropolitana.geojson` | Límite de Lima Metropolitana (provincias de Lima y Callao), relación OSM 12933390 |
+| `distritos.geojson` | 50 distritos (`admin_level=8` de OSM; Ancón, Carabayllo, Pucusana y Santa María del Mar completados con Nominatim) |
+| `preparacion.json` | Fuentes, fecha, conteos y duración de la última preparación |
+
+Preparación (solo si se quiere regenerar; no es necesaria para ejecutar LimaGo):
+
+```powershell
+python -m pip install -r requirements-preparacion.txt
+```
+
+```powershell
+python -m datos.red_metropolitana --forzar
+```
+
+1. **Límite** de la relación OSM 12933390.
+2. **Núcleo** desde el extracto `Lima.osm.pbf` de BBBike (leído con `osmium`, filtro `drive` de osmnx) y **franjas** de 0,04° de la API oficial de OSM para cubrir lo que el extracto no alcanza (las franjas se dividen solas si la API responde 400 por exceso de datos).
+3. **Construcción** con la misma secuencia de `osmnx.graph_from_polygon` que Miraflores (margen, truncado, componente, simplificación, truncado exacto) y conversión a `GrafoVial`.
+4. **Distritos** de OSM; los que falten se buscan en Nominatim (`--solo-distritos` repite solo este paso).
+
+Los insumos intermedios (`datos/fuentes/*.pbf`, `datos/lima/lima_drive.osm`, ~90 MB) están en `.gitignore`. La preparación tarda ~2–3 min y usa ~2,5 GB de memoria.
+
+Resultado del 2026-11-07: **152 441 intersecciones, 401 998 tramos dirigidos, 33 083,6 km**; mayor componente fuertemente conexa 152 043 intersecciones; 50 distritos.

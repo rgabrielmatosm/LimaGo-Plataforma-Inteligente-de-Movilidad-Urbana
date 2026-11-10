@@ -1,0 +1,117 @@
+{
+  "entorno": {
+    "fecha_utc": "2026-11-07T01:18:14+00:00",
+    "python": "3.13.18",
+    "implementacion": "CPython",
+    "sistema": "Linux-6.18.44-fc-v300-x86_64-with-glibc2.39",
+    "procesador": "x86_64",
+    "nucleos_logicos": 4,
+    "networkx": "3.7",
+    "osmnx": "2.1.1"
+  },
+  "grafo": {
+    "nodos": 152441,
+    "aristas": 401998,
+    "componente_principal": 152043,
+    "carga_s": 2.285497478999787
+  },
+  "busqueda": [
+    {
+      "conductores": 300,
+      "construccion_ms": 0.6519270000353572,
+      "quadtree_ms_por_consulta": 0.03561952333333333,
+      "lineal_ms_por_consulta": 0.11897734333333332,
+      "aceleracion": 3.340228397216994,
+      "resultados_identicos": "300/300",
+      "profundidad": 5
+    },
+    {
+      "conductores": 3000,
+      "construccion_ms": 8.85280700003932,
+      "quadtree_ms_por_consulta": 0.045652359999999996,
+      "lineal_ms_por_consulta": 1.2402960666666667,
+      "aceleracion": 27.168279288664742,
+      "resultados_identicos": "300/300",
+      "profundidad": 7
+    },
+    {
+      "conductores": 30000,
+      "construccion_ms": 92.42985599985332,
+      "quadtree_ms_por_consulta": 0.055096193333333335,
+      "lineal_ms_por_consulta": 12.825259396666667,
+      "aceleracion": 232.77941035006776,
+      "resultados_identicos": "300/300",
+      "profundidad": 9
+    }
+  ],
+  "rutas": [
+    {
+      "rango_km_linea_recta": [
+        0,
+        3
+      ],
+      "pares": 12,
+      "mediana_ms": 3.090452500146057,
+      "maximo_ms": 16.205782999804796,
+      "nodos_explorados_mediana": 2014.0,
+      "distancia_calles_km_mediana": 2.9486956103110455
+    },
+    {
+      "rango_km_linea_recta": [
+        3,
+        8
+      ],
+      "pares": 12,
+      "mediana_ms": 28.618287000199416,
+      "maximo_ms": 103.34912899998017,
+      "nodos_explorados_mediana": 16583.0,
+      "distancia_calles_km_mediana": 8.374771520223632
+    },
+    {
+      "rango_km_linea_recta": [
+        8,
+        15
+      ],
+      "pares": 12,
+      "mediana_ms": 59.50647999998182,
+      "maximo_ms": 126.42083799983084,
+      "nodos_explorados_mediana": 32547.5,
+      "distancia_calles_km_mediana": 15.498749268245689
+    },
+    {
+      "rango_km_linea_recta": [
+        15,
+        25
+      ],
+      "pares": 12,
+      "mediana_ms": 148.46236650009814,
+      "maximo_ms": 266.0128120000991,
+      "nodos_explorados_mediana": 70603.0,
+      "distancia_calles_km_mediana": 25.683196996872013
+    },
+    {
+      "rango_km_linea_recta": [
+        25,
+        40
+      ],
+      "pares": 12,
+      "mediana_ms": 287.18572000002496,
+      "maximo_ms": 353.7852620002013,
+      "nodos_explorados_mediana": 129340.5,
+      "distancia_calles_km_mediana": 42.64530810828802
+    }
+  ],
+  "verificacion_networkx": {
+    "pares": 20,
+    "iguales": 20,
+    "diferencia_maxima_m": 0.0
+  },
+  "despacho": {
+    "conductores": 2500,
+    "k": 8,
+    "solicitudes": 60,
+    "mediana_ms": 1.1152529998526006,
+    "p95_ms": 8.758008999848244
+  },
+  "memoria_pico_mb": 600.1953125
+}

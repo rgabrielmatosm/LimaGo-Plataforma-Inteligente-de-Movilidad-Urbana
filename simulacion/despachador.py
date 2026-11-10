@@ -26,10 +26,10 @@ from algoritmos.congestion import PesosDinamicos
 from algoritmos.dijkstra import distancias_hacia_destino, eta_segundos, reconstruir_ruta_hacia
 from algoritmos.grafo import GrafoVial
 from config.ajustes import Ajustes
-from estructuras.geografia import Rectangulo, validar_coordenadas
+from estructuras.geografia import Rectangulo
 from estructuras.quadtree import Quadtree
-from simulacion.errores import CoordenadasInvalidas, FueraDeCobertura, SinConexionVial
-from simulacion.modelos import Conductor, EstadoConductor, Pasajero
+from simulacion.modelos import Conductor, EstadoConductor, Pasajero, validar_transicion
+from simulacion.ubicacion import UbicadorRed, cargar_poligono
 
 
 @dataclass
@@ -85,10 +85,10 @@ class Despachador:
         self.hora_actual = ajustes.hora_inicio_simulacion
         self.pesos_dinamicos = PesosDinamicos(grafo) if ajustes.congestion_activa else None
         # Índice propio de intersecciones para ubicar pasajeros sobre la red.
-        self.indice_intersecciones = Quadtree(self.limites, capacidad=16, profundidad_maxima=22)
-        for nodo in sorted(self.nodos_validos):
-            lat, lon = grafo.coordenadas(nodo)
-            self.indice_intersecciones.insertar(nodo, lat, lon, True)
+        poligono = cargar_poligono(ajustes.ruta_limite) if ajustes.cobertura_por_poligono else None
+        self.ubicador = UbicadorRed(grafo, ajustes.distancia_maxima_conexion_m, self.nodos_validos,
+                                    poligono, ajustes.nombre_cobertura)
+        self.indice_intersecciones = self.ubicador.indice
         self.conductores: dict[int, Conductor] = {}
         self.quadtree = Quadtree(self.limites, ajustes.capacidad_nodo, ajustes.profundidad_maxima)
         for conductor in conductores:
@@ -116,22 +116,27 @@ class Despachador:
             self.quadtree.actualizar_posicion(conductor_id, lat, lon)
 
     def cambiar_estado(self, conductor_id: int, estado: EstadoConductor) -> None:
+        """Cambia el estado validando la transición; el Quadtree solo marca disponibles a los «disponible»."""
         with self._candado:
             conductor = self.conductores[conductor_id]
+            validar_transicion(conductor.estado, estado)
             conductor.estado = estado
             self.quadtree.cambiar_disponibilidad(conductor_id, estado is EstadoConductor.DISPONIBLE)
 
     def liberar_conductor(self, conductor_id: int) -> None:
         with self._candado:
             conductor = self.conductores[conductor_id]
+            if conductor.estado is EstadoConductor.EN_VIAJE:
+                self.cambiar_estado(conductor_id, EstadoConductor.FINALIZADO)
             conductor.ruta = []
+            conductor.espera_restante = 0
             conductor.solicitud_id = None
             conductor.destino_nodo = None
             conductor.avance_m = 0.0
             self.cambiar_estado(conductor_id, EstadoConductor.DISPONIBLE)
 
     def conteo_estados(self) -> dict[str, int]:
-        conteo = {estado.value: 0 for estado in EstadoConductor}
+        conteo = {estado.value: 0 for estado in EstadoConductor}  # incluye los estados de la V3
         for conductor in self.conductores.values():
             conteo[conductor.estado.value] += 1
         return conteo
@@ -139,21 +144,16 @@ class Despachador:
     # ------------------------------------------------------------ pasajeros
     def ubicar_en_red(self, lat: float, lon: float) -> tuple[int, float]:
         """Intersección conectada más cercana. Lanza errores de ubicación con mensaje claro."""
-        try:
-            validar_coordenadas(lat, lon)
-        except ValueError as error:
-            raise CoordenadasInvalidas(str(error)) from error
-        if not self.limites.contiene(lat, lon):
-            raise FueraDeCobertura("La ubicación está fuera de la zona de cobertura de Miraflores")
-        mas_cercano = self.indice_intersecciones.vecino_mas_cercano(lat, lon)
-        if mas_cercano is None:
-            raise SinConexionVial("No hay calles disponibles en la red")
-        distancia, nodo = mas_cercano
-        if distancia > self.ajustes.distancia_maxima_conexion_m:
-            raise SinConexionVial(
-                f"La ubicación está a {distancia:.0f} m de la calle más cercana; elige un punto junto a una vía"
-            )
-        return nodo, distancia
+        return self.ubicador.ubicar(lat, lon)
+
+    def configurar_congestion(self, activa: bool, hora: float | None = None) -> None:
+        """Activa o desactiva los pesos dinámicos por hora (Reto B) durante la simulación."""
+        with self._candado:
+            self.pesos_dinamicos = PesosDinamicos(self.grafo) if activa else None
+            if hora is not None:
+                if not 0 <= hora < 24:
+                    raise ValueError("La hora debe estar entre 0 y 24")
+                self.hora_actual = float(hora)
 
     def crear_pasajero(self, identificador: int, lat: float, lon: float, direccion: str = "",
                        destino: tuple[float, float] | None = None, destino_direccion: str = "") -> Pasajero:

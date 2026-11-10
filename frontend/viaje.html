@@ -4,132 +4,98 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Pedir un viaje · LimaGo</title>
+  <meta name="description" content="Pide un viaje en Lima: detectamos tu ubicación, eliges el destino y ves la tarifa antes de confirmar.">
   <link rel="icon" href="img/logo.svg" type="image/svg+xml">
   <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
 </head>
-<body>
-<header class="cabecera">
-  <div class="contenedor">
-    <a class="logo" href="index.html" aria-label="LimaGo, inicio"><img src="img/logo.svg" alt="" width="30" height="30"><span>Lima<b>Go</b></span></a>
-    <button class="menu-movil" aria-label="Abrir menú" aria-expanded="false">☰</button>
-    <nav class="navegacion" aria-label="Principal">
-      <a href="index.html">Inicio</a>
-      <a href="index.html#como-funciona">Cómo funciona</a>
-      <a href="index.html#cobertura">Cobertura</a>
-      <a href="historial.html">Mis viajes</a>
-      <a class="boton pequeno" href="viaje.html" aria-current="page">Pedir un viaje</a>
-    </nav>
-  </div>
-</header>
+<body data-pagina="viaje">
+<div data-cabecera></div>
 
-<main class="app">
+<main class="app" id="contenido">
   <section class="panel" aria-label="Solicitud de viaje">
-    <!-- Formulario de solicitud -->
-    <form id="formulario" novalidate>
-      <h1>¿A dónde vamos?</h1>
-      <p class="subtitulo">Te asignamos el conductor que llega primero.</p>
 
-      <fieldset class="campo" style="border:0;padding:0;margin:0 0 6px" data-lugar="origen">
-        <legend style="font-weight:600;font-size:.92rem;margin-bottom:6px">Punto de recojo</legend>
-        <div class="pestanas" role="tablist" aria-label="Forma de indicar el recojo">
-          <button type="button" role="tab" data-modo="direccion" aria-selected="true">Dirección</button>
-          <button type="button" role="tab" data-modo="coordenadas" aria-selected="false">Coordenadas</button>
-          <button type="button" role="tab" data-modo="mapa" aria-selected="false">En el mapa</button>
-        </div>
-        <div data-panel="direccion" style="position:relative">
-          <label class="sr" for="origen-texto">Dirección de recojo</label>
-          <input class="entrada" id="origen-texto" data-entrada="texto" autocomplete="off" placeholder="Ej.: Parque Kennedy o Av. José Larco 1150">
-          <ul class="sugerencias oculto" role="listbox"></ul>
-        </div>
-        <div data-panel="coordenadas" class="oculto">
-          <label class="sr" for="origen-coordenadas">Coordenadas de recojo</label>
-          <input class="entrada" id="origen-coordenadas" data-entrada="coordenadas" inputmode="decimal" placeholder="-12.1218, -77.0304">
-          <span class="ayuda">Latitud y longitud separadas por coma.</span>
-        </div>
-        <div data-panel="mapa" class="oculto">
-          <button type="button" class="boton secundario bloque" data-accion="elegir-mapa">📍 Tocar el punto en el mapa</button>
-        </div>
-        <span class="ayuda" data-seleccion></span>
-      </fieldset>
+    <!-- Paso 1 y 2: recojo y destino -->
+    <div id="paso-lugares" class="paso-viaje">
+      <div>
+        <h1>¿A dónde vamos?</h1>
+        <p class="subtitulo" style="margin-bottom:6px">Te recogemos donde estás. Solo dinos tu destino.</p>
+      </div>
 
-      <fieldset class="campo" style="border:0;padding:0;margin:0 0 6px" data-lugar="destino">
-        <legend style="font-weight:600;font-size:.92rem;margin-bottom:6px">Destino <span class="ayuda">(opcional)</span></legend>
-        <div class="pestanas" role="tablist" aria-label="Forma de indicar el destino">
-          <button type="button" role="tab" data-modo="direccion" aria-selected="true">Dirección</button>
-          <button type="button" role="tab" data-modo="coordenadas" aria-selected="false">Coordenadas</button>
-          <button type="button" role="tab" data-modo="mapa" aria-selected="false">En el mapa</button>
+      <div class="fila-lugar" id="resumen-origen">
+        <span class="punto-lugar" style="background:#0f1f1c" aria-hidden="true"></span>
+        <div class="texto">
+          <span class="ayuda">Recojo</span>
+          <strong id="origen-texto-resumen">Detectando tu ubicación…</strong>
+          <span class="ayuda" id="origen-detalle"></span>
         </div>
-        <div data-panel="direccion" style="position:relative">
-          <label class="sr" for="destino-texto">Dirección de destino</label>
-          <input class="entrada" id="destino-texto" data-entrada="texto" autocomplete="off" placeholder="Ej.: Larcomar">
-          <ul class="sugerencias oculto" role="listbox"></ul>
-        </div>
-        <div data-panel="coordenadas" class="oculto">
-          <label class="sr" for="destino-coordenadas">Coordenadas de destino</label>
-          <input class="entrada" id="destino-coordenadas" data-entrada="coordenadas" inputmode="decimal" placeholder="-12.1322, -77.0302">
-        </div>
-        <div data-panel="mapa" class="oculto">
-          <button type="button" class="boton secundario bloque" data-accion="elegir-mapa">📍 Tocar el destino en el mapa</button>
-        </div>
-        <span class="ayuda" data-seleccion></span>
-      </fieldset>
+        <button class="boton fantasma pequeno" type="button" id="cambiar-origen">Cambiar</button>
+      </div>
+      <div id="editor-origen" class="oculto">
+        <div id="selector-origen"></div>
+        <button class="boton secundario pequeno" type="button" id="usar-ubicacion" style="margin-bottom:8px">Usar mi ubicación actual</button>
+      </div>
 
+      <div id="selector-destino"></div>
       <div id="mensaje" role="alert"></div>
       <div id="opciones" class="oculto">
         <p class="ayuda" style="margin:0 0 6px">Encontramos varios lugares con ese nombre. Elige el correcto:</p>
         <ul class="sugerencias" style="position:static;box-shadow:none" role="listbox"></ul>
       </div>
-      <button class="boton grande bloque" id="pedir" type="submit">Pedir LimaGo</button>
-      <p class="ayuda" style="margin-top:10px">Los puntos en verde del mapa son conductores disponibles ahora.</p>
-    </form>
+      <button class="boton grande bloque" id="ver-tarifa" type="button">Ver tarifa</button>
+    </div>
 
-    <!-- Viaje en curso -->
-    <section id="viaje" class="oculto" aria-live="polite">
-      <span class="etiqueta" id="viaje-estado">—</span>
-      <div class="resumen-viaje tarjeta" style="box-shadow:none">
-        <div class="conductor">
-          <div class="avatar"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5z"/></svg></div>
-          <div style="flex:1">
-            <h3 id="viaje-conductor">—</h3>
-            <p id="viaje-detalle">—</p>
-          </div>
-          <div style="text-align:right"><div class="eta-grande" id="viaje-eta">—</div><span class="ayuda" id="viaje-eta-texto">llegada estimada</span></div>
+    <!-- Paso 3-6: cotización y confirmación -->
+    <section id="paso-cotizacion" class="paso-viaje oculto" aria-live="polite">
+      <button class="boton fantasma pequeno" type="button" id="volver" style="justify-self:start">← Cambiar destino</button>
+      <div class="fila-lugar"><span class="punto-lugar" style="background:#0f1f1c"></span>
+        <div class="texto"><span class="ayuda">Recojo</span><strong id="cot-origen">—</strong></div></div>
+      <div class="fila-lugar"><span class="punto-lugar" style="background:#f26b3a;border-radius:3px"></span>
+        <div class="texto"><span class="ayuda">Destino</span><strong id="cot-destino">—</strong></div></div>
+      <div class="tarjeta plana" style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div><span class="ayuda">Tarifa estimada</span><div class="precio" id="cot-precio">—</div></div>
+          <span class="chip-trafico" id="cot-trafico">—</span>
         </div>
-        <div class="datos-viaje">
-          <div><span>Distancia del conductor</span><strong id="viaje-distancia">—</strong></div>
-          <div><span>Conductores evaluados</span><strong id="viaje-candidatos">—</strong></div>
-          <div><span>Solicitud</span><strong id="viaje-id">—</strong></div>
+        <div class="datos-viaje" style="margin:12px 0">
+          <div><span>Distancia</span><strong id="cot-distancia">—</strong></div>
+          <div><span>Duración</span><strong id="cot-duracion">—</strong></div>
+          <div><span>Conductor cerca</span><strong id="cot-recogida">—</strong></div>
         </div>
-        <ol class="linea-tiempo" id="linea-tiempo">
-          <li data-paso="asignada">Conductor asignado</li>
-          <li data-paso="camino">Conductor en camino</li>
-          <li data-paso="en_viaje">A bordo, rumbo a tu destino</li>
-          <li data-paso="completada">Viaje completado</li>
-        </ol>
-        <p class="ayuda" id="viaje-direcciones"></p>
+        <details>
+          <summary class="ayuda" style="cursor:pointer">Ver desglose</summary>
+          <ul class="desglose" id="cot-desglose"></ul>
+        </details>
+        <p class="etiqueta-simulacion" id="cot-nota"></p>
       </div>
-      <div id="viaje-mensaje" role="alert"></div>
-      <div style="display:grid;gap:8px;margin-top:12px">
-        <button class="boton peligro bloque" id="cancelar" type="button">Cancelar viaje</button>
-        <button class="boton bloque oculto" id="nuevo" type="button">Pedir otro viaje</button>
-      </div>
+      <button class="boton grande bloque" id="confirmar" type="button">Confirmar viaje</button>
+    </section>
+
+    <!-- Paso 7-9: búsqueda y aceptación -->
+    <section id="paso-busqueda" class="paso-viaje oculto" aria-live="polite">
+      <h1>Buscando tu conductor</h1>
+      <div class="buscando"><span class="pulso"></span><span id="busqueda-texto">Enviando tu solicitud a conductores cercanos…</span></div>
+      <p class="ayuda" id="busqueda-detalle"></p>
+      <button class="boton peligro bloque" id="cancelar-busqueda" type="button">Cancelar</button>
+    </section>
+
+    <section id="paso-sin-conductor" class="paso-viaje oculto" aria-live="polite">
+      <h1>No encontramos conductor</h1>
+      <div class="aviso advertencia" id="sin-conductor-texto">Ningún conductor cercano aceptó el viaje.</div>
+      <button class="boton bloque" id="reintentar" type="button">Intentar de nuevo</button>
     </section>
   </section>
 
   <section class="mapa-app" aria-label="Mapa">
-    <div id="mapa"></div>
-    <div class="modo-mapa oculto" id="modo-mapa">Toca el mapa para marcar el punto</div>
-    <div class="leyenda-mapa" aria-hidden="true">
-      <span><span class="punto" style="background:var(--disponible)"></span> Disponible</span>
-      <span><span class="punto" style="background:var(--en-camino)"></span> Ocupado · recogiendo</span>
-      <span><span class="punto" style="background:var(--en-viaje)"></span> Ocupado · en viaje</span>
-    </div>
+    <div id="mapa" class="mapa"></div>
+    <div class="modo-mapa oculto" id="modo-mapa" role="status">Toca el mapa para marcar el punto</div>
   </section>
 </main>
 
+<div data-pie></div>
 <script src="vendor/leaflet/leaflet.js"></script>
-<script src="js/comun.js"></script>
-<script src="js/viaje.js"></script>
+<script src="js/comun.js?v=3"></script>
+<script src="js/viaje.js?v=3"></script>
 </body>
 </html>

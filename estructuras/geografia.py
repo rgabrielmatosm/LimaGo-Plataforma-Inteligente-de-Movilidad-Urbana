@@ -28,6 +28,15 @@ def haversine_metros(lat1: float, lon1: float, lat2: float, lon2: float) -> floa
     return 2.0 * RADIO_TIERRA_M * math.asin(math.sqrt(a))
 
 
+def rumbo_grados(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
+    """Rumbo inicial de 1 a 2 en grados (0 = norte, 90 = este), para orientar el ícono del vehículo."""
+    phi1, phi2 = math.radians(lat1), math.radians(lat2)
+    dl = math.radians(lon2 - lon1)
+    x = math.sin(dl) * math.cos(phi2)
+    y = math.cos(phi1) * math.sin(phi2) - math.sin(phi1) * math.cos(phi2) * math.cos(dl)
+    return (math.degrees(math.atan2(x, y)) + 360) % 360
+
+
 def validar_coordenadas(lat: float, lon: float) -> None:
     """Lanza ``ValueError`` si las coordenadas no son válidas en la Tierra."""
     if lat is None or lon is None:
@@ -151,3 +160,59 @@ class Rectangulo:
             max(lons) + margen_grados,
             max(lats) + margen_grados,
         )
+
+
+class PoligonoCobertura:
+    """Zona de cobertura real (polígono o multipolígono con huecos) en grados.
+
+    ``contiene`` usa el algoritmo propio de **cruce de rayos** (par/impar): se
+    traza un rayo horizontal desde el punto y se cuentan los cruces con las
+    aristas de cada anillo; un número impar significa que el punto está dentro.
+    Primero se descarta con el rectángulo envolvente (O(1)); después el costo es
+    O(V) en el número de vértices.
+
+    Se construye desde GeoJSON (``Polygon`` o ``MultiPolygon``) sin librerías
+    geométricas, para que la validación de cobertura sea código propio.
+    """
+
+    def __init__(self, poligonos: list[list[list[tuple[float, float]]]]) -> None:
+        # poligonos = [[anillo_exterior, hueco_1, ...], ...]; anillos de (lon, lat)
+        if not poligonos:
+            raise ValueError("Se necesita al menos un polígono")
+        self.poligonos = poligonos
+        puntos = [p for poligono in poligonos for p in poligono[0]]
+        self.rectangulo = Rectangulo(min(p[0] for p in puntos), min(p[1] for p in puntos),
+                                     max(p[0] for p in puntos), max(p[1] for p in puntos))
+
+    @classmethod
+    def desde_geojson(cls, datos: dict) -> "PoligonoCobertura":
+        geometrias = []
+        objetos = datos.get("features", [datos]) if datos.get("type") == "FeatureCollection" else [datos]
+        for objeto in objetos:
+            geometria = objeto.get("geometry", objeto)
+            if geometria["type"] == "Polygon":
+                geometrias.append(geometria["coordinates"])
+            elif geometria["type"] == "MultiPolygon":
+                geometrias.extend(geometria["coordinates"])
+        return cls([[[(float(x), float(y)) for x, y, *_ in anillo] for anillo in poligono] for poligono in geometrias])
+
+    @staticmethod
+    def _dentro_de_anillo(lon: float, lat: float, anillo: list[tuple[float, float]]) -> bool:
+        dentro = False
+        j = len(anillo) - 1
+        for i in range(len(anillo)):
+            xi, yi = anillo[i]
+            xj, yj = anillo[j]
+            if (yi > lat) != (yj > lat) and lon < (xj - xi) * (lat - yi) / (yj - yi) + xi:
+                dentro = not dentro
+            j = i
+        return dentro
+
+    def contiene(self, lat: float, lon: float) -> bool:
+        if not self.rectangulo.contiene(lat, lon):
+            return False
+        for poligono in self.poligonos:
+            if self._dentro_de_anillo(lon, lat, poligono[0]) and not any(
+                    self._dentro_de_anillo(lon, lat, hueco) for hueco in poligono[1:]):
+                return True
+        return False

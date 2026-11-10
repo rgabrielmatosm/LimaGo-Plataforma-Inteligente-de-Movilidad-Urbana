@@ -72,6 +72,7 @@ class Geocodificador:
         self.ajustes = ajustes
         self.limites = limites
         self.separacion_ambigua_m = separacion_ambigua_m
+        self.nombre_cobertura = getattr(ajustes, "nombre_cobertura", "Miraflores")
         self._cliente = cliente_http or self._cliente_nominatim
         self._usar_cache = usar_cache
         self._ruta_cache = Path(ajustes.ruta_cache_geocodificacion)
@@ -166,7 +167,7 @@ class Geocodificador:
         """Un único lugar o una excepción clara (no encontrado / ambiguo / fuera de cobertura)."""
         resultados = self.buscar(texto)
         if not resultados:
-            raise DireccionNoEncontrada(f"No encontramos «{texto.strip()}» dentro de Miraflores")
+            raise DireccionNoEncontrada(f"No encontramos «{texto.strip()}» dentro de {self.nombre_cobertura}")
         if len(resultados) == 1:
             return resultados[0]
         primero = resultados[0]

@@ -1,42 +1,5 @@
 """Pruebas de integración: API + worker + persistencia (SQLite) sobre la malla sintética."""
-import threading
-import time
-
-import pytest
-from fastapi.testclient import TestClient
-
-from api import main as api_main
-from api.persistencia import BaseDatos
-from api.worker import Trabajador
-from simulacion.geocodificacion import Geocodificador
 from tests.conftest import LAT0, LON0, PASO, nodo_malla
-
-
-@pytest.fixture
-def entorno_api(malla, ajustes_prueba):
-    ajustes = ajustes_prueba.con(num_conductores=10, proporcion_ocupados=0.0, intervalo_real_turno_s=0.05,
-                                 distancia_maxima_conexion_m=60)
-    respuestas = {"Plaza Central, Lima": [{"display_name": "Plaza Central, Miraflores", "lat": LAT0 + 3 * PASO,
-                                           "lon": LON0 + 3 * PASO, "importance": 0.5}]}
-    geo = Geocodificador(ajustes, malla.limites(), cliente_http=lambda r, p: respuestas.get(p.get("q"), []),
-                         usar_cache=False)
-    trabajador = Trabajador(ajustes, BaseDatos(ajustes.url_base_datos), malla)
-    trabajador.iniciar()
-    trabajador.simulador.pausar()  # turnos controlados por la prueba
-    trabajador.publicar()
-
-    def bucle():
-        while not trabajador._detener.is_set():
-            trabajador.paso()
-            time.sleep(0.02)
-
-    hilo = threading.Thread(target=bucle, daemon=True)
-    hilo.start()
-    api_main.configurar(ajustes, malla, geo)
-    with TestClient(api_main.app) as cliente:
-        yield cliente, trabajador
-    trabajador.detener()
-    hilo.join(timeout=5)
 
 
 def test_flujo_completo_solicitud_seguimiento_historial(entorno_api, malla):

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Seguimiento · LimaGo</title>
+  <meta name="description" content="Sigue tu viaje LimaGo en tiempo real.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
+</head>
+<body data-pagina="seguimiento">
+<div data-cabecera></div>
+
+<main class="app" id="contenido">
+  <section class="panel" aria-label="Seguimiento del viaje">
+    <!-- Sin viaje seleccionado -->
+    <div id="buscar-viaje" class="oculto">
+      <h1>Seguimiento</h1>
+      <p class="subtitulo">Ingresa el número de tu solicitud o elige uno de tus viajes activos.</p>
+      <form id="form-numero" class="campo" novalidate>
+        <label for="numero">Número de solicitud</label>
+        <div style="display:flex;gap:8px"><input class="entrada" id="numero" inputmode="numeric" pattern="[0-9]+" placeholder="Ej.: 128" required>
+          <button class="boton" type="submit">Seguir</button></div>
+        <span class="ayuda" id="numero-ayuda"></span>
+      </form>
+      <h2 style="font-size:1.05rem;margin:22px 0 10px">Viajes activos</h2>
+      <div id="activos"><div class="esqueleto" style="height:64px"></div></div>
+      <a class="boton secundario bloque" href="viaje.html" style="margin-top:16px">Pedir un viaje</a>
+    </div>
+
+    <!-- Viaje en curso -->
+    <section id="viaje" class="oculto" aria-live="polite">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <span class="etiqueta" id="estado">—</span><span class="ayuda" id="numero-viaje"></span>
+      </div>
+      <div class="tarjeta plana" style="margin-top:12px">
+        <div class="conductor">
+          <div class="avatar" data-icono="persona"></div>
+          <div style="flex:1"><h3 id="conductor">—</h3><p id="detalle">—</p></div>
+          <div style="text-align:right"><div class="eta-grande" id="eta">—</div><span class="ayuda" id="eta-texto"></span></div>
+        </div>
+        <div style="margin-top:16px">
+          <div style="display:flex;justify-content:space-between" class="ayuda"><span id="progreso-texto">Progreso</span><span id="progreso-valor"></span></div>
+          <div class="progreso" role="progressbar" aria-label="Progreso del recorrido" aria-valuemin="0" aria-valuemax="100" id="barra"><div></div></div>
+        </div>
+        <div class="datos-viaje">
+          <div><span>Falta</span><strong id="restante">—</strong></div>
+          <div><span>Tarifa estimada</span><strong id="tarifa">—</strong></div>
+          <div><span>Solicitado</span><strong id="hora">—</strong></div>
+        </div>
+        <ol class="linea-tiempo" id="linea">
+          <li>Buscando conductor</li>
+          <li>Conductor en camino</li>
+          <li>Tu conductor llegó</li>
+          <li>A bordo, rumbo a tu destino</li>
+          <li>Viaje completado</li>
+        </ol>
+        <p class="ayuda" id="direcciones"></p>
+      </div>
+      <div id="aviso" role="status"></div>
+      <div style="display:grid;gap:8px;margin-top:12px">
+        <button class="boton alerta bloque oculto" id="alerta" type="button">Alerta de seguridad</button>
+        <p class="etiqueta-simulacion oculto" id="alerta-nota" style="margin:0">Función de demostración: avisa al centro de operaciones de LimaGo. No contacta a la Policía, al SAMU ni al serenazgo.</p>
+        <button class="boton peligro bloque oculto" id="cancelar" type="button">Cancelar viaje</button>
+        <a class="boton bloque oculto" id="nuevo" href="viaje.html">Pedir otro viaje</a>
+        <a class="boton secundario bloque" href="historial.html">Ver mis viajes</a>
+      </div>
+    </section>
+  </section>
+
+  <section class="mapa-app" aria-label="Mapa del viaje">
+    <div id="mapa" class="mapa"></div>
+    <div class="leyenda-mapa" aria-hidden="true">
+      <span><span class="punto" style="background:#0f1f1c"></span> Recojo</span>
+      <span><span class="punto" style="background:#f26b3a"></span> Destino</span>
+      <span><span class="punto" style="background:#0f766e"></span> Tu conductor y su ruta</span>
+    </div>
+  </section>
+</main>
+
+<div data-pie></div>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/comun.js?v=3"></script>
+<script src="js/seguimiento.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cobertura · LimaGo</title>
+  <meta name="description" content="Zona de servicio de LimaGo: los 50 distritos de Lima Metropolitana y el Callao.">
+  <link rel="icon" href="img/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/estilos.css?v=3">
+  <script src="js/plantilla.js?v=3"></script>
+</head>
+<body data-pagina="cobertura">
+<div data-cabecera></div>
+
+<main id="contenido">
+  <header class="encabezado-pagina">
+    <div class="contenedor">
+      <nav class="migas" aria-label="Ruta"><a href="index.html">Inicio</a> › Cobertura</nav>
+      <h1>Dónde operamos</h1>
+      <p>LimaGo atiende en toda Lima Metropolitana: los 43 distritos de la provincia de Lima y los 7 del Callao. Recogemos en cualquier punto junto a una vía por la que circulan autos.</p>
+    </div>
+  </header>
+
+  <section class="seccion" style="padding-top:16px">
+    <div class="contenedor dividido" style="align-items:start">
+      <div>
+        <div class="tarjeta">
+          <h2 style="font-size:1.25rem;margin:0 0 6px">¿Llegamos a tu punto?</h2>
+          <p class="ayuda" style="margin:0 0 14px">Escribe una dirección, coordenadas o toca el mapa.</p>
+          <form id="verificar" novalidate>
+            <div id="selector-punto"></div>
+            <button class="boton bloque" type="submit">Comprobar</button>
+          </form>
+          <div id="resultado" aria-live="polite"></div>
+        </div>
+        <div class="rejilla-2" style="margin-top:16px">
+          <div class="tarjeta plana cifra"><strong id="cifra-km">—</strong><span>km de vías en servicio</span></div>
+          <div class="tarjeta plana cifra"><strong id="cifra-cruces">—</strong><span>intersecciones cubiertas</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="mapa-cobertura" style="height:520px;position:relative">
+          <div id="mapa" style="position:absolute;inset:0"></div>
+          <div class="modo-mapa oculto" id="modo-mapa" role="status"></div>
+        </div>
+        <label class="interruptor" style="margin-top:12px"><input type="checkbox" id="ver-distritos" checked> Mostrar los límites distritales</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="seccion alterna" aria-labelledby="titulo-zonas">
+    <div class="contenedor">
+      <span class="antetitulo">Distritos atendidos</span>
+      <h2 id="titulo-zonas">Lima y Callao, de Ancón a Pucusana</h2>
+      <p class="subtitulo">Puedes pedir viajes dentro de un distrito o entre distritos. El límite de servicio es el del área metropolitana oficial.</p>
+      <div class="campo" style="max-width:420px">
+        <label for="buscar-distrito">Buscar un distrito</label>
+        <input class="entrada" id="buscar-distrito" type="search" placeholder="Ej.: San Juan de Lurigancho">
+      </div>
+      <ul class="lista-distritos" id="lista-distritos"><li class="esqueleto" style="height:18px"></li></ul>
+      <div class="rejilla-3" style="margin-top:28px">
+        <article class="tarjeta plana beneficio"><h3>Entre distritos</h3><p>La ruta se calcula por las calles de toda la ciudad, por ejemplo de Comas a Miraflores o del Callao a La Molina.</p></article>
+        <article class="tarjeta plana beneficio"><h3>Fuera de la zona</h3><p>Si marcas un punto fuera de Lima Metropolitana o en el mar, te avisamos antes de calcular la tarifa.</p></article>
+        <article class="tarjeta plana beneficio"><h3>Lejos de una vía</h3><p>Si el punto está en un cerro, un parque o lejos de una calle, ajustamos el recojo a la vía más cercana o te pedimos elegir otro.</p></article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-pie></div>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script src="js/comun.js?v=3"></script>
+<script>
+"use strict";
+(async () => {
+  const $ = (s) => document.querySelector(s);
+  $("#selector-punto").outerHTML = LimaGo.htmlSelector("punto", "Punto a comprobar", "Ej.: Av. Túpac Amaru 4500, Comas");
+  const mapa = LimaGo.crearMapa("mapa");
+  LimaGo.SelectorLugar.conectarMapa(mapa);
+  const selector = new LimaGo.SelectorLugar($('[data-lugar="punto"]'), { nombre: "Punto a comprobar", mapa, tipoPin: "origen",
+    alCambiar: (s) => { if (s.valor) comprobar(s.valor); } });
+  let capaDistritos = null, nombres = [];
+  try {
+    const { datos } = await LimaGo.dibujarCobertura(mapa);
+    $("#cifra-km").textContent = Math.round(datos.km_de_vias).toLocaleString("es-PE");
+    $("#cifra-cruces").textContent = datos.intersecciones.toLocaleString("es-PE");
+    nombres = datos.distritos;
+    pintarLista("");
+    const geo = await LimaGo.api("/distritos");
+    capaDistritos = L.geoJSON(geo, { style: { color: "#0f766e", weight: 1, fillOpacity: 0.03 },
+      onEachFeature: (f, capa) => capa.bindTooltip(f.properties.nombre, { sticky: true }) }).addTo(mapa);
+  } catch (e) { Plantilla.notificar(e.message, "error"); }
+
+  function pintarLista(q) {
+    const n = (t) => t.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    const visibles = nombres.filter((x) => n(x).includes(n(q)));
+    $("#lista-distritos").innerHTML = visibles.length ? visibles.map((x) => `<li>✓ ${LimaGo.escapar(x)}</li>`).join("")
+      : "<li>No encontramos ese distrito en la zona de cobertura.</li>";
+  }
+  $("#buscar-distrito").addEventListener("input", (e) => pintarLista(e.target.value));
+  $("#ver-distritos").addEventListener("change", (e) => {
+    if (capaDistritos) { if (e.target.checked) capaDistritos.addTo(mapa); else mapa.removeLayer(capaDistritos); }
+  });
+
+  async function comprobar(punto) {
+    const caja = $("#resultado");
+    caja.innerHTML = '<div class="buscando" style="margin-top:12px"><span class="girador"></span>Comprobando…</div>';
+    try {
+      const r = await LimaGo.api(`/ubicacion/ajustar?lat=${punto.lat}&lon=${punto.lon}`);
+      caja.innerHTML = r.cubierto
+        ? `<div class="aviso exito">Sí, recogemos aquí${r.distrito ? ` (${LimaGo.escapar(r.distrito)})` : ""}. <a href="viaje.html?origen=${encodeURIComponent(LimaGo.corto(punto.direccion, 2))}">Pedir un viaje desde este punto</a></div>`
+        : `<div class="aviso advertencia">${LimaGo.escapar(r.mensaje)}</div>`;
+    } catch (error) {
+      caja.innerHTML = `<div class="aviso error">${LimaGo.escapar(error.message)}</div>`;
+    }
+  }
+
+  $("#verificar").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    let datos;
+    try { datos = selector.datos(); } catch (error) { $("#resultado").innerHTML = `<div class="aviso error">${LimaGo.escapar(error.message)}</div>`; return; }
+    if (!datos) { $("#resultado").innerHTML = '<div class="aviso error">Indica un punto para comprobar.</div>'; return; }
+    if (datos.lat != null) { comprobar(datos); return; }
+    try {
+      const { resultados } = await LimaGo.api(`/geocodificar?q=${encodeURIComponent(datos.texto)}`);
+      if (!resultados.length) { $("#resultado").innerHTML = '<div class="aviso advertencia">No encontramos esa dirección en la zona de cobertura.</div>'; return; }
+      selector.fijar(resultados[0]);
+    } catch (error) {
+      $("#resultado").innerHTML = `<div class="aviso error">${LimaGo.escapar(error.message)}</div>`;
+    }
+  });
+})();
+</script>
+</body>
+</html>

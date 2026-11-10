@@ -1,0 +1,23 @@
+{
+  "fecha_utc": "2026-11-07T00:53:08Z",
+  "fuentes": {
+    "limite": "OSM relación 12933390",
+    "nucleo": "https://download.bbbike.org/osm/bbbike/Lima/Lima.osm.pbf",
+    "franjas": "https://api.openstreetmap.org/api/0.6/map",
+    "recuadros_franjas": 27,
+    "peticiones_api": 27
+  },
+  "nodos": 152441,
+  "aristas": 401998,
+  "km_de_tramos": 33083.6,
+  "componente_fuerte": 152043,
+  "distritos": 50,
+  "segundos": 137.4,
+  "tamano_npz_mb": 15.3,
+  "distritos_completados_nominatim": [
+    "Ancón",
+    "Carabayllo",
+    "Pucusana",
+    "Santa María del Mar"
+  ]
+}
